@@ -1,10 +1,13 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
 
 import "../common/Utils.js" as Utils
 
-Component {
+Item {
     Rectangle {
         readonly property string objectType: "DesktopButton"
 
@@ -96,7 +99,7 @@ Component {
 
             color: {
                 if (isCurrent) {
-                    return config.DesktopIndicatorsCustomColorForCurrentDesktop || theme.buttonFocusColor;
+                    return config.DesktopIndicatorsCustomColorForCurrentDesktop || Kirigami.Theme.buttonFocusColor;
                 }
                 if (isEmpty && config.DesktopIndicatorsCustomColorForIdleDesktops) {
                     return config.DesktopIndicatorsCustomColorForIdleDesktops;
@@ -107,7 +110,7 @@ Component {
                 if (isUrgent && config.DesktopIndicatorsCustomColorForDesktopsNeedingAttention) {
                     return config.DesktopIndicatorsCustomColorForDesktopsNeedingAttention;
                 }
-                return theme.textColor;
+                return Kirigami.Theme.textColor;
             }
 
             Behavior on color {
@@ -227,7 +230,7 @@ Component {
 
             color: config.DesktopIndicatorsStyle == 5 ?
                    indicator.color :
-                   config.DesktopLabelsCustomColor || theme.textColor
+                   config.DesktopLabelsCustomColor || Kirigami.Theme.textColor
 
             Behavior on color {
                 enabled: config.AnimationsEnable
@@ -259,8 +262,8 @@ Component {
                 }
             }
 
-            font.family: config.DesktopLabelsCustomFont || theme.defaultFont.family
-            font.pixelSize: config.DesktopLabelsCustomFontSize || theme.defaultFont.pixelSize
+            font.family: config.DesktopLabelsCustomFont || Kirigami.Theme.defaultFont.family
+            font.pixelSize: config.DesktopLabelsCustomFontSize || Kirigami.Theme.defaultFont.pixelSize
             font.bold: isCurrent && config.DesktopLabelsBoldFontForCurrentDesktop
         }
 

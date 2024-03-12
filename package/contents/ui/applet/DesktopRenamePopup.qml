@@ -1,9 +1,10 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.plasmoid 2.0
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
 
 import "../common" as UICommon
 
@@ -22,7 +23,7 @@ PlasmaCore.Dialog {
 
         Text {
             Layout.alignment: Qt.AlignVCenter
-            color: theme.textColor
+            color: Kirigami.Theme.textColor
             text: "Rename as"
         }
 

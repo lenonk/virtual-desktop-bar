@@ -1,10 +1,12 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+import org.kde.kcmutils as KCM
 
 import "../common" as UICommon
 
-Item {
+KCM.GridViewKCM {
     // Empty desktops
     property string cfg_EmptyDesktopsRenameAs
 

@@ -11,6 +11,8 @@
 
 #include <KActionCollection>
 #include <KWindowSystem>
+#include <KWindowInfo>
+#include <KX11Extras>
 #include <KWayland/Client/plasmavirtualdesktop.h>
 #include <KWayland/Client/plasmawindowmanagement.h>
 #include <KWayland/Client/connection_thread.h>

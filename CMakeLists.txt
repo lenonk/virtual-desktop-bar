@@ -16,12 +16,12 @@ endif()
 if(NOT KDE_INSTALL_QMLDIR)
     file(STRINGS /etc/os-release distro REGEX "^NAME=.*$")
     if(distro MATCHES ".*Ubuntu.*")
-        set(KDE_INSTALL_QMLDIR "/usr/lib/x86_64-linux-gnu/qt5/qml")
+        set(KDE_INSTALL_QMLDIR "/usr/lib/x86_64-linux-gnu/qt6/qml")
     endif()
 
     file(STRINGS /etc/os-release distro REGEX "^NAME=.*$")
     if(distro MATCHES ".*openSUSE.*")
-        set(KDE_INSTALL_QMLDIR "/usr/lib64/qt5/qml")
+        set(KDE_INSTALL_QMLDIR "/usr/lib64/qt6/qml")
     endif()
 
     file(STRINGS /etc/os-release distro REGEX "^NAME=.*$")
@@ -38,28 +38,30 @@ include(KDECompilerSettings)
 include(KDECMakeSettings)
 include(ECMInstallIcons)
 
-set(REQUIRED_QT_VERSION 5.9.5)
-set(KF5_MIN_VERSION 5.44.0)
+set(REQUIRED_QT_VERSION 6.2.0)
+set(KF6_MIN_VERSION 6.0.0)
 
-find_package(Qt5 ${REQUIRED_QT_VERSION}
+find_package(Qt6 ${REQUIRED_QT_VERSION}
              CONFIG REQUIRED
-             Qml
-             X11Extras)
+             Qml)
 
-find_package(KF5 ${KF5_MIN_VERSION}
+find_package(KF6 ${KF6_MIN_VERSION}
              REQUIRED COMPONENTS
-             Plasma
-             Wayland
              WindowSystem
              GlobalAccel
              XmlGui)
+find_package(Plasma "6.0.0" REQUIRED)
+
+find_package(KWayland "6.0.0" CONFIG REQUIRED)
+set_package_properties(KWayland PROPERTIES TYPE OPTIONAL )
+add_feature_info("KWayland" KWayland_FOUND "Required for the awesome Wayland on Qt demo")
 
 find_package(LibTaskManager "5.24.0" # Replace literal appropriate with variable
              CONFIG REQUIRED)
 
 plasma_install_package(package org.kde.plasma.virtualdesktopbar)
 
-include_directories("/usr/include/taskmanager" ${KF5WaylandClient_INCLUDE_DIRS}) # Replace literal with appropriate variable
+include_directories("/usr/include/taskmanager" ${KF6WaylandClient_INCLUDE_DIRS}) # Replace literal with appropriate variable
 
 set(virtualdesktopbar_SRCS
     plugin/DesktopInfo.cpp
@@ -70,13 +72,12 @@ set(virtualdesktopbar_SRCS
 add_library(virtualdesktopbar SHARED ${virtualdesktopbar_SRCS})
 
 target_link_libraries(virtualdesktopbar
-                      Qt5::Qml
-                      Qt5::X11Extras
-                      KF5::Plasma
-                      KF5::WaylandClient
-                      KF5::WindowSystem
-                      KF5::GlobalAccel
-                      KF5::XmlGui
+                      Qt6::Qml
+                      Plasma::Plasma
+                      Plasma::KWaylandClient
+                      KF6::WindowSystem
+                      KF6::GlobalAccel
+                      KF6::XmlGui
                       PW::LibTaskManager)
 
 install(TARGETS virtualdesktopbar DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/plasma/virtualdesktopbar)

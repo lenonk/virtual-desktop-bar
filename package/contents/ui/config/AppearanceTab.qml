@@ -1,14 +1,15 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.0
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Dialogs
+import QtQuick.Layouts
 
-import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.kcmutils as KCM
+import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami as Kirigami
 
 import "../common" as UICommon
 
-Item {
+KCM.GridViewKCM {
     // Behavior - Dynamic desktops
     property bool cfg_DynamicDesktopsEnable
 
@@ -307,7 +308,7 @@ Item {
 
                     var foundIndex = find(cfg_DesktopLabelsCustomFont);
                     if (foundIndex == -1) {
-                        foundIndex = find(theme.defaultFont.family);
+                        foundIndex = find(Kirigami.Theme.defaultFont.family);
                     }
                     if (foundIndex >= 0) {
                         currentIndex = foundIndex;
@@ -340,7 +341,7 @@ Item {
             SpinBox {
                 id: desktopLabelsCustomFontSizeSpinBox
                 enabled: desktopLabelsCustomFontSizeCheckBox.checked
-                value: cfg_DesktopLabelsCustomFontSize || theme.defaultFont.pixelSize
+                value: cfg_DesktopLabelsCustomFontSize || Kirigami.Theme.defaultFont.pixelSize
                 minimumValue: 5
                 maximumValue: 100
                 suffix: " px"
@@ -368,7 +369,7 @@ Item {
                 id: desktopLabelsCustomColorButton
                 enabled: desktopLabelsCustomColorCheckBox.enabled &&
                          desktopLabelsCustomColorCheckBox.checked
-                color: cfg_DesktopLabelsCustomColor || theme.textColor
+                color: cfg_DesktopLabelsCustomColor || Kirigami.Theme.textColor
 
                 colorAcceptedCallback: function(color) {
                     cfg_DesktopLabelsCustomColor = color;
@@ -513,7 +514,7 @@ Item {
             ColorButton {
                 id: desktopIndicatorsCustomColorForIdleDesktopsButton
                 enabled: desktopIndicatorsCustomColorForIdleDesktopsCheckBox.checked
-                color: cfg_DesktopIndicatorsCustomColorForIdleDesktops || theme.textColor
+                color: cfg_DesktopIndicatorsCustomColorForIdleDesktops || Kirigami.Theme.textColor
 
                 colorAcceptedCallback: function(color) {
                     cfg_DesktopIndicatorsCustomColorForIdleDesktops = color;
@@ -535,7 +536,7 @@ Item {
             ColorButton {
                 id: desktopIndicatorsCustomColorForCurrentDesktopButton
                 enabled: desktopIndicatorsCustomColorForCurrentDesktopCheckBox.checked
-                color: cfg_DesktopIndicatorsCustomColorForCurrentDesktop || theme.buttonFocusColor
+                color: cfg_DesktopIndicatorsCustomColorForCurrentDesktop || Kirigami.Theme.buttonFocusColor
 
                 colorAcceptedCallback: function(color) {
                     cfg_DesktopIndicatorsCustomColorForCurrentDesktop = color;
@@ -557,7 +558,7 @@ Item {
             ColorButton {
                 id: desktopIndicatorsCustomColorForOccupiedIdleDesktopsButton
                 enabled: desktopIndicatorsCustomColorForOccupiedIdleDesktopsCheckBox.checked
-                color: cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops || theme.textColor
+                color: cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops || Kirigami.Theme.textColor
 
                 colorAcceptedCallback: function(color) {
                     cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops = color;
@@ -579,7 +580,7 @@ Item {
             ColorButton {
                 id: desktopIndicatorsCustomColorForDesktopsNeedingAttentionButton
                 enabled: desktopIndicatorsCustomColorForDesktopsNeedingAttentionCheckBox.checked
-                color: cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention || theme.textColor
+                color: cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention || Kirigami.Theme.textColor
 
                 colorAcceptedCallback: function(color) {
                     cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention = color;

@@ -1,15 +1,16 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
 
-import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami as Kirigami
 
 import "../common" as UICommon
 
-PlasmaCore.IconItem {
+Kirigami.Icon {
     roundToIconSize: false
-    Layout.maximumWidth: theme.defaultFont.pixelSize * 1.65
-    Layout.maximumHeight: theme.defaultFont.pixelSize * 1.65
+    Layout.maximumWidth: Kirigami.Theme.defaultFont.pixelSize * 1.65
+    Layout.maximumHeight: Kirigami.Theme.defaultFont.pixelSize * 1.65
 
     source: "help-contextual"
 
