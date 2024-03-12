@@ -9,7 +9,9 @@ import org.kde.kirigami as Kirigami
 
 import "../common" as UICommon
 
-KCM.GridViewKCM {
+KCM.SimpleKCM {
+    id: root
+
     // Behavior - Dynamic desktops
     property bool cfg_DynamicDesktopsEnable
 
@@ -54,9 +56,7 @@ KCM.GridViewKCM {
     property alias cfg_DesktopIndicatorsDistinctForOccupiedIdleDesktops: desktopIndicatorsDistinctForOccupiedIdleDesktopsCheckBox.checked
     property alias cfg_DesktopIndicatorsDistinctForDesktopsNeedingAttention: desktopIndicatorsDistinctForDesktopsNeedingAttentionCheckBox.checked
 
-    GridLayout {
-        columns: 1
-
+    Kirigami.FormLayout {
         SectionHeader {
             text: "Animations"
         }
@@ -114,7 +114,8 @@ KCM.GridViewKCM {
                 value: cfg_DesktopButtonsVerticalMargin
                 minimumValue: 0
                 maximumValue: 300
-                suffix: " px"
+                // #FIX Gone in QT6
+                // suffix: " px"
             }
 
             HintIcon {

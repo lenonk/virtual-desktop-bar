@@ -2,11 +2,14 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
 
 import "../common" as UICommon
 
-KCM.GridViewKCM {
+KCM.SimpleKCM {
+    id: root
+
     // Empty desktops
     property string cfg_EmptyDesktopsRenameAs
 
@@ -27,9 +30,7 @@ KCM.GridViewKCM {
     property alias cfg_MouseWheelInvertDesktopSwitchingDirection: mouseWheelInvertDesktopSwitchingDirectionCheckBox.checked
     property alias cfg_MouseWheelWrapDesktopNavigationWhenScrolling: mouseWheelWrapDesktopNavigationWhenScrollingCheckBox.checked
 
-    GridLayout {
-        columns: 1
-
+    Kirigami.FormLayout {
         SectionHeader {
             text: "Empty desktops"
         }
