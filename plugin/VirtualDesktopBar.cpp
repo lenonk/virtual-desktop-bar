@@ -8,7 +8,6 @@
 #include <QRegularExpression>
 #include <QScreen>
 #include <QTimer>
-#include <QX11Info>
 #include <QThread>
 
 #include <KGlobalAccel>
@@ -29,9 +28,6 @@ VirtualDesktopBar::VirtualDesktopBar(QObject* parent) : QObject(parent),
     if (KWindowSystem::isPlatformWayland()) {
         initWaylandConnection();
     }
-    else if (KWindowSystem::isPlatformX11()) {
-        netRootInfo = new NETRootInfo(QX11Info::connection(), QFlag(0));
-    }
 
     vdi = new TaskManager::VirtualDesktopInfo();
     currentDesktop = vdi->currentDesktop();
@@ -43,10 +39,6 @@ VirtualDesktopBar::VirtualDesktopBar(QObject* parent) : QObject(parent),
 
 VirtualDesktopBar::~VirtualDesktopBar() noexcept
 {
-    if (netRootInfo) {
-        delete netRootInfo;
-        netRootInfo = nullptr;
-    }
     if (vdi) {
         delete vdi;
         vdi = nullptr;
@@ -422,8 +414,7 @@ QList<DesktopInfo> VirtualDesktopBar::getDesktopInfoList(bool extraInfo) {
                 if (separatorPosition >= 0) {
                     separatorPosition += 3;
                     int length = windowName.length() - separatorPosition;
-                    QStringRef substringRef(&windowName, separatorPosition, length);
-                    windowName = substringRef.toString().trimmed();
+                    windowName = windowName.mid(separatorPosition, windowName.length() - separatorPosition).trimmed();
                 }
 
                 if (i == 0) {
@@ -448,8 +439,7 @@ QList<DesktopInfo> VirtualDesktopBar::getDesktopInfoList(bool extraInfo) {
                 if (separatorPosition >= 0) {
                     separatorPosition += 3;
                     int length = windowName.length() - separatorPosition;
-                    QStringRef substringRef(&windowName, separatorPosition, length);
-                    windowName = substringRef.toString().trimmed();
+                    windowName = windowName.mid(separatorPosition, windowName.length() - separatorPosition).trimmed();
                 }
 
                 if (i == 0) {

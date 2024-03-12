@@ -1,33 +1,36 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+import org.kde.kirigami as Kirigami
+import org.kde.kcmutils as KCM
 
 import "../common" as UICommon
 
-Item {
+KCM.SimpleKCM {
+    id: root
+
     // Empty desktops
     property string cfg_EmptyDesktopsRenameAs
 
     // Adding desktops
-    property alias cfg_AddingDesktopsSwitchTo: addingDesktopsSwitchToCheckBox.checked
-    property alias cfg_AddingDesktopsPromptToRename: addingDesktopsPromptToRenameCheckBox.checked
+    property bool cfg_AddingDesktopsSwitchTo: addingDesktopsSwitchToCheckBox.checked
+    property bool cfg_AddingDesktopsPromptToRename: addingDesktopsPromptToRenameCheckBox.checked
     property string cfg_AddingDesktopsExecuteCommand
 
     // Dynamic desktops
-    property alias cfg_DynamicDesktopsEnable: dynamicDesktopsEnableCheckBox.checked
+    property bool cfg_DynamicDesktopsEnable: dynamicDesktopsEnableCheckBox.checked
 
     // Multiple screens/monitors
-    property alias cfg_MultipleScreensFilterOccupiedDesktops: multipleScreensFilterOccupiedDesktopsCheckBox.checked
+    property bool cfg_MultipleScreensFilterOccupiedDesktops: multipleScreensFilterOccupiedDesktopsCheckBox.checked
 
     // Mouse wheel handling
-    property alias cfg_MouseWheelRemoveDesktopOnClick: mouseWheelRemoveDesktopOnClickCheckBox.checked
-    property alias cfg_MouseWheelSwitchDesktopOnScroll: mouseWheelSwitchDesktopOnScrollCheckBox.checked
-    property alias cfg_MouseWheelInvertDesktopSwitchingDirection: mouseWheelInvertDesktopSwitchingDirectionCheckBox.checked
-    property alias cfg_MouseWheelWrapDesktopNavigationWhenScrolling: mouseWheelWrapDesktopNavigationWhenScrollingCheckBox.checked
+    property bool cfg_MouseWheelRemoveDesktopOnClick: mouseWheelRemoveDesktopOnClickCheckBox.checked
+    property bool cfg_MouseWheelSwitchDesktopOnScroll: mouseWheelSwitchDesktopOnScrollCheckBox.checked
+    property bool cfg_MouseWheelInvertDesktopSwitchingDirection: mouseWheelInvertDesktopSwitchingDirectionCheckBox.checked
+    property bool cfg_MouseWheelWrapDesktopNavigationWhenScrolling: mouseWheelWrapDesktopNavigationWhenScrollingCheckBox.checked
 
-    GridLayout {
-        columns: 1
-
+    Kirigami.FormLayout {
         SectionHeader {
             text: "Empty desktops"
         }

@@ -1,0 +1,17 @@
+{
+  "KPackageStructure": "Plasma/Applet",
+  "KPlugin": {
+    "Authors": [
+      {
+        "Name": "wsdfhjxc"
+      }
+    ],
+    "Category": "Windows and Tasks",
+    "Description": "Manage your virtual desktops",
+    "Icon": "virtualdesktopbar",
+    "Id": "org.kde.plasma.virtualdesktopbar",
+    "Name": "Virtual Desktop Bar",
+    "Version": "1.5"
+  },
+  "X-Plasma-API-Minimum-Version": "6.0"
+}

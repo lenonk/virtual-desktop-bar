@@ -1,5 +1,8 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
+import QtQuick
+import QtQuick.Controls
+
+import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
 
 Item {
     readonly property string objectType: "AddDesktopButton"
@@ -22,12 +25,12 @@ Item {
                             implicitWidth / 2.5
 
         opacity: 1.0
-        color: config.DesktopLabelsCustomColor || theme.textColor
+        color: config.DesktopLabelsCustomColor || Kirigami.Theme.textColor
 
         text: "+"
         font.weight: Font.Light
-        font.family: config.DesktopLabelsCustomFont || theme.defaultFont.family
-        font.pixelSize: (config.DesktopLabelsCustomFontSize || theme.defaultFont.pixelSize) * 1.5
+        font.family: config.DesktopLabelsCustomFont || Kirigami.Theme.defaultFont.family
+        font.pixelSize: (config.DesktopLabelsCustomFontSize || Kirigami.Theme.defaultFont.pixelSize) * 1.5
     }
 
     MouseArea {

@@ -1,7 +1,8 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+
+import org.kde.kirigami as Kirigami
 
 ColumnLayout {
     spacing: 0
@@ -13,7 +14,7 @@ ColumnLayout {
     }
 
     Label {
-        font.pixelSize: theme.defaultFont.pixelSize + 4
+        font.pixelSize: Kirigami.Theme.defaultFont.pixelSize + 4
         text: parent.text
     }
 
