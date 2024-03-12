@@ -14,21 +14,21 @@ KCM.SimpleKCM {
     property string cfg_EmptyDesktopsRenameAs
 
     // Adding desktops
-    property alias cfg_AddingDesktopsSwitchTo: addingDesktopsSwitchToCheckBox.checked
-    property alias cfg_AddingDesktopsPromptToRename: addingDesktopsPromptToRenameCheckBox.checked
+    property bool cfg_AddingDesktopsSwitchTo: addingDesktopsSwitchToCheckBox.checked
+    property bool cfg_AddingDesktopsPromptToRename: addingDesktopsPromptToRenameCheckBox.checked
     property string cfg_AddingDesktopsExecuteCommand
 
     // Dynamic desktops
-    property alias cfg_DynamicDesktopsEnable: dynamicDesktopsEnableCheckBox.checked
+    property bool cfg_DynamicDesktopsEnable: dynamicDesktopsEnableCheckBox.checked
 
     // Multiple screens/monitors
-    property alias cfg_MultipleScreensFilterOccupiedDesktops: multipleScreensFilterOccupiedDesktopsCheckBox.checked
+    property bool cfg_MultipleScreensFilterOccupiedDesktops: multipleScreensFilterOccupiedDesktopsCheckBox.checked
 
     // Mouse wheel handling
-    property alias cfg_MouseWheelRemoveDesktopOnClick: mouseWheelRemoveDesktopOnClickCheckBox.checked
-    property alias cfg_MouseWheelSwitchDesktopOnScroll: mouseWheelSwitchDesktopOnScrollCheckBox.checked
-    property alias cfg_MouseWheelInvertDesktopSwitchingDirection: mouseWheelInvertDesktopSwitchingDirectionCheckBox.checked
-    property alias cfg_MouseWheelWrapDesktopNavigationWhenScrolling: mouseWheelWrapDesktopNavigationWhenScrollingCheckBox.checked
+    property bool cfg_MouseWheelRemoveDesktopOnClick: mouseWheelRemoveDesktopOnClickCheckBox.checked
+    property bool cfg_MouseWheelSwitchDesktopOnScroll: mouseWheelSwitchDesktopOnScrollCheckBox.checked
+    property bool cfg_MouseWheelInvertDesktopSwitchingDirection: mouseWheelInvertDesktopSwitchingDirectionCheckBox.checked
+    property bool cfg_MouseWheelWrapDesktopNavigationWhenScrolling: mouseWheelWrapDesktopNavigationWhenScrollingCheckBox.checked
 
     Kirigami.FormLayout {
         SectionHeader {

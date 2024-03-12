@@ -16,45 +16,45 @@ KCM.SimpleKCM {
     property bool cfg_DynamicDesktopsEnable
 
     // Animations
-    property alias cfg_AnimationsEnable: animationsEnableCheckBox.checked
+    property bool cfg_AnimationsEnable: animationsEnableCheckBox.checked
 
     // Tooltips
-    property alias cfg_TooltipsEnable: tooltipsEnableCheckBox.checked
+    property bool cfg_TooltipsEnable: tooltipsEnableCheckBox.checked
 
     // Add desktop button
-    property alias cfg_AddDesktopButtonShow: addDesktopButtonShowCheckBox.checked
+    property bool cfg_AddDesktopButtonShow: addDesktopButtonShowCheckBox.checked
 
     // Desktop buttons
-    property alias cfg_DesktopButtonsVerticalMargin: desktopButtonsVerticalMarginSpinBox.value
-    property alias cfg_DesktopButtonsHorizontalMargin: desktopButtonsHorizontalMarginSpinBox.value
-    property alias cfg_DesktopButtonsSpacing: desktopButtonsSpacingSpinBox.value
-    property alias cfg_DesktopButtonsSetCommonSizeForAll: desktopButtonsSetCommonSizeForAllCheckBox.checked
-    property alias cfg_DesktopButtonsShowOnlyForCurrentDesktop: desktopButtonsShowOnlyForCurrentDesktopCheckBox.checked
-    property alias cfg_DesktopButtonsShowOnlyForOccupiedDesktops: desktopButtonsShowOnlyForOccupiedDesktopsCheckBox.checked
+    property int cfg_DesktopButtonsVerticalMargin: desktopButtonsVerticalMarginSpinBox.value
+    property int cfg_DesktopButtonsHorizontalMargin: desktopButtonsHorizontalMarginSpinBox.value
+    property int cfg_DesktopButtonsSpacing: desktopButtonsSpacingSpinBox.value
+    property bool cfg_DesktopButtonsSetCommonSizeForAll: desktopButtonsSetCommonSizeForAllCheckBox.checked
+    property bool cfg_DesktopButtonsShowOnlyForCurrentDesktop: desktopButtonsShowOnlyForCurrentDesktopCheckBox.checked
+    property bool cfg_DesktopButtonsShowOnlyForOccupiedDesktops: desktopButtonsShowOnlyForOccupiedDesktopsCheckBox.checked
 
     // Desktop labels
-    property alias cfg_DesktopLabelsStyle: desktopLabelsStyleComboBox.currentIndex
+    property int cfg_DesktopLabelsStyle: desktopLabelsStyleComboBox.currentIndex
     property string cfg_DesktopLabelsStyleCustomFormat
     property string cfg_DesktopLabelsCustomFont
     property int cfg_DesktopLabelsCustomFontSize
     property string cfg_DesktopLabelsCustomColor
-    property alias cfg_DesktopLabelsDimForIdleDesktops: desktopLabelsDimForIdleDesktopsCheckBox.checked
-    property alias cfg_DesktopLabelsBoldFontForCurrentDesktop: desktopLabelsBoldFontForCurrentDesktopCheckBox.checked
-    property alias cfg_DesktopLabelsMaximumLength: desktopLabelsMaximumLengthSpinBox.value
-    property alias cfg_DesktopLabelsDisplayAsUppercased: desktopLabelsDisplayAsUppercasedCheckBox.checked
+    property bool cfg_DesktopLabelsDimForIdleDesktops: desktopLabelsDimForIdleDesktopsCheckBox.checked
+    property bool cfg_DesktopLabelsBoldFontForCurrentDesktop: desktopLabelsBoldFontForCurrentDesktopCheckBox.checked
+    property int cfg_DesktopLabelsMaximumLength: desktopLabelsMaximumLengthSpinBox.value
+    property bool cfg_DesktopLabelsDisplayAsUppercased: desktopLabelsDisplayAsUppercasedCheckBox.checked
 
     // Desktop indicators
-    property alias cfg_DesktopIndicatorsStyle: desktopIndicatorsStyleComboBox.currentIndex
-    property alias cfg_DesktopIndicatorsStyleBlockRadius: desktopIndicatorsStyleBlockRadiusSpinBox.value
-    property alias cfg_DesktopIndicatorsStyleLineThickness: desktopIndicatorsStyleLineThicknessSpinBox.value
-    property alias cfg_DesktopIndicatorsInvertPosition: desktopIndicatorsInvertPositionCheckBox.checked
+    property int cfg_DesktopIndicatorsStyle: desktopIndicatorsStyleComboBox.currentIndex
+    property int cfg_DesktopIndicatorsStyleBlockRadius: desktopIndicatorsStyleBlockRadiusSpinBox.value
+    property int cfg_DesktopIndicatorsStyleLineThickness: desktopIndicatorsStyleLineThicknessSpinBox.value
+    property bool cfg_DesktopIndicatorsInvertPosition: desktopIndicatorsInvertPositionCheckBox.checked
     property string cfg_DesktopIndicatorsCustomColorForIdleDesktops
     property string cfg_DesktopIndicatorsCustomColorForCurrentDesktop
     property string cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops
     property string cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention
-    property alias cfg_DesktopIndicatorsDoNotOverrideOpacityOfCustomColors: desktopIndicatorsDoNotOverrideOpacityOfCustomColorsCheckBox.checked
-    property alias cfg_DesktopIndicatorsDistinctForOccupiedIdleDesktops: desktopIndicatorsDistinctForOccupiedIdleDesktopsCheckBox.checked
-    property alias cfg_DesktopIndicatorsDistinctForDesktopsNeedingAttention: desktopIndicatorsDistinctForDesktopsNeedingAttentionCheckBox.checked
+    property bool cfg_DesktopIndicatorsDoNotOverrideOpacityOfCustomColors: desktopIndicatorsDoNotOverrideOpacityOfCustomColorsCheckBox.checked
+    property bool cfg_DesktopIndicatorsDistinctForOccupiedIdleDesktops: desktopIndicatorsDistinctForOccupiedIdleDesktopsCheckBox.checked
+    property bool cfg_DesktopIndicatorsDistinctForDesktopsNeedingAttention: desktopIndicatorsDistinctForDesktopsNeedingAttentionCheckBox.checked
 
     Kirigami.FormLayout {
         SectionHeader {
@@ -112,8 +112,8 @@ KCM.SimpleKCM {
                           cfg_DesktopIndicatorsStyle != 5)
 
                 value: cfg_DesktopButtonsVerticalMargin
-                minimumValue: 0
-                maximumValue: 300
+                from: 0
+                to: 300
                 // #FIX Gone in QT6
                 // suffix: " px"
             }
@@ -138,9 +138,9 @@ KCM.SimpleKCM {
                           cfg_DesktopIndicatorsStyle != 5)
 
                 value: cfg_DesktopButtonsHorizontalMargin
-                minimumValue: 0
-                maximumValue: 300
-                suffix: " px"
+                from: 0
+                to: 300
+                // suffix: " px"
             }
 
             HintIcon {
@@ -160,9 +160,9 @@ KCM.SimpleKCM {
                 enabled: !cfg_DesktopButtonsShowOnlyForCurrentDesktop ||
                          cfg_DesktopButtonsShowOnlyForOccupiedDesktops
                 value: cfg_DesktopButtonsSpacing
-                minimumValue: 0
-                maximumValue: 100
-                suffix: " px"
+                from: 0
+                to: 100
+                // suffix: " px"
             }
 
             HintIcon {
@@ -264,9 +264,9 @@ KCM.SimpleKCM {
             SpinBox {
                 id: desktopLabelsMaximumLengthSpinBox
                 enabled: cfg_DesktopLabelsStyle != 1
-                minimumValue: 3
-                maximumValue: 100
-                suffix: " chars"
+                from: 3
+                to: 100
+                // suffix: " chars"
             }
 
             HintIcon {
@@ -343,9 +343,9 @@ KCM.SimpleKCM {
                 id: desktopLabelsCustomFontSizeSpinBox
                 enabled: desktopLabelsCustomFontSizeCheckBox.checked
                 value: cfg_DesktopLabelsCustomFontSize || Kirigami.Theme.defaultFont.pixelSize
-                minimumValue: 5
-                maximumValue: 100
-                suffix: " px"
+                from: 5
+                to: 100
+                // suffix: " px"
                 onValueChanged: {
                     if (desktopLabelsCustomFontSizeCheckBox.checked) {
                         cfg_DesktopLabelsCustomFontSize = value;
@@ -471,18 +471,18 @@ KCM.SimpleKCM {
                 id: desktopIndicatorsStyleBlockRadiusSpinBox
                 visible: cfg_DesktopIndicatorsStyle == 2
                 value: cfg_DesktopIndicatorsStyleBlockRadius
-                minimumValue: 0
-                maximumValue: 300
-                suffix: " px corner radius"
+                from: 0
+                to: 300
+                // suffix: " px corner radius"
             }
 
             SpinBox {
                 id: desktopIndicatorsStyleLineThicknessSpinBox
                 visible: cfg_DesktopIndicatorsStyle < 2
                 value: cfg_DesktopIndicatorsStyleLineThickness
-                minimumValue: 1
-                maximumValue: 10
-                suffix: " px thickness"
+                from: 1
+                to: 10
+                // suffix: " px thickness"
             }
         }
 

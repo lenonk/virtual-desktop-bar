@@ -4,17 +4,16 @@ import org.kde.kquickcontrolsaddons
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 
+import "applet" as Applet
 import org.kde.plasma.virtualdesktopbar 1.2
-
-import "applet"
 
 PlasmoidItem {
     id: root
 
-    DesktopRenamePopup { id: renamePopup }
-    DesktopButtonTooltip { id: tooltip }
+    Applet.DesktopRenamePopup { id: renamePopup }
+    Applet.DesktopButtonTooltip { id: tooltip }
 
-    fullRepresentation: Container {}
+    fullRepresentation: Applet.Container {}
     preferredRepresentation: fullRepresentation
 
     property QtObject config: plasmoid.configuration

@@ -48,8 +48,8 @@ Item {
             });
         }
 
-        property alias _label: label
-        property alias _indicator: indicator
+        property Item _label: label
+        property Item _indicator: indicator
 
         Layout.fillWidth: isVerticalOrientation
         Layout.fillHeight: !isVerticalOrientation
