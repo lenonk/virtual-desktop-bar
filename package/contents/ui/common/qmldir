@@ -1,0 +1,2 @@
+module org.kde.plasma.virtualdesktopbar.ui
+singleton LayoutProps 1.0 LayoutProps.qml

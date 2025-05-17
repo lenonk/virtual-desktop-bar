@@ -1,23 +1,38 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Layouts
+import org.kde.kirigami 2.20 as Kirigami
 
 ColumnLayout {
-    spacing: 0
+    id: root
 
     property string text
 
+    Layout.fillWidth: true
+    spacing: 0
+
+    // Add top margin for spacing between sections
     Item {
-        height: 10
+        Layout.fillWidth: true
+        Layout.preferredHeight: Kirigami.Units.largeSpacing
     }
 
-    Label {
-        font.pixelSize: theme.defaultFont.pixelSize + 4
-        text: parent.text
+    // Header text
+    Kirigami.Heading {
+        Layout.fillWidth: true
+        text: root.text
+        level: 2
+        font.pointSize: Kirigami.Theme.defaultFont.pointSize * 1.1
+        color: Kirigami.Theme.textColor
+        elide: Text.ElideRight
+        wrapMode: Text.NoWrap
     }
 
-    Item {
-        height: 1
+    // Separator line
+    Rectangle {
+        Layout.fillWidth: true
+        Layout.preferredHeight: 1
+        Layout.topMargin: Kirigami.Units.smallSpacing
+        color: Kirigami.Theme.disabledTextColor
+        opacity: 0.4
     }
 }

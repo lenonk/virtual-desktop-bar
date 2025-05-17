@@ -1,40 +1,59 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Controls.Styles 1.4
-import QtQuick.Dialogs 1.0
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Dialogs
+import org.kde.kirigami 2.20 as Kirigami
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 
-Button {
-    id: button
-    enabled: false
-    implicitWidth: theme.defaultFont.pixelSize * 2.1
-    implicitHeight: theme.defaultFont.pixelSize * 1.67
-    opacity: enabled ? 1 : 0.3
+PlasmaComponents3.Button {
+    id: root
 
     property string color
     property var colorAcceptedCallback
 
-    style: ButtonStyle {
-        background: Rectangle {
-            radius: 4
-            border.width: 1
-            color: button.color
-            border.color: "gray"
+    implicitWidth: Kirigami.Units.gridUnit * 2
+    implicitHeight: Kirigami.Units.gridUnit * 1.5
+    opacity: enabled ? 1.0 : 0.3
+
+    background: Rectangle {
+        radius: Kirigami.Units.smallSpacing
+        color: root.color
+        border {
+            width: 1
+            color: Kirigami.Theme.disabledTextColor
+        }
+
+        // Add visual feedback for hover and press states
+        Rectangle {
+            anchors.fill: parent
+            radius: parent.radius
+            color: Kirigami.Theme.highlightColor
+            opacity: root.hovered ? 0.1 : (root.pressed ? 0.2 : 0)
         }
     }
 
     ColorDialog {
-        id: dialog
-        title: "Choose a color"
-        showAlphaChannel: true
-        visible: false
+        id: colorDialog
+        title: i18n("Choose Color")
+        currentColor: root.color
+        options: ColorDialog.ShowAlphaChannel
+
         onAccepted: {
-            button.color = color;
-            colorAcceptedCallback(color);
-            dialog.visible = false;
+            root.color = selectedColor
+            if (colorAcceptedCallback) {
+                colorAcceptedCallback(selectedColor)
+            }
         }
     }
 
-    onClicked: dialog.visible = true
+    onClicked: colorDialog.open()
 
-    Component.onCompleted: dialog.color = color
+    PlasmaComponents3.ToolTip {
+        text: i18n("Click to change color")
+        visible: root.hovered
+    }
+
+    Component.onCompleted: {
+        // Enable the button by default, unlike the original
+        enabled = true
+    }
 }

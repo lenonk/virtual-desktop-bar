@@ -1,182 +1,214 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Layouts
+import org.kde.kirigami 2.20 as Kirigami
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 
 import "../common" as UICommon
 
 Item {
-    // Empty desktops
+    id: root
+
+    // Config properties
     property string cfg_EmptyDesktopsRenameAs
-
-    // Adding desktops
-    property alias cfg_AddingDesktopsSwitchTo: addingDesktopsSwitchToCheckBox.checked
-    property alias cfg_AddingDesktopsPromptToRename: addingDesktopsPromptToRenameCheckBox.checked
+    property alias cfg_AddingDesktopsSwitchTo: addingDesktopsSwitchTo.checked
+    property alias cfg_AddingDesktopsPromptToRename: addingDesktopsPromptToRename.checked
     property string cfg_AddingDesktopsExecuteCommand
+    property alias cfg_DynamicDesktopsEnable: dynamicDesktopsEnable.checked
+    property alias cfg_MultipleScreensFilterOccupiedDesktops: multipleScreensFilter.checked
+    property alias cfg_MouseWheelRemoveDesktopOnClick: mouseWheelRemoveDesktop.checked
+    property alias cfg_MouseWheelSwitchDesktopOnScroll: mouseWheelSwitchDesktop.checked
+    property alias cfg_MouseWheelInvertDesktopSwitchingDirection: mouseWheelInvertDirection.checked
+    property alias cfg_MouseWheelWrapDesktopNavigationWhenScrolling: mouseWheelWrapNavigation.checked
 
-    // Dynamic desktops
-    property alias cfg_DynamicDesktopsEnable: dynamicDesktopsEnableCheckBox.checked
+    ScrollView {
+        anchors.fill: parent
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
 
-    // Multiple screens/monitors
-    property alias cfg_MultipleScreensFilterOccupiedDesktops: multipleScreensFilterOccupiedDesktopsCheckBox.checked
+        ColumnLayout {
+            width: parent.width
+            spacing: Kirigami.Units.largeSpacing
 
-    // Mouse wheel handling
-    property alias cfg_MouseWheelRemoveDesktopOnClick: mouseWheelRemoveDesktopOnClickCheckBox.checked
-    property alias cfg_MouseWheelSwitchDesktopOnScroll: mouseWheelSwitchDesktopOnScrollCheckBox.checked
-    property alias cfg_MouseWheelInvertDesktopSwitchingDirection: mouseWheelInvertDesktopSwitchingDirectionCheckBox.checked
-    property alias cfg_MouseWheelWrapDesktopNavigationWhenScrolling: mouseWheelWrapDesktopNavigationWhenScrollingCheckBox.checked
+            Kirigami.FormLayout {
+                Layout.fillWidth: true
 
-    GridLayout {
-        columns: 1
+                // Empty Desktops Section
+                Kirigami.Heading {
+                    Layout.fillWidth: true
+                    text: i18n("Empty Desktops")
+                    level: 2
+                }
 
-        SectionHeader {
-            text: "Empty desktops"
-        }
+                RowLayout {
+                    Kirigami.FormData.label: i18n("Rename as:")
 
-        RowLayout {
-            spacing: 0
+                    PlasmaComponents3.CheckBox {
+                        id: emptyDesktopsRename
+                        checked: cfg_EmptyDesktopsRenameAs
+                        onCheckedChanged: cfg_EmptyDesktopsRenameAs = checked ?
+                            emptyDesktopsRenameText.text : ""
+                    }
 
-            CheckBox {
-                id: emptyDesktopsRenameAsCheckBox
-                checked: cfg_EmptyDesktopsRenameAs
-                onCheckedChanged: cfg_EmptyDesktopsRenameAs = checked ?
-                                  emptyDesktopsRenameAsTextField.text : ""
-                text: "Rename as"
-            }
-
-            UICommon.GrowingTextField {
-                id: emptyDesktopsRenameAsTextField
-                enabled: emptyDesktopsRenameAsCheckBox.checked
-                maximumLength: 20
-                text: cfg_EmptyDesktopsRenameAs || "Desktop"
-                onTextChanged: {
-                    if (cfg_EmptyDesktopsRenameAs && text) {
-                        cfg_EmptyDesktopsRenameAs = text;
+                    UICommon.GrowingTextField {
+                        id: emptyDesktopsRenameText
+                        enabled: emptyDesktopsRename.checked
+                        maximumLength: 20
+                        text: cfg_EmptyDesktopsRenameAs || i18n("Desktop")
+                        onTextChanged: {
+                            if (cfg_EmptyDesktopsRenameAs && text) {
+                                cfg_EmptyDesktopsRenameAs = text
+                            }
+                        }
                     }
                 }
-                onEditingFinished: cfg_EmptyDesktopsRenameAs = text
-            }
-        }
 
-        SectionHeader {
-            text: "Adding desktops"
-        }
+                // Adding Desktops Section
+                Kirigami.Heading {
+                    Layout.fillWidth: true
+                    Layout.topMargin: Kirigami.Units.largeSpacing
+                    text: i18n("Adding Desktops")
+                    level: 2
+                }
 
-        RowLayout {
-            spacing: 0
+                RowLayout {
+                    PlasmaComponents3.CheckBox {
+                        id: addingDesktopsSwitchTo
+                        enabled: !cfg_DynamicDesktopsEnable
+                        text: i18n("Switch to newly added desktop")
+                    }
 
-            CheckBox {
-                id: addingDesktopsSwitchToCheckBox
-                enabled: !dynamicDesktopsEnableCheckBox.checked
-                text: "Switch to an added desktop"
-            }
-
-            HintIcon {
-                visible: !addingDesktopsSwitchToCheckBox.enabled
-                tooltipText: "Not available if dynamic desktops are enabled"
-            }
-        }
-
-        RowLayout {
-            spacing: 0
-
-            CheckBox {
-                id: addingDesktopsPromptToRenameCheckBox
-                enabled: !dynamicDesktopsEnableCheckBox.checked
-                text: "Prompt to rename an added desktop"
-            }
-
-            HintIcon {
-                visible: !addingDesktopsPromptToRenameCheckBox.enabled
-                tooltipText: "Not available if dynamic desktops are enabled"
-            }
-        }
-
-        RowLayout {
-            spacing: 0
-
-            CheckBox {
-                id: addingDesktopsExecuteCommandCheckBox
-                checked: cfg_AddingDesktopsExecuteCommand
-                onCheckedChanged: cfg_AddingDesktopsExecuteCommand = checked ?
-                                  addingDesktopsExecuteCommandTextField.text : ""
-                text: "Execute a command:"
-            }
-
-            UICommon.GrowingTextField {
-                id: addingDesktopsExecuteCommandTextField
-                enabled: addingDesktopsExecuteCommandCheckBox.enabled &&
-                         addingDesktopsExecuteCommandCheckBox.checked
-                maximumLength: 255
-                text: cfg_AddingDesktopsExecuteCommand || "krunner"
-                onTextChanged: {
-                    if (cfg_AddingDesktopsExecuteCommand && text) {
-                        cfg_AddingDesktopsExecuteCommand = text;
+                    PlasmaComponents3.ToolButton {
+                        icon.name: "help-contextual"
+                        visible: !addingDesktopsSwitchTo.enabled
+                        display: PlasmaComponents3.AbstractButton.IconOnly
+                        PlasmaComponents3.ToolTip {
+                            text: i18n("Not available with dynamic desktops enabled")
+                            visible: parent.hovered
+                        }
                     }
                 }
-                onEditingFinished: cfg_AddingDesktopsExecuteCommand = text
+
+                RowLayout {
+                    PlasmaComponents3.CheckBox {
+                        id: addingDesktopsPromptToRename
+                        enabled: !cfg_DynamicDesktopsEnable
+                        text: i18n("Prompt to rename newly added desktop")
+                    }
+
+                    PlasmaComponents3.ToolButton {
+                        icon.name: "help-contextual"
+                        visible: !addingDesktopsPromptToRename.enabled
+                        display: PlasmaComponents3.AbstractButton.IconOnly
+                        PlasmaComponents3.ToolTip {
+                            text: i18n("Not available with dynamic desktops enabled")
+                            visible: parent.hovered
+                        }
+                    }
+                }
+
+                RowLayout {
+                    Kirigami.FormData.label: i18n("Execute command:")
+
+                    PlasmaComponents3.CheckBox {
+                        id: executeCommandEnable
+                        checked: cfg_AddingDesktopsExecuteCommand
+                        onCheckedChanged: cfg_AddingDesktopsExecuteCommand = checked ?
+                            executeCommandText.text : ""
+                    }
+
+                    UICommon.GrowingTextField {
+                        id: executeCommandText
+                        enabled: executeCommandEnable.checked
+                        maximumLength: 255
+                        text: cfg_AddingDesktopsExecuteCommand || "krunner"
+                        onTextChanged: {
+                            if (cfg_AddingDesktopsExecuteCommand && text) {
+                                cfg_AddingDesktopsExecuteCommand = text
+                            }
+                        }
+                    }
+                }
+
+                // Dynamic Desktops Section
+                Kirigami.Heading {
+                    Layout.fillWidth: true
+                    Layout.topMargin: Kirigami.Units.largeSpacing
+                    text: i18n("Dynamic Desktops")
+                    level: 2
+                }
+
+                RowLayout {
+                    PlasmaComponents3.CheckBox {
+                        id: dynamicDesktopsEnable
+                        text: i18n("Enable dynamic desktops")
+                    }
+
+                    PlasmaComponents3.ToolButton {
+                        icon.name: "help-contextual"
+                        display: PlasmaComponents3.AbstractButton.IconOnly
+                        PlasmaComponents3.ToolTip {
+                            text: i18n("Automatically adds and removes desktops")
+                            visible: parent.hovered
+                        }
+                    }
+                }
+
+                // Multiple Screens Section
+                Kirigami.Heading {
+                    Layout.fillWidth: true
+                    Layout.topMargin: Kirigami.Units.largeSpacing
+                    text: i18n("Multiple Screens")
+                    level: 2
+                }
+
+                PlasmaComponents3.CheckBox {
+                    id: multipleScreensFilter
+                    text: i18n("Filter occupied desktops by screen")
+                }
+
+                // Mouse Wheel Section
+                Kirigami.Heading {
+                    Layout.fillWidth: true
+                    Layout.topMargin: Kirigami.Units.largeSpacing
+                    text: i18n("Mouse Wheel")
+                    level: 2
+                }
+
+                RowLayout {
+                    PlasmaComponents3.CheckBox {
+                        id: mouseWheelRemoveDesktop
+                        enabled: !cfg_DynamicDesktopsEnable
+                        text: i18n("Remove desktops on middle-click")
+                    }
+
+                    PlasmaComponents3.ToolButton {
+                        icon.name: "help-contextual"
+                        visible: !mouseWheelRemoveDesktop.enabled
+                        display: PlasmaComponents3.AbstractButton.IconOnly
+                        PlasmaComponents3.ToolTip {
+                            text: i18n("Not available with dynamic desktops enabled")
+                            visible: parent.hovered
+                        }
+                    }
+                }
+
+                PlasmaComponents3.CheckBox {
+                    id: mouseWheelSwitchDesktop
+                    text: i18n("Switch desktops by scrolling")
+                }
+
+                PlasmaComponents3.CheckBox {
+                    id: mouseWheelInvertDirection
+                    enabled: mouseWheelSwitchDesktop.checked
+                    text: i18n("Invert scrolling direction")
+                }
+
+                PlasmaComponents3.CheckBox {
+                    id: mouseWheelWrapNavigation
+                    enabled: mouseWheelSwitchDesktop.checked
+                    text: i18n("Wrap around at first and last desktop")
+                }
             }
-        }
-
-        SectionHeader {
-            text: "Dynamic desktops"
-        }
-
-        RowLayout {
-            spacing: 0
-
-            CheckBox {
-                id: dynamicDesktopsEnableCheckBox
-                text: "Enable dynamic desktops"
-            }
-
-            HintIcon {
-                tooltipText: "Automatically adds and removes desktops"
-            }
-        }
-
-        SectionHeader {
-            text: "Multiple screens/monitors"
-        }
-
-        CheckBox {
-            id: multipleScreensFilterOccupiedDesktopsCheckBox
-            text: "Filter occupied desktops by screen/monitor"
-        }
-
-        SectionHeader {
-            text: "Mouse wheel handling"
-        }
-
-        RowLayout {
-            spacing: 0
-
-            CheckBox {
-                id: mouseWheelRemoveDesktopOnClickCheckBox
-                enabled: !dynamicDesktopsEnableCheckBox.checked
-                text: "Remove desktops on the wheel click"
-            }
-
-            HintIcon {
-                visible: !mouseWheelRemoveDesktopOnClickCheckBox.enabled
-                tooltipText: "Not available if dynamic desktops are enabled"
-            }
-        }
-
-        CheckBox {
-            id: mouseWheelSwitchDesktopOnScrollCheckBox
-            text: "Switch desktops by scrolling the wheel"
-        }
-
-        CheckBox {
-            id: mouseWheelInvertDesktopSwitchingDirectionCheckBox
-            enabled: mouseWheelSwitchDesktopOnScrollCheckBox.checked
-            text: "Invert wheel scrolling desktop switching direction"
-        }
-
-        CheckBox {
-            id: mouseWheelWrapDesktopNavigationWhenScrollingCheckBox
-            enabled: mouseWheelSwitchDesktopOnScrollCheckBox.checked
-            text: "Wrap desktop navigation after reaching first or last one"
         }
     }
 }

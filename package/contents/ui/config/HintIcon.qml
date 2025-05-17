@@ -1,29 +1,35 @@
-import QtQuick 2.7
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.3
+import QtQuick
+import QtQuick.Layouts
+import org.kde.kirigami 2.20 as Kirigami
+import org.kde.plasma.components 3.0 as PlasmaComponents3
 
-import org.kde.plasma.core 2.0 as PlasmaCore
-
-import "../common" as UICommon
-
-PlasmaCore.IconItem {
-    roundToIconSize: false
-    Layout.maximumWidth: theme.defaultFont.pixelSize * 1.65
-    Layout.maximumHeight: theme.defaultFont.pixelSize * 1.65
-
-    source: "help-contextual"
+PlasmaComponents3.ToolButton {
+    id: root
 
     property string tooltipText
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        hoverEnabled: true
+    Layout.maximumWidth: Kirigami.Units.gridUnit * 1.5
+    Layout.maximumHeight: Kirigami.Units.gridUnit * 1.5
+
+    display: PlasmaComponents3.AbstractButton.IconOnly
+    icon.name: "help-contextual"
+
+    // Use built-in tooltip functionality
+    PlasmaComponents3.ToolTip {
+        text: root.tooltipText
+        visible: root.hovered
+        delay: Kirigami.Units.shortDuration
+        timeout: -1  // Show until mouse leaves
     }
 
-    UICommon.TextTooltip {
-        target: parent
-        visible: mouseArea.containsMouse
-        content: tooltipText
+    // Make the button non-interactive except for tooltip
+    enabled: false
+
+    // Ensure cursor changes to help when hovering
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.WhatsThisCursor
+        hoverEnabled: true
+        onClicked: {} // Consume clicks
     }
 }
