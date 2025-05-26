@@ -1,2 +1,3 @@
 module org.kde.plasma.virtualdesktopbar.ui
 singleton LayoutProps 1.0 LayoutProps.qml
+singleton TaskManager 1.0 TaskManagerUtils.qml

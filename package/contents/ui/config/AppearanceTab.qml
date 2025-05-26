@@ -1,308 +1,610 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import QtQuick.Dialogs
-import org.kde.kirigami 2.20 as Kirigami
-import org.kde.plasma.components 3.0 as PlasmaComponents3
+import org.kde.plasma.core as PlasmaCore
+import org.kde.kquickcontrols as KQControls
+import org.kde.kirigami as Kirigami
+import org.kde.kcmutils as KCM
 
 import "../common" as UICommon
+import "../common/IndicatorStyles.js" as IndicatorStyles
+import "."
 
-Item {
+pragma ComponentBehavior: Bound
+
+KCM.SimpleKCM {
     id: root
-
-    // Config properties
+    // Behavior - Dynamic desktops
     property bool cfg_DynamicDesktopsEnable
-    property alias cfg_AnimationsEnable: animationsEnable.checked
-    property alias cfg_TooltipsEnable: tooltipsEnable.checked
-    property alias cfg_AddDesktopButtonShow: addDesktopButtonShow.checked
 
-    // Desktop buttons config
-    property alias cfg_DesktopButtonsVerticalMargin: desktopButtonsVerticalMargin.value
-    property alias cfg_DesktopButtonsHorizontalMargin: desktopButtonsHorizontalMargin.value
-    property alias cfg_DesktopButtonsSpacing: desktopButtonsSpacing.value
-    property alias cfg_DesktopButtonsSetCommonSizeForAll: desktopButtonsSetCommonSize.checked
-    property alias cfg_DesktopButtonsShowOnlyForCurrentDesktop: showOnlyCurrentDesktop.checked
-    property alias cfg_DesktopButtonsShowOnlyForOccupiedDesktops: showOnlyOccupiedDesktops.checked
+    // Animations
+    property alias cfg_AnimationsEnable: animationsEnableCheckBox.checked
 
-    // Desktop labels config
-    property alias cfg_DesktopLabelsStyle: labelsStyle.currentIndex
+    // Tooltips
+    property alias cfg_TooltipsEnable: tooltipsEnableCheckBox.checked
+
+    // Add desktop button
+    property alias cfg_AddDesktopButtonShow: addDesktopButtonShowCheckBox.checked
+
+    // Desktop buttons
+    property alias cfg_DesktopButtonsVerticalMargin: desktopButtonsVerticalMarginSpinBox.value
+    property alias cfg_DesktopButtonsHorizontalMargin: desktopButtonsHorizontalMarginSpinBox.value
+    property alias cfg_DesktopButtonsSpacing: desktopButtonsSpacingSpinBox.value
+    property alias cfg_DesktopButtonsSetCommonSizeForAll: desktopButtonsSetCommonSizeForAllCheckBox.checked
+    property alias cfg_DesktopButtonsShowOnlyForCurrentDesktop: desktopButtonsShowOnlyForCurrentDesktopCheckBox.checked
+    property alias cfg_DesktopButtonsShowOnlyForOccupiedDesktops: desktopButtonsShowOnlyForOccupiedDesktopsCheckBox.checked
+
+    // Desktop labels
+    property alias cfg_DesktopLabelsStyle: desktopLabelsStyleComboBox.currentIndex
     property string cfg_DesktopLabelsStyleCustomFormat
     property string cfg_DesktopLabelsCustomFont
     property int cfg_DesktopLabelsCustomFontSize
     property string cfg_DesktopLabelsCustomColor
-    property alias cfg_DesktopLabelsDimForIdleDesktops: dimIdleDesktops.checked
-    property alias cfg_DesktopLabelsBoldFontForCurrentDesktop: boldCurrentDesktop.checked
-    property alias cfg_DesktopLabelsMaximumLength: maxLabelLength.value
-    property alias cfg_DesktopLabelsDisplayAsUppercased: uppercaseLabels.checked
+    property alias cfg_DesktopLabelsDimForIdleDesktops: desktopLabelsDimForIdleDesktopsCheckBox.checked
+    property alias cfg_DesktopLabelsBoldFontForCurrentDesktop: desktopLabelsBoldFontForCurrentDesktopCheckBox.checked
+    property alias cfg_DesktopLabelsMaximumLength: desktopLabelsMaximumLengthSpinBox.value
+    property alias cfg_DesktopLabelsDisplayAsUppercased: desktopLabelsDisplayAsUppercasedCheckBox.checked
 
-    // Desktop indicators config
-    property alias cfg_DesktopIndicatorsStyle: indicatorsStyle.currentIndex
-    property alias cfg_DesktopIndicatorsStyleBlockRadius: blockRadius.value
-    property alias cfg_DesktopIndicatorsStyleLineThickness: lineThickness.value
-    property alias cfg_DesktopIndicatorsInvertPosition: invertPosition.checked
+    // Desktop indicators
+    property alias cfg_DesktopIndicatorsStyle: desktopIndicatorsStyleComboBox.currentIndex
+    property alias cfg_DesktopIndicatorsStyleBlockRadius: desktopIndicatorsStyleBlockRadiusSpinBox.value
+    property alias cfg_DesktopIndicatorsStyleLineThickness: desktopIndicatorsStyleLineThicknessSpinBox.value
+    property alias cfg_DesktopIndicatorsInvertPosition: desktopIndicatorsInvertPositionCheckBox.checked
     property string cfg_DesktopIndicatorsCustomColorForIdleDesktops
     property string cfg_DesktopIndicatorsCustomColorForCurrentDesktop
     property string cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops
     property string cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention
-    property alias cfg_DesktopIndicatorsDoNotOverrideOpacityOfCustomColors: preserveCustomColors.checked
-    property alias cfg_DesktopIndicatorsDistinctForOccupiedIdleDesktops: distinctOccupied.checked
-    property alias cfg_DesktopIndicatorsDistinctForDesktopsNeedingAttention: distinctAttention.checked
+    property alias cfg_DesktopIndicatorsDoNotOverrideOpacityOfCustomColors: desktopIndicatorsDoNotOverrideOpacityOfCustomColorsCheckBox.checked
+    property alias cfg_DesktopIndicatorsDistinctForOccupiedIdleDesktops: desktopIndicatorsDistinctForOccupiedIdleDesktopsCheckBox.checked
+    property alias cfg_DesktopIndicatorsDistinctForDesktopsNeedingAttention: desktopIndicatorsDistinctForDesktopsNeedingAttentionCheckBox.checked
 
-    ScrollView {
-        anchors.fill: parent
-        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+    Kirigami.FormLayout {
+        Item { Kirigami.FormData.isSection: true }
 
-        ColumnLayout {
-            width: parent.width
-            spacing: Kirigami.Units.largeSpacing
+        RowLayout {
+            Kirigami.FormData.label: "Animations:"
 
-            // Animations Section
-            Kirigami.FormLayout {
-                PlasmaComponents3.CheckBox {
-                    id: animationsEnable
-                    Kirigami.FormData.label: i18n("Animations")
-                    text: i18n("Enable animations")
+            CheckBox {
+                id: animationsEnableCheckBox
+                text: "Enable animations"
+            }
+        }
+
+        Item { Kirigami.FormData.isSection: true }
+        RowLayout {
+            Kirigami.FormData.label: "Tooltips:"
+
+            CheckBox {
+                id: tooltipsEnableCheckBox
+                text: "Enable hover tooltips"
+            }
+        }
+
+        Item { Kirigami.FormData.isSection: true }
+        RowLayout {
+            Kirigami.FormData.label: "Add Desktop Button:"
+            CheckBox {
+                id: addDesktopButtonShowCheckBox
+                enabled: !cfg_DynamicDesktopsEnable
+                text: "Show button for adding desktops"
+            }
+
+            HintIcon {
+                visible: !addDesktopButtonShowCheckBox.enabled
+                tooltipText: "Not available if dynamic desktops are enabled"
+            }
+        }
+
+        Item { Kirigami.FormData.isSection: true }
+        RowLayout {
+            Kirigami.FormData.label: "Desktop Buttons:"
+            Label {
+                text: "Vertical margins:"
+            }
+
+            PXSpinBox {
+                id: desktopButtonsVerticalMarginSpinBox
+                value: cfg_DesktopButtonsVerticalMargin
+
+                editable: plasmoid.formFactor == PlasmaCore.Types.Vertical ||
+                    (cfg_DesktopIndicatorsStyle != IndicatorStyles.EdgeLine &&
+                        cfg_DesktopIndicatorsStyle != IndicatorStyles.FullSize &&
+                        cfg_DesktopIndicatorsStyle != IndicatorStyles.UseLabels)
+
+                from: 0
+                to: 300
+                suffix: " px"
+            }
+
+            HintIcon {
+                visible: !desktopButtonsVerticalMarginSpinBox.enabled
+                tooltipText: "Not available for the selected indicator style"
+            }
+        }
+
+        RowLayout {
+            Label {
+                text: "Horizontal margins:"
+            }
+
+            PXSpinBox {
+                id: desktopButtonsHorizontalMarginSpinBox
+                value: cfg_DesktopButtonsHorizontalMargin
+
+                editable: plasmoid.formFactor != PlasmaCore.Types.Vertical ||
+                    (cfg_DesktopIndicatorsStyle != IndicatorStyles.SideLine &&
+                        cfg_DesktopIndicatorsStyle != IndicatorStyles.FullSize &&
+                        cfg_DesktopIndicatorsStyle != IndicatorStyles.UseLabels)
+
+                from: 0
+                to: 300
+                suffix: " px"
+            }
+
+            HintIcon {
+                visible: !desktopButtonsHorizontalMarginSpinBox.enabled
+                tooltipText: "Not available for the selected indicator style"
+            }
+        }
+
+        RowLayout {
+            Label {
+                enabled: desktopButtonsSpacingSpinBox.enabled
+                text: "Spacing between buttons:"
+            }
+
+            PXSpinBox {
+                id: desktopButtonsSpacingSpinBox
+                value: cfg_DesktopButtonsSpacing
+
+                editable: !cfg_DesktopButtonsShowOnlyForCurrentDesktop ||
+                    cfg_DesktopButtonsShowOnlyForOccupiedDesktops
+
+                from: 0
+                to: 100
+                suffix: " px"
+            }
+
+            HintIcon {
+                visible: !desktopButtonsSpacingSpinBox.enabled
+                tooltipText: "Not available if only one button is shown"
+            }
+        }
+
+        RowLayout {
+            CheckBox {
+                id: desktopButtonsSetCommonSizeForAllCheckBox
+                text: "Set common size for all buttons"
+            }
+
+            HintIcon {
+                tooltipText: "The size is based on the largest button"
+            }
+        }
+
+        CheckBox {
+            id: desktopButtonsShowOnlyForCurrentDesktopCheckBox
+            text: "Show button only for current desktop"
+        }
+
+        CheckBox {
+            id: desktopButtonsShowOnlyForOccupiedDesktopsCheckBox
+            text: "Show button only for occupied desktops"
+        }
+
+        Item { Kirigami.FormData.isSection: true }
+        RowLayout {
+            Kirigami.FormData.label: "Desktop Labels:"
+            Label {
+                text: "Style:"
+            }
+
+            ComboBox {
+                id: desktopLabelsStyleComboBox
+                implicitWidth: 150
+                model: [
+                    "Name",
+                    "Number",
+                    "Number: name",
+                    "Active window's name",
+                    "Custom format"
+                ]
+                onCurrentIndexChanged: {
+                    if (cfg_DesktopLabelsStyle == 4) {
+                        cfg_DesktopLabelsStyleCustomFormat = desktopLabelsStyleTextField.text;
+                    } else {
+                        cfg_DesktopLabelsStyleCustomFormat = "";
+                    }
+                }
+
+                Component.onCompleted: {
+                    if (cfg_DesktopLabelsStyle != 4 &&
+                        cfg_DesktopLabelsStyleCustomFormat) {
+                        cfg_DesktopLabelsStyleCustomFormat = "";
+                    }
                 }
             }
 
-            // Tooltips Section
-            Kirigami.FormLayout {
-                PlasmaComponents3.CheckBox {
-                    id: tooltipsEnable
-                    Kirigami.FormData.label: i18n("Tooltips")
-                    text: i18n("Show tooltips on hover")
+            UICommon.GrowingTextField {
+                id: desktopLabelsStyleTextField
+                visible: cfg_DesktopLabelsStyle == 4
+                maximumLength: 50
+                text: cfg_DesktopLabelsStyleCustomFormat || "$X: $N"
+                onTextChanged: {
+                    if (cfg_DesktopLabelsStyle == 4 && text) {
+                        cfg_DesktopLabelsStyleCustomFormat = text;
+                    }
                 }
+                onEditingFinished: cfg_DesktopLabelsStyleCustomFormat = text
             }
 
-            // Add Desktop Button Section
-            Kirigami.FormLayout {
-                RowLayout {
-                    Kirigami.FormData.label: i18n("Add Desktop Button")
+            HintIcon {
+                visible: desktopLabelsStyleTextField.visible
+                tooltipText: "Available variables:<br><br>
+                          <tt>$X</tt> = desktop's number<br>
+                          <tt>$R</tt> = desktop's number (Roman)<br>
+                          <tt>$N</tt> = desktop's name<br>
+                          <tt>$W</tt> = active window's name<br>
+                          <tt>$WX</tt> = <tt>$W</tt>, or <tt>$X</tt> if there are no windows<br>
+                          <tt>$WR</tt> = <tt>$W</tt>, or <tt>$R</tt> if there are no windows<br>
+                          <tt>$WN</tt> = <tt>$W</tt>, or <tt>$N</tt> if there are no windows"
+            }
+        }
 
-                    PlasmaComponents3.CheckBox {
-                        id: addDesktopButtonShow
-                        enabled: !cfg_DynamicDesktopsEnable
-                        text: i18n("Show add desktop button")
-                    }
-
-                    PlasmaComponents3.ToolButton {
-                        icon.name: "help-contextual"
-                        visible: !addDesktopButtonShow.enabled
-                        display: PlasmaComponents3.AbstractButton.IconOnly
-                        PlasmaComponents3.ToolTip.text: i18n("Not available with dynamic desktops enabled")
-                        PlasmaComponents3.ToolTip.visible: hovered
-                    }
-                }
+        RowLayout {
+            Label {
+                enabled: desktopLabelsMaximumLengthSpinBox.enabled
+                text: "Maximum length:"
             }
 
-            // Desktop Buttons Section
-            Kirigami.FormLayout {
-                Layout.fillWidth: true
-
-                PlasmaComponents3.SpinBox {
-                    id: desktopButtonsVerticalMargin
-                    Kirigami.FormData.label: i18n("Vertical margins:")
-                    from: 0
-                    to: 300
-                    stepSize: 1
-                    // suffix: " px"
-                }
-
-                PlasmaComponents3.SpinBox {
-                    id: desktopButtonsHorizontalMargin
-                    Kirigami.FormData.label: i18n("Horizontal margins:")
-                    from: 0
-                    to: 300
-                    stepSize: 1
-                    // suffix: " px"
-                }
-
-                PlasmaComponents3.SpinBox {
-                    id: desktopButtonsSpacing
-                    Kirigami.FormData.label: i18n("Button spacing:")
-                    from: 0
-                    to: 100
-                    stepSize: 1
-                    // suffix: " px"
-                }
-
-                PlasmaComponents3.CheckBox {
-                    id: desktopButtonsSetCommonSize
-                    Kirigami.FormData.label: i18n("Size:")
-                    text: i18n("Use common size for all buttons")
-                }
-
-                PlasmaComponents3.CheckBox {
-                    id: showOnlyCurrentDesktop
-                    text: i18n("Show only current desktop")
-                }
-
-                PlasmaComponents3.CheckBox {
-                    id: showOnlyOccupiedDesktops
-                    text: i18n("Show only occupied desktops")
-                }
+            PXSpinBox {
+                id: desktopLabelsMaximumLengthSpinBox
+                editable: cfg_DesktopLabelsStyle != 1
+                from: 3
+                to: 100
+                suffix: " chars"
             }
 
-            // Desktop Labels Section
-            Kirigami.FormLayout {
-                Layout.fillWidth: true
+            HintIcon {
+                tooltipText: cfg_DesktopLabelsStyle == 1 ?
+                    "Not available for the selected label style" :
+                    "Labels longer than the specified value will be ellipsized"
+            }
+        }
 
-                PlasmaComponents3.ComboBox {
-                    id: labelsStyle
-                    Kirigami.FormData.label: i18n("Label style:")
-                    model: [
-                        i18n("Name"),
-                        i18n("Number"),
-                        i18n("Number: Name"),
-                        i18n("Active Window"),
-                        i18n("Custom Format")
-                    ]
+        RowLayout {
+            CheckBox {
+                id: desktopLabelsCustomFontCheckBox
+                checked: cfg_DesktopLabelsCustomFont
+                onCheckedChanged: {
+                    if (checked) {
+                        var currentIndex = desktopLabelsCustomFontComboBox.currentIndex;
+                        var selectedFont = desktopLabelsCustomFontComboBox.model[currentIndex].value;
+                        cfg_DesktopLabelsCustomFont = selectedFont;
+                    } else {
+                        cfg_DesktopLabelsCustomFont = "";
+                    }
                 }
+                text: "Custom font:"
+            }
 
-                UICommon.GrowingTextField {
-                    id: customFormat
-                    visible: labelsStyle.currentIndex === 4
-                    Kirigami.FormData.label: visible ? i18n("Custom format:") : ""
-                    placeholderText: "$X: $N"
-                    text: cfg_DesktopLabelsStyleCustomFormat
-                    onTextChanged: if (labelsStyle.currentIndex === 4) cfg_DesktopLabelsStyleCustomFormat = text
-                }
+            ComboBox {
+                id: desktopLabelsCustomFontComboBox
+                enabled: desktopLabelsCustomFontCheckBox.checked
+                implicitWidth: 130
 
-                PlasmaComponents3.SpinBox {
-                    id: maxLabelLength
-                    Kirigami.FormData.label: i18n("Maximum length:")
-                    from: 3
-                    to: 100
-                    stepSize: 1
-                    // suffix: i18n(" chars")
-                }
+                Component.onCompleted: {
+                    var array = [];
+                    var fonts = Qt.fontFamilies()
+                    for (var i = 0; i < fonts.length; i++) {
+                        array.push({text: fonts[i], value: fonts[i]});
+                    }
+                    model = array;
 
-                FontDialog {
-                    id: fontDialog
-                    title: i18n("Choose Label Font")
-                    onAccepted: {
-                        cfg_DesktopLabelsCustomFont = selectedFont.family
-                        cfg_DesktopLabelsCustomFontSize = selectedFont.pointSize
+                    var foundIndex = find(cfg_DesktopLabelsCustomFont);
+                    if (foundIndex == -1) {
+                        foundIndex = find(PlasmaCore.Theme.defaultFont.family);
+                    }
+                    if (foundIndex >= 0) {
+                        currentIndex = foundIndex;
                     }
                 }
 
-                RowLayout {
-                    Kirigami.FormData.label: i18n("Font:")
-                    PlasmaComponents3.Button {
-                        text: cfg_DesktopLabelsCustomFont || i18n("System Default")
-                        onClicked: fontDialog.open()
-                    }
-                }
-
-                ColorDialog {
-                    id: labelColorDialog
-                    title: i18n("Choose Label Color")
-                    onAccepted: cfg_DesktopLabelsCustomColor = selectedColor
-                }
-
-                RowLayout {
-                    Kirigami.FormData.label: i18n("Color:")
-                    PlasmaComponents3.Button {
-                        Layout.preferredWidth: Kirigami.Units.gridUnit * 3
-                        background: Rectangle {
-                            color: cfg_DesktopLabelsCustomColor || Kirigami.Theme.textColor
+                onCurrentIndexChanged: {
+                    if (enabled && currentIndex) {
+                        var selectedItem = model[currentIndex];
+                        if (selectedItem) {
+                            var selectedFont = selectedItem.value;
+                            cfg_DesktopLabelsCustomFont = selectedFont;
                         }
-                        onClicked: labelColorDialog.open()
                     }
                 }
+            }
+        }
 
-                PlasmaComponents3.CheckBox {
-                    id: dimIdleDesktops
-                    text: i18n("Dim labels for idle desktops")
+        RowLayout {
+            CheckBox {
+                id: desktopLabelsCustomFontSizeCheckBox
+                checked: cfg_DesktopLabelsCustomFontSize > 0
+                onCheckedChanged: cfg_DesktopLabelsCustomFontSize = checked ?
+                    desktopLabelsCustomFontSizeSpinBox.value : 0
+                text: "Custom font size:"
+            }
+
+            PXSpinBox {
+                id: desktopLabelsCustomFontSizeSpinBox
+                value: cfg_DesktopLabelsCustomFontSize || PlasmaCore.Theme.defaultFont.pixelSize
+
+                editable: desktopLabelsCustomFontSizeCheckBox.checked
+                from: 5
+                to: 100
+                suffix: " px"
+                onValueChanged: {
+                    if (desktopLabelsCustomFontSizeCheckBox.checked) {
+                        cfg_DesktopLabelsCustomFontSize = value;
+                    }
                 }
+            }
+        }
 
-                PlasmaComponents3.CheckBox {
-                    id: boldCurrentDesktop
-                    text: i18n("Bold font for current desktop")
-                }
+        RowLayout {
+            CheckBox {
+                id: desktopLabelsCustomColorCheckBox
+                enabled: cfg_DesktopIndicatorsStyle != IndicatorStyles.UseLabels
+                checked: cfg_DesktopLabelsCustomColor
+                onCheckedChanged: cfg_DesktopLabelsCustomColor = checked ?
+                    desktopLabelsCustomColorButton.color : ""
+                text: "Custom text color:"
+            }
 
-                PlasmaComponents3.CheckBox {
-                    id: uppercaseLabels
-                    text: i18n("Display labels in uppercase")
+            ColorButton {
+                id: desktopLabelsCustomColorButton
+                enabled: desktopLabelsCustomColorCheckBox.enabled &&
+                    desktopLabelsCustomColorCheckBox.checked
+                color: cfg_DesktopLabelsCustomColor || PlasmaCore.Theme.textColor
+
+                colorAcceptedCallback: function (color) {
+                    cfg_DesktopLabelsCustomColor = color;
                 }
             }
 
-            // Desktop Indicators Section
-            Kirigami.FormLayout {
-                Layout.fillWidth: true
+            Item {
+                width: 8
+            }
 
-                PlasmaComponents3.ComboBox {
-                    id: indicatorsStyle
-                    Kirigami.FormData.label: i18n("Indicator style:")
-                    model: [
-                        i18n("Edge Line"),
-                        i18n("Side Line"),
-                        i18n("Block"),
-                        i18n("Rounded"),
-                        i18n("Full Size"),
-                        i18n("Use Labels")
-                    ]
+            HintIcon {
+                visible: desktopLabelsCustomColorCheckBox.checked ||
+                    !desktopLabelsCustomColorCheckBox.enabled
+                tooltipText: cfg_DesktopIndicatorsStyle != IndicatorStyles.UseLabels ?
+                    "Click the colored box to choose a different color" :
+                    "Not available if labels are used as indicators"
+            }
+        }
+
+        RowLayout {
+            CheckBox {
+                id: desktopLabelsDimForIdleDesktopsCheckBox
+                enabled: cfg_DesktopIndicatorsStyle != IndicatorStyles.UseLabels
+                text: "Dim labels for idle desktops"
+            }
+
+            HintIcon {
+                visible: !desktopLabelsDimForIdleDesktopsCheckBox.enabled
+                tooltipText: "Not available if labels are used as indicators"
+            }
+        }
+
+        RowLayout {
+            CheckBox {
+                id: desktopLabelsDisplayAsUppercasedCheckBox
+                enabled: cfg_DesktopLabelsStyle != 1
+                text: "Display labels as UPPERCASED"
+            }
+
+            HintIcon {
+                visible: !desktopLabelsDisplayAsUppercasedCheckBox.enabled
+                tooltipText: "Not available for the selected label style"
+            }
+        }
+
+        CheckBox {
+            id: desktopLabelsBoldFontForCurrentDesktopCheckBox
+            text: "Set bold font for current desktop"
+        }
+
+        Item { Kirigami.FormData.isSection: true }
+        RowLayout {
+            Kirigami.FormData.label: "Desktop Indicators:"
+            Label {
+                text: "Style:"
+            }
+
+            ComboBox {
+                id: desktopIndicatorsStyleComboBox
+                implicitWidth: 100
+                model: [
+                    "Edge line",
+                    "Side line",
+                    "Block",
+                    "Rounded",
+                    "Full size",
+                    "Use labels"
+                ]
+
+                onCurrentIndexChanged: {
+                    if (cfg_DesktopIndicatorsStyle == IndicatorStyles.Block) {
+                        cfg_DesktopIndicatorsStyleBlockRadius = desktopIndicatorsStyleBlockRadiusSpinBox.value;
+                    } else {
+                        cfg_DesktopIndicatorsStyleBlockRadius = 2;
+                    }
+                    if (cfg_DesktopIndicatorsStyle < IndicatorStyles.Block) {
+                        cfg_DesktopIndicatorsStyleLineThickness = desktopIndicatorsStyleLineThicknessSpinBox.value;
+                    } else {
+                        cfg_DesktopIndicatorsStyleLineThickness = 3;
+                    }
+
                 }
 
-                PlasmaComponents3.SpinBox {
-                    id: blockRadius
-                    visible: indicatorsStyle.currentIndex === 2
-                    Kirigami.FormData.label: visible ? i18n("Corner radius:") : ""
-                    from: 0
-                    to: 300
-                    stepSize: 1
-                    // suffix: " px"
-                }
-
-                PlasmaComponents3.SpinBox {
-                    id: lineThickness
-                    visible: indicatorsStyle.currentIndex < 2
-                    Kirigami.FormData.label: visible ? i18n("Line thickness:") : ""
-                    from: 1
-                    to: 10
-                    stepSize: 1
-                    // suffix: " px"
-                }
-
-                PlasmaComponents3.CheckBox {
-                    id: invertPosition
-                    enabled: indicatorsStyle.currentIndex < 2
-                    text: i18n("Invert indicator position")
-                }
-
-                // Custom colors section for indicators
-                ColorDialog {
-                    id: idleColorDialog
-                    title: i18n("Choose Color for Idle Desktops")
-                    onAccepted: cfg_DesktopIndicatorsCustomColorForIdleDesktops = selectedColor
-                }
-
-                RowLayout {
-                    Kirigami.FormData.label: i18n("Idle desktop color:")
-                    PlasmaComponents3.Button {
-                        Layout.preferredWidth: Kirigami.Units.gridUnit * 3
-                        background: Rectangle {
-                            color: cfg_DesktopIndicatorsCustomColorForIdleDesktops || Kirigami.Theme.textColor
-                        }
-                        onClicked: idleColorDialog.open()
+                Component.onCompleted: {
+                    if (cfg_DesktopIndicatorsStyle != IndicatorStyles.Block) {
+                        cfg_DesktopIndicatorsStyleBlockRadius = 2;
                     }
                 }
+            }
 
-                // Add similar ColorDialog and button setups for other indicator colors...
+            PXSpinBox {
+                id: desktopIndicatorsStyleBlockRadiusSpinBox
+                value: cfg_DesktopIndicatorsStyleBlockRadius
+                visible: cfg_DesktopIndicatorsStyle == IndicatorStyles.Block
+                from: 0
+                to: 300
+                suffix: " px corner radius"
+            }
 
-                PlasmaComponents3.CheckBox {
-                    id: preserveCustomColors
-                    text: i18n("Preserve opacity of custom colors")
+            PXSpinBox {
+                id: desktopIndicatorsStyleLineThicknessSpinBox
+                value: cfg_DesktopIndicatorsStyleLineThickness
+                visible: cfg_DesktopIndicatorsStyle < IndicatorStyles.Block
+                from: 1
+                to: 10
+                suffix: " px thickness"
+            }
+        }
+
+        RowLayout {
+            CheckBox {
+                id: desktopIndicatorsInvertPositionCheckBox
+                enabled: cfg_DesktopIndicatorsStyle < IndicatorStyles.Block
+                text: "Invert indicator's position"
+            }
+
+            HintIcon {
+                visible: !desktopIndicatorsInvertPositionCheckBox.enabled
+                tooltipText: "Not available for the selected indicator style"
+            }
+        }
+
+        RowLayout {
+            CheckBox {
+                id: desktopIndicatorsDoNotOverrideOpacityOfCustomColorsCheckBox
+                enabled: desktopIndicatorsCustomColorForCurrentDesktopCheckBox.checked ||
+                    desktopIndicatorsCustomColorForIdleDesktopsCheckBox.checked ||
+                    desktopIndicatorsCustomColorForOccupiedIdleDesktopsCheckBox.checked ||
+                    desktopIndicatorsCustomColorForDesktopsNeedingAttentionCheckBox.checked
+                text: "Do not override opacity of custom colors"
+            }
+
+            HintIcon {
+                tooltipText: !desktopIndicatorsDoNotOverrideOpacityOfCustomColorsCheckBox.enabled ?
+                    "Not available if custom colors are not used" :
+                    "Alpha channel of custom colors will be applied without any modifications"
+            }
+        }
+
+        RowLayout {
+            CheckBox {
+                id: desktopIndicatorsDistinctForOccupiedIdleDesktopsCheckBox
+                enabled: !cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops ||
+                    !cfg_DesktopIndicatorsDoNotOverrideOpacityOfCustomColors
+                text: "Distinct indicators for occupied idle desktops"
+            }
+
+            HintIcon {
+                visible: !desktopIndicatorsDistinctForOccupiedIdleDesktopsCheckBox.enabled
+                tooltipText: "Not available if a custom color is used and overriding opacity of custom colors is blocked"
+            }
+        }
+
+        RowLayout {
+            CheckBox {
+                id: desktopIndicatorsDistinctForDesktopsNeedingAttentionCheckBox
+                enabled: !cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention ||
+                    !cfg_DesktopIndicatorsDoNotOverrideOpacityOfCustomColors
+                text: "Distinct indicators for desktops needing attention"
+            }
+
+            HintIcon {
+                visible: !desktopIndicatorsDistinctForDesktopsNeedingAttentionCheckBox.enabled
+                tooltipText: "Not available if a custom color is used and overriding opacity of custom colors is blocked"
+            }
+        }
+
+        RowLayout {
+            CheckBox {
+                id: desktopIndicatorsCustomColorForIdleDesktopsCheckBox
+                checked: cfg_DesktopIndicatorsCustomColorForIdleDesktops
+                onCheckedChanged: cfg_DesktopIndicatorsCustomColorForIdleDesktops = checked ?
+                    desktopIndicatorsCustomColorForIdleDesktopsButton.color : ""
+                text: "Custom color for idle desktops:"
+            }
+
+            ColorButton {
+                id: desktopIndicatorsCustomColorForIdleDesktopsButton
+                enabled: desktopIndicatorsCustomColorForIdleDesktopsCheckBox.checked
+                color: cfg_DesktopIndicatorsCustomColorForIdleDesktops || PlasmaCore.Theme.textColor
+
+                colorAcceptedCallback: function (color) {
+                    cfg_DesktopIndicatorsCustomColorForIdleDesktops = color;
                 }
+            }
+        }
 
-                PlasmaComponents3.CheckBox {
-                    id: distinctOccupied
-                    text: i18n("Distinct indicators for occupied desktops")
+        RowLayout {
+            CheckBox {
+                id: desktopIndicatorsCustomColorForCurrentDesktopCheckBox
+                checked: cfg_DesktopIndicatorsCustomColorForCurrentDesktop
+                onCheckedChanged: cfg_DesktopIndicatorsCustomColorForCurrentDesktop = checked ?
+                    desktopIndicatorsCustomColorForCurrentDesktopButton.color : ""
+                text: "Custom color for current desktop:"
+            }
+
+            ColorButton {
+                id: desktopIndicatorsCustomColorForCurrentDesktopButton
+                enabled: desktopIndicatorsCustomColorForCurrentDesktopCheckBox.checked
+                color: cfg_DesktopIndicatorsCustomColorForCurrentDesktop || PlasmaCore.Theme.buttonFocusColor
+
+                colorAcceptedCallback: function (color) {
+                    cfg_DesktopIndicatorsCustomColorForCurrentDesktop = color;
                 }
+            }
+        }
 
-                PlasmaComponents3.CheckBox {
-                    id: distinctAttention
-                    text: i18n("Distinct indicators for desktops needing attention")
+        RowLayout {
+            CheckBox {
+                id: desktopIndicatorsCustomColorForOccupiedIdleDesktopsCheckBox
+                checked: cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops
+                onCheckedChanged: cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops = checked ?
+                    desktopIndicatorsCustomColorForOccupiedIdleDesktopsButton.color : ""
+                text: "Custom color for occupied idle desktops:"
+            }
+
+            ColorButton {
+                id: desktopIndicatorsCustomColorForOccupiedIdleDesktopsButton
+                enabled: desktopIndicatorsCustomColorForOccupiedIdleDesktopsCheckBox.checked
+                color: cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops || PlasmaCore.Theme.textColor
+
+                colorAcceptedCallback: function (color) {
+                    cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops = color;
+                }
+            }
+        }
+
+        RowLayout {
+            CheckBox {
+                id: desktopIndicatorsCustomColorForDesktopsNeedingAttentionCheckBox
+                checked: cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention
+                onCheckedChanged: cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention = checked ?
+                    desktopIndicatorsCustomColorForDesktopsNeedingAttentionButton.color : ""
+                text: "Custom color for desktops needing attention:"
+            }
+
+            ColorButton {
+                id: desktopIndicatorsCustomColorForDesktopsNeedingAttentionButton
+                enabled: desktopIndicatorsCustomColorForDesktopsNeedingAttentionCheckBox.checked
+                color: cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention || PlasmaCore.Theme.textColor
+
+                colorAcceptedCallback: function (color) {
+                    cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention = color;
                 }
             }
         }

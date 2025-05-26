@@ -2,7 +2,12 @@
 set(virtualdesktopbar_SRCS
         VirtualDesktopBar.cpp
         VirtualDesktopBarPlugin.cpp
+        VirtualDesktopBar.hpp
 )
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
 add_library(virtualdesktopbar SHARED ${virtualdesktopbar_SRCS})
 
@@ -18,8 +23,9 @@ target_link_libraries(virtualdesktopbar
         KF6::I18n
         KF6::Service
         KF6::WindowSystem
-        Plasma::Plasma
         KWin::kwin
+        Plasma::Plasma
+        Plasma::Activities
 )
 
 install(TARGETS virtualdesktopbar DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/plasma/virtualdesktopbar)

@@ -1,9 +1,9 @@
 import QtQuick
-import org.kde.plasma.configuration 2.0
-import org.kde.kirigami 2.20 as Kirigami
+import org.kde.plasma.configuration as PlasmaConfig
+// import org.kde.kirigami 2.20 as Kirigami
 
-ConfigModel {
-    ConfigCategory {
+PlasmaConfig.ConfigModel {
+    PlasmaConfig.ConfigCategory {
         name: i18n("Behavior")
         icon: "preferences-desktop"
         source: "config/BehaviorTab.qml"
@@ -12,7 +12,7 @@ ConfigModel {
         property int weight: 10
     }
 
-    ConfigCategory {
+    PlasmaConfig.ConfigCategory {
         name: i18n("Appearance")
         icon: "preferences-desktop-display-color"
         source: "config/AppearanceTab.qml"

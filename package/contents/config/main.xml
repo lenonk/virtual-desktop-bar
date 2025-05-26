@@ -4,220 +4,152 @@
       xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
       http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
 
-  <include>QFontDatabase</include>
-  <kcfgfile name=""/>
+    <kcfgfile name=""/>
 
-  <group name="Preferences">
-    <!-- Behavior -->
     <group name="Behavior">
-      <entry key="EmptyDesktopsRenameAs" type="String">
-        <label>Default name for empty desktops</label>
-        <default></default>
-        <whatsthis>Template name for empty desktops</whatsthis>
-      </entry>
+        <!-- Behavior - Empty desktops -->
+        <entry name="EmptyDesktopsRenameAs" type="String">
+            <label>The default name assigned to newly created virtual desktops.</label>
+            <default></default>
+        </entry>
 
-      <group name="AddingDesktops">
-        <entry key="AddingDesktopsSwitchTo" type="Bool">
-          <label>Switch to newly added desktop</label>
-          <default>true</default>
+        <!-- Behavior - Adding desktops -->
+        <entry name="AddingDesktopsSwitchTo" type="Bool">
+            <default>true</default>
+        </entry>/
+        <entry name="AddingDesktopsPromptToRename" type="Bool">
+            <default>false</default>
         </entry>
-        <entry key="AddingDesktopsPromptToRename" type="Bool">
-          <label>Prompt to rename new desktop</label>
-          <default>false</default>
+        <entry name="AddingDesktopsExecuteCommand" type="String">
+            <default></default>
         </entry>
-        <entry key="AddingDesktopsExecuteCommand" type="String">
-          <label>Command to execute when adding desktop</label>
-          <default></default>
-        </entry>
-      </group>
 
-      <entry key="DynamicDesktopsEnable" type="Bool">
-        <label>Enable dynamic desktops</label>
-        <default>false</default>
-      </entry>
+        <!-- Behavior - Dynamic desktops -->
+        <entry name="DynamicDesktopsEnable" type="Bool">
+            <default>false</default>
+        </entry>
 
-      <group name="MultipleScreens">
-        <entry key="MultipleScreensFilterOccupiedDesktops" type="Bool">
-          <label>Filter occupied desktops per screen</label>
-          <default>true</default>
+        <!-- Behavior - Multiple screens/monitors -->
+        <entry name="MultipleScreensFilterOccupiedDesktops" type="Bool">
+            <default>true</default>
         </entry>
-      </group>
 
-      <group name="MouseWheel">
-        <entry key="MouseWheelRemoveDesktopOnClick" type="Bool">
-          <label>Remove desktop on middle click</label>
-          <default>true</default>
+        <!-- Behavior - Mouse wheel handling -->
+        <entry name="MouseWheelRemoveDesktopOnClick" type="Bool">
+            <default>true</default>
         </entry>
-        <entry key="MouseWheelSwitchDesktopOnScroll" type="Bool">
-          <label>Switch desktop on scroll</label>
-          <default>true</default>
+        <entry name="MouseWheelSwitchDesktopOnScroll" type="Bool">
+            <default>true</default>
         </entry>
-        <entry key="MouseWheelInvertDesktopSwitchingDirection" type="Bool">
-          <label>Invert desktop switching direction</label>
-          <default>false</default>
+        <entry name="MouseWheelInvertDesktopSwitchingDirection" type="Bool">
+            <default>false</default>
         </entry>
-        <entry key="MouseWheelWrapDesktopNavigationWhenScrolling" type="Bool">
-          <label>Wrap desktop navigation when scrolling</label>
-          <default>false</default>
+        <entry name="MouseWheelWrapDesktopNavigationWhenScrolling" type="Bool">
+            <default>false</default>
         </entry>
-      </group>
     </group>
 
-    <!-- Appearance -->
     <group name="Appearance">
-      <entry key="AnimationsEnable" type="Bool">
-        <label>Enable animations</label>
-        <default>true</default>
-      </entry>
+        <!-- Appearance - Animations -->
+        <entry name="AnimationsEnable" type="Bool">
+            <default>true</default>
+        </entry>
 
-      <entry key="TooltipsEnable" type="Bool">
-        <label>Enable tooltips</label>
-        <default>true</default>
-      </entry>
+        <!-- Appearance - Tooltips -->
+        <entry name="TooltipsEnable" type="Bool">
+            <default>true</default>
+        </entry>
 
-      <group name="AddDesktopButton">
-        <entry key="AddDesktopButtonShow" type="Bool">
-          <label>Show add desktop button</label>
-          <default>true</default>
+        <!-- Appearance - Add desktop button -->
+        <entry name="AddDesktopButtonShow" type="Bool">
+            <default>true</default>
         </entry>
-        <entry key="AddDesktopButtonSize" type="Int">
-          <label>Add desktop button size</label>
-          <default>0</default>
-          <min>0</min>
-          <max>100</max>
+        <entry name="AddDesktopButtonSize" type="Int">
+            <default>0</default>
         </entry>
-      </group>
 
-      <group name="DesktopButtons">
-        <entry key="DesktopButtonsVerticalMargin" type="Int">
-          <label>Vertical margin</label>
-          <default>3</default>
-          <min>0</min>
-          <max>20</max>
+        <!-- Appearance - Desktop buttons -->
+        <entry name="DesktopButtonsVerticalMargin" type="Int">
+            <default>3</default>
         </entry>
-        <entry key="DesktopButtonsHorizontalMargin" type="Int">
-          <label>Horizontal margin</label>
-          <default>6</default>
-          <min>0</min>
-          <max>20</max>
+        <entry name="DesktopButtonsHorizontalMargin" type="Int">
+            <default>3</default>
         </entry>
-        <entry key="DesktopButtonsSpacing" type="Int">
-          <label>Spacing between buttons</label>
-          <default>3</default>
-          <min>0</min>
-          <max>20</max>
+        <entry name="DesktopButtonsSpacing" type="Int">
+            <default>3</default>
         </entry>
-        <entry key="DesktopButtonsSetCommonSizeForAll" type="Bool">
-          <label>Use common size for all buttons</label>
-          <default>false</default>
+        <entry name="DesktopButtonsSetCommonSizeForAll" type="Bool">
+            <default>false</default>
         </entry>
-        <entry key="DesktopButtonsShowOnlyForCurrentDesktop" type="Bool">
-          <label>Show only current desktop</label>
-          <default>false</default>
+        <entry name="DesktopButtonsShowOnlyForCurrentDesktop" type="Bool">
+            <default>false</default>
         </entry>
-        <entry key="DesktopButtonsShowOnlyForOccupiedDesktops" type="Bool">
-          <label>Show only occupied desktops</label>
-          <default>false</default>
+        <entry name="DesktopButtonsShowOnlyForOccupiedDesktops" type="Bool">
+            <default>false</default>
         </entry>
-      </group>
 
-      <group name="DesktopLabels">
-        <entry key="DesktopLabelsStyle" type="Int">
-          <label>Label style</label>
-          <default>0</default>
-          <min>0</min>
-          <max>4</max>
+        <!-- Appearance - Desktop labels -->
+        <entry name="DesktopLabelsStyle" type="Int">
+            <default>0</default>
         </entry>
-        <entry key="DesktopLabelsStyleCustomFormat" type="String">
-          <label>Custom label format</label>
-          <default></default>
+        <entry name="DesktopLabelsStyleCustomFormat" type="String">
+            <default></default>
         </entry>
-        <entry key="DesktopLabelsMaximumLength" type="Int">
-          <label>Maximum label length</label>
-          <default>25</default>
-          <min>1</min>
-          <max>100</max>
+        <entry name="DesktopLabelsMaximumLength" type="Int">
+            <default>25</default>
         </entry>
-        <entry key="DesktopLabelsCustomFont" type="String">
-          <label>Custom font</label>
-          <default></default>
+        <entry name="DesktopLabelsCustomFont" type="String">
+            <default></default>
         </entry>
-        <entry key="DesktopLabelsCustomFontSize" type="Int">
-          <label>Custom font size</label>
-          <default>0</default>
-          <min>0</min>
-          <max>100</max>
+        <entry name="DesktopLabelsCustomFontSize" type="Int">
+            <default>0</default>
         </entry>
-        <entry key="DesktopLabelsCustomColor" type="String">
-          <label>Custom label color</label>
-          <default></default>
+        <entry name="DesktopLabelsCustomColor" type="String">
+            <default></default>
         </entry>
-        <entry key="DesktopLabelsDimForIdleDesktops" type="Bool">
-          <label>Dim labels for idle desktops</label>
-          <default>true</default>
+        <entry name="DesktopLabelsDimForIdleDesktops" type="Bool">
+            <default>true</default>
         </entry>
-        <entry key="DesktopLabelsDisplayAsUppercased" type="Bool">
-          <label>Display labels in uppercase</label>
-          <default>false</default>
+        <entry name="DesktopLabelsDisplayAsUppercased" type="Bool">
+            <default>false</default>
         </entry>
-        <entry key="DesktopLabelsBoldFontForCurrentDesktop" type="Bool">
-          <label>Use bold font for current desktop</label>
-          <default>false</default>
+        <entry name="DesktopLabelsBoldFontForCurrentDesktop" type="Bool">
+            <default>false</default>
         </entry>
-      </group>
 
-      <group name="DesktopIndicators">
-        <entry key="DesktopIndicatorsStyle" type="Int">
-          <label>Indicator style</label>
-          <default>0</default>
-          <min>0</min>
-          <max>5</max>
+        <!-- Appearance - Desktop indicators -->
+        <entry name="DesktopIndicatorsStyle" type="Int">
+            <default>0</default>
         </entry>
-        <entry key="DesktopIndicatorsStyleBlockRadius" type="Int">
-          <label>Block style corner radius</label>
-          <default>2</default>
-          <min>0</min>
-          <max>20</max>
+        <entry name="DesktopIndicatorsStyleBlockRadius" type="Int">
+            <default>2</default>
         </entry>
-        <entry key="DesktopIndicatorsStyleLineThickness" type="Int">
-          <label>Line style thickness</label>
-          <default>3</default>
-          <min>1</min>
-          <max>10</max>
+        <entry name="DesktopIndicatorsStyleLineThickness" type="Int">
+            <default>3</default>
         </entry>
-        <entry key="DesktopIndicatorsInvertPosition" type="Bool">
-          <label>Invert indicator position</label>
-          <default>false</default>
+        <entry name="DesktopIndicatorsInvertPosition" type="Bool">
+            <default>false</default>
         </entry>
-        <entry key="DesktopIndicatorsCustomColorForIdleDesktops" type="String">
-          <label>Custom color for idle desktops</label>
-          <default></default>
+        <entry name="DesktopIndicatorsCustomColorForIdleDesktops" type="String">
+            <default></default>
         </entry>
-        <entry key="DesktopIndicatorsCustomColorForCurrentDesktop" type="String">
-          <label>Custom color for current desktop</label>
-          <default></default>
+        <entry name="DesktopIndicatorsCustomColorForCurrentDesktop" type="String">
+            <default></default>
         </entry>
-        <entry key="DesktopIndicatorsCustomColorForOccupiedIdleDesktops" type="String">
-          <label>Custom color for occupied idle desktops</label>
-          <default></default>
+        <entry name="DesktopIndicatorsCustomColorForOccupiedIdleDesktops" type="String">
+            <default></default>
         </entry>
-        <entry key="DesktopIndicatorsCustomColorForDesktopsNeedingAttention" type="String">
-          <label>Custom color for desktops needing attention</label>
-          <default></default>
+        <entry name="DesktopIndicatorsCustomColorForDesktopsNeedingAttention" type="String">
+            <default></default>
         </entry>
-        <entry key="DesktopIndicatorsDoNotOverrideOpacityOfCustomColors" type="Bool">
-          <label>Preserve opacity of custom colors</label>
-          <default>false</default>
+        <entry name="DesktopIndicatorsDoNotOverrideOpacityOfCustomColors" type="Bool">
+            <default>false</default>
         </entry>
-        <entry key="DesktopIndicatorsDistinctForOccupiedIdleDesktops" type="Bool">
-          <label>Distinct indicators for occupied idle desktops</label>
-          <default>true</default>
+        <entry name="DesktopIndicatorsDistinctForOccupiedIdleDesktops" type="Bool">
+            <default>true</default>
         </entry>
-        <entry key="DesktopIndicatorsDistinctForDesktopsNeedingAttention" type="Bool">
-          <label>Distinct indicators for desktops needing attention</label>
-          <default>false</default>
+        <entry name="DesktopIndicatorsDistinctForDesktopsNeedingAttention" type="Bool">
+            <default>false</default>
         </entry>
-      </group>
     </group>
-  </group>
 </kcfg>

@@ -1,12 +1,11 @@
 // plugin/VirtualDesktopBar.hpp
 #pragma once
 
-#include <map>
-
 #include <QObject>
-#include <QDBusInterface>
 #include <QVariantList>
-#include <QDBusArgument>
+#include <QDBusInterface>
+
+#include "KWinDesktop.h"
 
 namespace DBus {
     namespace Services {
@@ -24,14 +23,6 @@ namespace DBus {
     }
 }
 
-struct KWinDesktop {
-    qint32 id    {};
-    QString uuid {};
-    QString name {};
-};
-Q_DECLARE_METATYPE(KWinDesktop)
-Q_DECLARE_METATYPE(QList<KWinDesktop>)
-
 class VirtualDesktopBar : public QObject {
     Q_OBJECT
 
@@ -40,13 +31,30 @@ public:
     ~VirtualDesktopBar() override;
 
     Q_INVOKABLE QVariantList requestDesktopInfoList();
+    Q_INVOKABLE bool createDesktop(quint32 index, const QString &name);
+    Q_INVOKABLE bool removeDesktop(QString id);
+    Q_INVOKABLE bool setDesktopName(QString id, QString name);
+    Q_INVOKABLE bool setCurrentDesktop(qint32 number);
+    Q_INVOKABLE bool nextDesktop();
+    Q_INVOKABLE bool previousDesktop();
+    Q_INVOKABLE QString getIconFromDesktopFile(const QString &desktopFile);
+    Q_INVOKABLE QString getCurrentActivityId();
+    Q_INVOKABLE QString getActivityName(const QString activityId);
 
 Q_SIGNALS:
-    // void desktopInfoListSent(const QVariantList& desktopInfoList);
+    void desktopCreated(const QString &id, const QVariantMap &desktopData);
+    void desktopDataChanged(const QString &id, const QVariantMap &desktopData);
+    void desktopRemoved(const QString &id);
+    void currentChanged(const QString &id);
+
+private Q_SLOTS:
+    void onDesktopCreated(const QString &id, const KWin::KWinDesktopData &desktopData);
+    void onDesktopDataChanged(const QString &id, const KWin::KWinDesktopData &desktopData);
+    void onDesktopRemoved(const QString &id);
+    void onCurrentChanged(const QString &id);
 
 private:
+    void connectToDBusSignals();
     QDBusInterface *createInterface(const QString& service, const QString& path, const QString& interface,
         const QDBusConnection &busType = QDBusConnection::sessionBus());
-
-    std::map<QString, QDBusInterface *> m_interfaces;
 };

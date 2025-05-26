@@ -1,279 +1,125 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.components as PlasmaComponents3
-import org.kde.plasma.virtualdesktopbar 1.0
-import "common/Utils.js" as Utils
-import "common" as Common
-import "."
+
+import "DesktopButton" as DesktopButton
 
 Item {
     id: root
 
-    property var desktopButtonList: []
-    property Item lastHoveredButton
-    property Item lastDesktopButton
-    property Item currentDesktopButton
-    property Item largestDesktopButton
-    property int numberOfVisibleDesktopButtons
-    property bool isDragging: false
-    property Item draggedDesktopButton
-    readonly property int pressToDragDuration: 300
+    // Properties
+    property QtObject config: plasmoid.configuration
+    property ListModel desktopInfoList: ListModel {}
 
-    anchors.fill: parent
+    signal desktopRenamed(string uuid, string name)
+    signal showDesktopButtonTooltip(DesktopButton.DesktopButton button)
+    signal hideDesktopButtonTooltip(bool force)
+    signal buttonRemoveAnimationCompleted(string uuid)
+    signal buttonMiddleClick(DesktopButton.DesktopButton button)
+    signal nextDesktop()
+    signal previousDesktop()
 
-    VirtualDesktopBar {
+    implicitWidth: desktopButtonGrid.implicitWidth
+    implicitHeight: desktopButtonGrid.implicitHeight
+
+    Backend {
         id: backend
+        desktopInfoList: root.desktopInfoList
     }
 
-    GridLayout {
-        id: mainLayout
-        anchors.fill: parent
-        rowSpacing: 0
-        columnSpacing: 0
-        flow: Common.LayoutProps.isVerticalOrientation ? GridLayout.TopToBottom : GridLayout.LeftToRight
-        Layout.minimumWidth: 200
+    DesktopButton.DesktopRenamePopup {
+        id: renamePopup
+    }
 
-        GridLayout {
-            id: desktopButtonContainer
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            rowSpacing: parent.rowSpacing
-            columnSpacing: parent.columnSpacing
-            flow: parent.flow
+    DesktopButton.DesktopButtonTooltip {
+        id: tooltip
+    }
 
-            Repeater {
-                id: buttonRepeater
-                model: backend.requestDesktopInfoList()
-                delegate: DesktopButton {
-                    visible: true
-                    container: root
-                    property var desktopInfo: modelData
-                    number: modelData.id
-                    name: modelData.name
-                    windowNameList: modelData.window_name_list
-                    isVisible: modelData.is_visible
-                    isCurrent: modelData.is_current
+    DesktopButton.DesktopButtonGrid {
+        id: desktopButtonGrid
 
-                    Component.onCompleted: {
-                        if (!root.desktopButtonList[index]) {
-                            root.desktopButtonList[index] = this;
-                        }
-                    }
-                    Component.onDestruction: {
-                        root.desktopButtonList[index] = null;
-                    }
-                }
-            }
-        }
+        anchors.centerIn: parent
+        container: root
+        desktopInfoList: root.desktopInfoList
 
-        AddDesktopButton {
-            Layout.fillWidth: Common.LayoutProps.isVerticalOrientation
-            Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
+        Component.onCompleted: {
+            root.width = desktopButtonGrid.implicitWidth;
         }
     }
 
-    function update(desktopInfoList) {
-        console.log("virtualdesktopbar: dil.length: " + desktopInfoList.length)
-        let synchronousUpdate = true;
-        let difference = desktopInfoList.length - desktopButtonList.length;
-
-        if (difference > 0) {
-            console.log("virtualdesktopbar: Adding desktop button");
-            addDesktopButtons(difference);
-        } else if (difference < 0) {
-            removeDesktopButtons(desktopInfoList);
-            synchronousUpdate = !config.AnimationsEnable;
-        }
-
-        if (synchronousUpdate) {
-            console.log("virtualdesktopbar: Updating desktop buttons");
-            updateDesktopButtons(desktopInfoList);
-        }
-
-        lastDesktopButton = buttonRepeater.itemAt(desktopButtonList.length - 1);
-        currentDesktopButton = desktopButtonList.find(button => button && button.isCurrent) || null;
-    }
-
-    function addDesktopButtons(difference) {
-        let init = desktopButtonList.length === 0;
-
-        for (let i = 0; i < difference; i++) {
-            desktopButtonList.push(null);
-        }
-
-        console.log("virtualdesktopbar: dbl length: " + desktopButtonList.length);
-
-        if (!init && difference !== 0 && !config.DynamicDesktopsEnable) {
-            if (config.AddingDesktopsSwitchTo) {
-                Utils.delay(100, function() {
-                    backend.showDesktop(desktopButtonList.length);
-                }, root);
-            }
-            if (config.AddingDesktopsPromptToRename) {
-                Utils.delay(100, function() {
-                    let lastButton = buttonRepeater.itemAt(desktopButtonList.length - 1);
-                    renamePopup.show(lastButton);
-                }, root);
-            }
+    onImplicitWidthChanged: {
+        if (parent && parent.Layout) {
+            parent.Layout.preferredWidth = implicitWidth;
         }
     }
 
-    function removeDesktopButtons(desktopInfoList) {
-       desktopButtonList = desktopButtonList.slice(0, desktopInfoList.length);
-    }
-
-    function getRemovedDesktopButtonIndexList(desktopInfoList) {
-        var removedDesktopButtonIndexList = [];
-
-        for (var i = 0; i < desktopButtonList.length; i++) {
-            var desktopButton = desktopButtonList[i];
-
-            var keepDesktopButton = false;
-            for (var j = 0; j < desktopInfoList.length; j++) {
-                var desktopInfo = desktopInfoList[j];
-                if (desktopButton.id === desktopInfo.id) {
-                    keepDesktopButton = true;
-                    break;
-                }
-            }
-            if (!keepDesktopButton) {
-                removedDesktopButtonIndexList.push(i);
-            }
-        }
-
-        return removedDesktopButtonIndexList;
-    }
-
-    function updateDesktopButtons(desktopInfoList) {
-        for (let i = 0; i < desktopButtonList.length; i++) {
-            let button = buttonRepeater.itemAt(i);
-            if (button) {
-                button.number = desktopInfoList[i].number;
-                button.isCurrent = desktopInfoList[i].isCurrent;
-            }
+    onImplicitHeightChanged: {
+        if (parent && parent.Layout) {
+            parent.Layout.preferredHeight = implicitHeight;
         }
     }
 
-    function updateLargestDesktopButton() {
-        let temp = largestDesktopButton;
-
-        for (let i = 0; i < desktopButtonList.length; i++) {
-            const desktopButton = desktopButtonList[i];
-            // Skip invalid or null buttons
-            if (!desktopButton || !desktopButton._label) {
-                continue;
-            }
-            // Compare implicitWidth, ensuring temp._label exists
-            if (!temp || !temp._label || temp._label.implicitWidth < desktopButton._label.implicitWidth) {
-                temp = desktopButton;
-            }
-        }
-
-        if (temp !== largestDesktopButton) {
-            largestDesktopButton = temp;
-        }
+    onDesktopRenamed: function(uuid, name) {
+        backend.setDesktopName(uuid, name);
     }
 
-    function updateNumberOfVisibleDesktopButtons() {
-        numberOfVisibleDesktopButtons = desktopButtonList.filter(button => {
-            return button && button.visible; // Use 'visible' or 'isVisible' as defined
-        }).length;
+    onShowDesktopButtonTooltip: function(button) {
+        tooltip.show(button);
     }
 
-    MouseArea {
-        anchors.fill: parent
-        propagateComposedEvents: true
+    onHideDesktopButtonTooltip: function(force) {
+        tooltip.checkHideTooltip(force);
+    }
 
-        readonly property int wheelDeltaLimit: 120
-        property int currentWheelDelta: 0
+    onButtonRemoveAnimationCompleted: function(uuid) {
+        backend.removeDesktop(uuid);
+    }
 
-        onClicked: {
-            mouse.accepted = isDragging;
-        }
+    onButtonMiddleClick: function(button) {
+        button.startRemoveAnimation();
+    }
 
-        onPressed: {
-            const initialDesktopButton = desktopButtonContainer.childAt(mouse.x, mouse.y);
-            if (!initialDesktopButton || !initialDesktopButton.number) {
-                return; // Ensure it's a DesktopButton with a number property
-            }
+    onNextDesktop: { backend.nextDesktop(); }
+    onPreviousDesktop: { backend.previousDesktop(); }
 
-            Utils.delay(pressToDragDuration, function() {
-                if (!pressed) {
-                    return;
-                }
+    // Signal handlers
+    function addDesktop() {
+        backend.createDesktop(desktopInfoList.count, "New Desktop");
+    }
 
-                const desktopButton = desktopButtonContainer.childAt(mouse.x, mouse.y);
-                if (desktopButton && desktopButton === initialDesktopButton) {
-                    isDragging = true;
-                    draggedDesktopButton = desktopButton;
-                }
-            }, root);
-        }
-
-        onPositionChanged: {
-            if (isDragging) {
-                const desktopButton = desktopButtonContainer.childAt(mouse.x, mouse.y);
-                if (!desktopButton || !desktopButton.number || desktopButton === draggedDesktopButton) {
-                    return; // Skip if not a valid button or same as dragged
-                }
-
-                const maxOffset = desktopButton.width * 0.3;
-                const centerPos = desktopButton.x + desktopButton.width / 2;
-                if (mouse.x >= centerPos - maxOffset && mouse.x <= centerPos + maxOffset) {
-                    backend.replaceDesktops(draggedDesktopButton.number, desktopButton.number);
-                    draggedDesktopButton = desktopButton;
-                }
-            }
-        }
-
-        onReleased: {
-            if (isDragging) {
-                draggedDesktopButton = null;
-                Qt.callLater(function() {
-                    isDragging = false;
-                });
-            }
-        }
-
-        onWheel: {
-            if (!config.MouseWheelSwitchDesktopOnScroll) {
+    function removeDesktop(last) {
+        console.log("removeDesktop() called");
+        let desktop = desktopInfoList.get(desktopInfoList.count - 1);
+        if (!last) {
+            if (!desktopButtonGrid.hoveredButton) {
+                console.log("removeDesktop() called with no hovered button!")
                 return;
             }
 
-            let desktopNumber = 0;
-            let change = wheel.angleDelta.y || wheel.angleDelta.x;
-            if (!config.MouseWheelInvertDesktopSwitchingDirection) {
-                change = -change;
-            }
-
-            currentWheelDelta += change;
-
-            if (currentWheelDelta >= wheelDeltaLimit) {
-                currentWheelDelta = 0;
-                if (currentDesktopButton && currentDesktopButton.number < desktopButtonList.length) {
-                    desktopNumber = currentDesktopButton.number + 1;
-                } else if (config.MouseWheelWrapDesktopNavigationWhenScrolling) {
-                    desktopNumber = 1;
+            let doomed = desktopButtonGrid.hoveredButton;
+            for (let i = 0; i < desktopInfoList.count; i++) {
+                desktop = desktopInfoList.get(i);
+                if (desktop.uuid === doomed.uuid) {
+                    break;
                 }
-            }
-
-            if (currentWheelDelta <= -wheelDeltaLimit) {
-                currentWheelDelta = 0;
-                if (currentDesktopButton && currentDesktopButton.number > 1) {
-                    desktopNumber = currentDesktopButton.number - 1;
-                } else if (config.MouseWheelWrapDesktopNavigationWhenScrolling) {
-                    desktopNumber = desktopButtonList.length;
-                }
-            }
-
-            if (desktopNumber > 0) {
-                if (config.TooltipsEnable) {
-                    tooltip.visible = false;
-                }
-                backend.showDesktop(desktopNumber);
             }
         }
+
+        let doomed = desktopButtonGrid.desktopButtonMap[desktop.uuid];
+        if (doomed) {
+            doomed.startRemoveAnimation();
+            return;
+        }
+
+        // This should never happen, but just in case...
+        backend.removeDesktop(desktop.uuid);
+    }
+
+    function switchToDesktop(number) {
+        backend.setCurrentDesktop(number);
+    }
+
+    function renameDesktop() {
+        renamePopup.show(desktopButtonGrid.hoveredButton);
     }
 }
