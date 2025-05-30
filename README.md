@@ -1,6 +1,8 @@
 # Virtual Desktop Bar
 
-This is an applet for KDE Plasma panel (or Latte Dock) that lets you switch between virtual desktops and also invoke some actions to dynamically manage them in a convenient way. In order to do it, you can use the mouse, the context menu or user-defined keyboard shortcuts. There are also some extra features related to virtual desktops.
+This is an applet for KDE Plasma panel that lets you switch between virtual desktops and also invoke some actions to dynamically manage them in a convenient way. In order to do it, you can use the mouse, the context menu or user-defined keyboard shortcuts. There are also some extra features related to virtual desktops.
+
+This branch is a fork of the excellent virtual-desktop-bar plasmoid for Plasma 5 and X11.  This version is updated to work with Plasma 6 and Wayland.  I have no idea whether or not it works on X11.  It probably should, but it's untested.  It almost certainly will not work with Plasma 5, that's untested too, but there are other forks out there for that.
 
 The plasmoid displays virtual desktops as text labels with indicators in various styles. That means there's no graphical icons and window previews like in the Plasma's default Pager applet. Although the intention is to keep it simple, the applet has several configuration options regarding its behavior and visuals. These should be more than enough for desktop customization enthusiasts and folks at [/r/unixporn](https://reddit.com/r/unixporn) who want to make their panels aesthetic.
 
@@ -20,6 +22,8 @@ And actually, the whole reason for creating this plasmoid was about the aestheti
 and a few more not mentioned options...
 
 ## Screenshots
+
+These screen shots are all of the original version.  New screenshots coming soon.
 
 Adding, renaming, moving, removing a desktop:
 
@@ -73,8 +77,6 @@ There are global keyboard shortcuts, but you have to configure them in the Globa
 ## Known issues
 
 * Virtual desktops are shared by all monitors (KWin's limitation)
-* Support for Plasma Wayland session isn't there yet (this is a long-term goal)
-* The code behind this applet is a mess that doesn't follow the proper way of writing plasmoids
 * Dynamic virtual desktop management doesn't play nice with KWin scripts (see the explanation below)
 
 ## Compatibility with KWin scripts
@@ -90,4 +92,4 @@ To avoid issues while using KWin scripts, do not use the features mentioned abov
 
 ## Compatibility with window managers other than KWin
 
-Some features, even the basic ones, like adding or removing desktops, might not work if KWin is replaced with a different window manager, be it i3, bspwm or any other. Such issues are unlikely to be addressed. However, the plasmoid should still display desktops and their state, so it can act as a visual addition with labels and indicators.
+Don't do it.  The entire C++ backend is dependant on KWin's D-Bus API.
