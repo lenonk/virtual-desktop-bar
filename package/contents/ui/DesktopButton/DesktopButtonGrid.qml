@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.plasma.components as PlasmaComponents
 import "../common" as Common
@@ -38,6 +39,7 @@ Item {
                 name: model.name
                 uuid: model.uuid
                 isCurrent: model.is_current
+                buttonGrid: desktopButtonGrid
 
                 Layout.fillWidth: Common.LayoutProps.isVerticalOrientation
                 Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
@@ -69,12 +71,28 @@ Item {
         onImplicitHeightChanged: { desktopButtonGrid.implicitHeight = implicitHeight; }
     }
 
+    Component {
+        id: desktopButtonComponent
+        DesktopButton {
+            Layout.fillWidth: Common.LayoutProps.isVerticalOrientation
+            Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
+        }
+    }
+
+    Component {
+        id: dropAreaComponent;
+        DesktopButtonDropArea {
+            Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
+            Layout.fillWidth: Common.LayoutProps.isVerticalOrientation
+        }
+    }
+
     MouseArea {
         id: mouseArea
 
         anchors.fill: parent
         hoverEnabled: false
-        propagateComposedEvents: true
+        acceptedButtons: Qt.NoButton
 
         onWheel: function (wheel) {
             if (!config.MouseWheelSwitchDesktopOnScroll) return;
@@ -141,7 +159,6 @@ Item {
     }
 
     onDesktopButtonMapChanged: {
-
         Qt.callLater(updateGridSizes);
     }
 
@@ -171,10 +188,6 @@ Item {
     }
 
     function updateGridSizes() {
-        for (var uuid in desktopButtonMap) {
-            var button = desktopButtonMap[uuid];
-        }
-
         if (config.DesktopButtonsSetCommonSizeForAll) {
             var maxWidth = 0;
             for (var uuid in desktopButtonMap) {

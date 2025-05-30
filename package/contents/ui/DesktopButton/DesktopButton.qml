@@ -16,6 +16,8 @@ Rectangle {
     readonly property int animationSizeDuration: 100
     readonly property int animationVisibilityDuration: 350
 
+    property var buttonTooltip: null
+
     property bool ignoreMouseArea: false
     property bool isCurrent: false
     // TODO: Set up a signal to set isDragged to to and ignoreMouseArea to true
@@ -26,9 +28,11 @@ Rectangle {
     property bool isUrgent: false
     property string name: ""
     property int number: 0
+    property int modelIdx: -1
     property string uuid: ""
     property string activeWindowName: ""
     property alias mouseArea: _mouseArea
+    property Item buttonGrid: null
 
     property int verticalMargins: 5
     property int horizontalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? 0 : config.DesktopButtonsSpacing)
@@ -49,6 +53,12 @@ Rectangle {
     state: "creating"
     visible: true
 
+    // Rectangle {
+    //     anchors.fill: parent
+    //     color: "transparent"
+    //     border.width: 1
+    //     border.color: "red"
+    // }
     SystemPalette { id: systemPalette }
 
     Timer {
@@ -137,10 +147,18 @@ Rectangle {
         }
     ]
 
+    Component {
+        id: tooltipComponent
+        DesktopButtonTooltip {
+            buttonGrid: buttonRect.buttonGrid
+        }
+    }
+
     Component.onCompleted: {
         state = "creating";
         createTimer.start();
         updateTaskInfo();
+        buttonTooltip = tooltipComponent.createObject(this, {"sourceButton": this});
     }
 
     onImplicitWidthChanged: {
@@ -161,6 +179,24 @@ Rectangle {
         onTriggered: buttonRect.state = "visible"
     }
 
+    // DesktopButtonDropArea {
+    //     anchors.fill: parent
+    // }
+
+    Rectangle {
+        id: dragHighlight
+
+        property bool dragIsHovered: false
+
+        anchors.fill: parent
+        visible: dragIsHovered
+
+        color: Qt.rgba(systemPalette.highlight.r, systemPalette.highlight.g, systemPalette.highlight.b, 0.2)
+
+        border.width: 1
+        border.color: systemPalette.highlight
+    }
+
     DesktopButtonIndicator {
         id: indicator
     }
@@ -177,11 +213,20 @@ Rectangle {
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
         anchors.fill: parent
         hoverEnabled: true
+        enabled: !dragOverlay.visible
+
+        onPressed: {
+            console.log("onPressed");
+        }
+
+        onReleased: {
+            console.log("onReleased");
+        }
 
         onClicked: function(mouse) {
             Qt.callLater(function() {
                 hoverTimer.stop();
-                hideDesktopButtonTooltip(true);
+                buttonTooltip.checkHide(true);
             });
 
             if (mouse.button === Qt.LeftButton) {
@@ -208,7 +253,7 @@ Rectangle {
         onExited: {
             hoverTimer.stop();
             Utils.delay(100, function () {
-                    hideDesktopButtonTooltip(false);
+                    buttonTooltip.checkHide(false);
             }, _mouseArea);
         }
 
@@ -219,7 +264,11 @@ Rectangle {
             repeat: false
 
             onTriggered: {
-                showDesktopButtonTooltip(buttonRect);
+                Qt.callLater(function() {
+                    if (!ignoreMouseArea) {
+                        buttonTooltip.show();
+                    }
+                });
             }
         }
     }

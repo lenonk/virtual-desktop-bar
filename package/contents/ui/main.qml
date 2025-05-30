@@ -1,13 +1,15 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Window
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents3
+import org.kde.kirigami 2.2 as Kirigami
 
 import "common" as Common
 
 PlasmoidItem {
-    id: root
+    id: plasmoidRoot
 
     property QtObject config: plasmoid.configuration
     property Item container: null
@@ -18,10 +20,34 @@ PlasmoidItem {
     property bool isVerticalOrientation: formFactor === PlasmaCore.Types.Vertical
 
     Component.onCompleted: {
-        Common.LayoutProps.formFactor = Qt.binding(() => root.formFactor);
-        Common.LayoutProps.location = Qt.binding(() => root.location);
-        Common.LayoutProps.isTopLocation = Qt.binding(() => root.isTopLocation);
-        Common.LayoutProps.isVerticalOrientation = Qt.binding(() => root.isVerticalOrientation);
+        Common.LayoutProps.formFactor = Qt.binding(() => plasmoidRoot.formFactor);
+        Common.LayoutProps.location = Qt.binding(() => plasmoidRoot.location);
+        Common.LayoutProps.isTopLocation = Qt.binding(() => plasmoidRoot.isTopLocation);
+        Common.LayoutProps.isVerticalOrientation = Qt.binding(() => plasmoidRoot.isVerticalOrientation);
+    }
+
+    Window {
+        id: dragOverlay
+
+        visible: false
+        x: 0
+        y: 0
+        width: Screen.width
+        height: Screen.height
+
+        // flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
+        flags: Qt.ToolTip | Qt.WindowFullScreen | Qt.WindowTransparentForInput
+        color: "transparent"
+
+        modality: Qt.NonModal
+
+        Rectangle {
+            id: dragOverlayContent
+            anchors.fill: parent
+            color: "transparent"
+            // border.width: 1
+            // border.color: "red"
+        }
     }
 
     preferredRepresentation: fullRepresentation
@@ -30,8 +56,8 @@ PlasmoidItem {
         source: "Container.qml"
 
         onLoaded: {
-            root.container = item;
-            item.parent = root;
+            plasmoidRoot.container = item;
+            item.parent = plasmoidRoot;
         }
     }
 
@@ -39,12 +65,12 @@ PlasmoidItem {
         PlasmaCore.Action {
             text: i18n("Rename Desktop")
             icon.name: "edit-rename"
-            onTriggered: root.action_renameDesktop()
+            onTriggered: plasmoidRoot.action_renameDesktop()
         },
         PlasmaCore.Action {
             text: i18n("Remove Desktop")
             icon.name: "list-remove"
-            onTriggered: root.action_removeDesktop()
+            onTriggered: plasmoidRoot.action_removeDesktop()
         },
         PlasmaCore.Action {
             isSeparator: true
@@ -52,12 +78,12 @@ PlasmoidItem {
         PlasmaCore.Action {
             text: i18n("Add Desktop")
             icon.name: "list-add"
-            onTriggered: root.action_addDesktop()
+            onTriggered: plasmoidRoot.action_addDesktop()
         },
         PlasmaCore.Action {
             text: i18n("Remove Last Desktop")
             icon.name: "list-remove"
-            onTriggered: root.action_removeLastDesktop()
+            onTriggered: plasmoidRoot.action_removeLastDesktop()
         },
         PlasmaCore.Action {
             isSeparator: true

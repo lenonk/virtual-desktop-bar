@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QVariantList>
 #include <QDBusInterface>
+#include <QCursor>
+#include <QGuiApplication>
+#include <QPoint>
 
 #include "KWinDesktop.h"
 
@@ -40,6 +43,8 @@ public:
     Q_INVOKABLE QString getIconFromDesktopFile(const QString &desktopFile);
     Q_INVOKABLE QString getCurrentActivityId();
     Q_INVOKABLE QString getActivityName(const QString activityId);
+    Q_INVOKABLE QPoint getCursorPosition() const;
+    Q_INVOKABLE QPoint getRelativeCursorPosition() const;
 
 Q_SIGNALS:
     void desktopCreated(const QString &id, const QVariantMap &desktopData);

@@ -12,8 +12,6 @@ Item {
     property ListModel desktopInfoList: ListModel {}
 
     signal desktopRenamed(string uuid, string name)
-    signal showDesktopButtonTooltip(DesktopButton.DesktopButton button)
-    signal hideDesktopButtonTooltip(bool force)
     signal buttonRemoveAnimationCompleted(string uuid)
     signal buttonMiddleClick(DesktopButton.DesktopButton button)
     signal nextDesktop()
@@ -29,10 +27,6 @@ Item {
 
     DesktopButton.DesktopRenamePopup {
         id: renamePopup
-    }
-
-    DesktopButton.DesktopButtonTooltip {
-        id: tooltip
     }
 
     DesktopButton.DesktopButtonGrid {
@@ -61,14 +55,6 @@ Item {
 
     onDesktopRenamed: function(uuid, name) {
         backend.setDesktopName(uuid, name);
-    }
-
-    onShowDesktopButtonTooltip: function(button) {
-        tooltip.show(button);
-    }
-
-    onHideDesktopButtonTooltip: function(force) {
-        tooltip.checkHideTooltip(force);
     }
 
     onButtonRemoveAnimationCompleted: function(uuid) {

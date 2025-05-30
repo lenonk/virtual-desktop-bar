@@ -6,6 +6,7 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QFile>
+#include <QScreen>
 #include <QCoreApplication>
 #include <QDBusConnectionInterface>
 
@@ -320,10 +321,35 @@ VirtualDesktopBar::getCurrentActivityId() {
     return consumer.currentActivity();
 }
 
-QString VirtualDesktopBar::getActivityName(const QString activityId) {
+QString
+VirtualDesktopBar::getActivityName(const QString activityId) {
     KActivities::Consumer consumer;
     const KActivities::Info activityInfo(activityId);
     return activityInfo.name();
+}
+
+QPoint
+VirtualDesktopBar::getCursorPosition() const {
+    return QCursor::pos();
+}
+
+QPoint
+VirtualDesktopBar::getRelativeCursorPosition() const {
+    const auto globalPos = QCursor::pos();
+    auto currentScreen = QGuiApplication::screenAt(globalPos);
+
+    if (!currentScreen) {
+        currentScreen = QGuiApplication::primaryScreen();
+    }
+
+    if (currentScreen) {
+        const auto screenGeometry = currentScreen->geometry();
+
+        return QPoint(globalPos.x() - screenGeometry.x(),
+                     globalPos.y() - screenGeometry.y());
+    }
+
+    return globalPos;
 }
 
 void

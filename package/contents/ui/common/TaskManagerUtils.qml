@@ -151,7 +151,22 @@ QtObject {
     // On X11, a window can only be on one or all virtual desktops. Therefore, only the first list entry is actually used.
     // On X11, the id 0 has a special meaning: The window is entered on all virtual desktops in the session.
     function requestVirtualDesktops(winId, sourceDesktopId, destDesktopIdList, activityId) {
-        // TODO: Convert winId to model index as in activateWindow
-        tasksModel.requestVirtualDesktops(taskIndex, destDesktopIdList);
+        if (!winId || !sourceDesktopId || !activityId) return false;
+
+        tasksModel.virtualDesktop = sourceDesktopId;
+        tasksModel.activity = activityId || "";
+
+        for (let i = 0; i < tasksModel.count; i++) {
+            const taskIndex = tasksModel.index(i, 0);
+            let rawWinId = tasksModel.data(taskIndex, TaskManager.AbstractTasksModel.WinIdList) || [];
+
+            const str = String(rawWinId);
+            const matches = str.match(/{([^}]+)}/);
+            const compWinId = matches && matches[1] ? matches[1] : str;
+
+            if (winId === compWinId) {
+                tasksModel.requestVirtualDesktops(taskIndex, destDesktopIdList);
+            }
+        }
     }
 }
