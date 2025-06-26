@@ -45,6 +45,8 @@ public:
     Q_INVOKABLE QString getActivityName(const QString activityId);
     Q_INVOKABLE QPoint getCursorPosition() const;
     Q_INVOKABLE QPoint getRelativeCursorPosition() const;
+    Q_INVOKABLE QPoint getRelativeScreenPosition() const;
+    Q_INVOKABLE QSize getCursorSize() const;
 
 Q_SIGNALS:
     void desktopCreated(const QString &id, const QVariantMap &desktopData);

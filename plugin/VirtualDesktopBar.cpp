@@ -351,6 +351,33 @@ VirtualDesktopBar::getRelativeCursorPosition() const {
 
     return globalPos;
 }
+QSize
+VirtualDesktopBar::getCursorSize() const {
+    const auto currentCursor = QGuiApplication::overrideCursor() ? *QGuiApplication::overrideCursor() : QCursor();
+    const auto cursorPixmap = currentCursor.pixmap();
+
+    if (!cursorPixmap.isNull()) { return cursorPixmap.size(); }
+
+    return QSize(16, 16);
+
+}
+
+QPoint
+VirtualDesktopBar::getRelativeScreenPosition() const {
+    const auto globalPos = QCursor::pos();
+    auto currentScreen = QGuiApplication::screenAt(globalPos);
+
+    if (!currentScreen) {
+        currentScreen = QGuiApplication::primaryScreen();
+    }
+
+    if (currentScreen) {
+        const auto screenGeometry = currentScreen->geometry();
+        return screenGeometry.topLeft();
+    }
+
+    return {0, 0};
+}
 
 void
 VirtualDesktopBar::onDesktopCreated(const QString &id, const KWin::KWinDesktopData &desktopData) {

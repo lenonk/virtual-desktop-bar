@@ -1,7 +1,6 @@
 import QtQuick
 import org.kde.plasma.virtualdesktopbar 1.0
 
-
 VirtualDesktopBar {
     id: backend
 
@@ -23,13 +22,14 @@ VirtualDesktopBar {
         };
 
         desktopInfoList.append(newDesktop);
-
+        desktopInfoList.append(getDummyDesktop(desktopData.id));
     }
 
     onDesktopRemoved: function (desktopId) {
         for (let i = 0; i < desktopInfoList.count; i++) {
             const desktop = desktopInfoList.get(i);
             if (desktop.uuid === desktopId) {
+                desktopInfoList.remove(i + 1);
                 desktopInfoList.remove(i);
                 break;
             }
@@ -51,7 +51,6 @@ VirtualDesktopBar {
                 break;
             }
         }
-
     }
 
     onCurrentChanged: function (desktopId) {
@@ -68,7 +67,32 @@ VirtualDesktopBar {
         desktopInfoList.clear();
 
         for (let i = 0; i < data.length; i++) {
+            desktopInfoList.append(getDummyDesktop(data[i].id));
             desktopInfoList.append(data[i]);
         }
+
+        const lastDesktop = desktopInfoList.get(desktopInfoList.count - 1);
+        desktopInfoList.append(getDummyDesktop(lastDesktop.id));
     }
+
+    function getDummyDesktop(number) {
+        let dummyDesktop = {
+            "id": number,
+            "uuid": generateUUID(),
+            "name": "",
+            "is_current": false,
+            "is_dummy": true,
+        };
+
+        return dummyDesktop;
+    }
+
+    function generateUUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0;
+            var v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
 }

@@ -45,6 +45,7 @@ Item {
                 hoverEnabled: true
 
                 onEntered: {
+                    hideTimer.stop();
                     tooltipRoot.isHovered = true;
                 }
 
@@ -114,11 +115,9 @@ Item {
                         width: windowListView.width
 
                         onDragStarted: {
-                            console.log("Drag started for window:", model.winId, "dragParent:", dragOverlay ? "valid" : "null");
                         }
                         onDragFinished: {
-                            console.log("Drag finished for window:", model.winId);
-                            tooltipRoot.checkHide();
+                            checkHide();
                         }
                     }
                 }
@@ -144,6 +143,10 @@ Item {
     }
 
     function checkHide(force = false) {
+        if (dragOverlay.visible) {
+            hideTimer.restart();
+            return;
+        }
         if (!tooltipRoot.isHovered && tooltipRoot.sourceButton) {
             if (force || (!tooltipRoot.sourceButton.mouseArea.containsMouse && !tooltipMouseArea.containsMouse)) {
                 hide();
@@ -200,6 +203,7 @@ Item {
     }
 
     function show() {
+        hideTimer.stop(); // Stop hiding if it's already running
         cleanup();
 
         tooltip.visualParent = sourceButton;
@@ -210,12 +214,7 @@ Item {
             windowListHeader.desktopIndicator.color = Kirigami.Theme.disabledTextColor
         }
 
-        Qt.callLater(function() {
-            updateContent();
-        })
-
-        Qt.callLater(function() {
-            tooltip.visible = true;
-        });
+        Qt.callLater(() => updateContent());
+        Qt.callLater(() => tooltip.visible = true);
     }
 }

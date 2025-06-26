@@ -8,15 +8,18 @@ Item {
 
     property QtObject config: plasmoid.configuration
 
+    property bool pulse: false
     property string appName: ""
     property string iconName: ""
     property string activityId: ""
+    property string desktopId: ""
     property bool isActive: false
     property  bool isDemandingAttention: false
     property string genericName: ""
 
     height: 40
     width: 200
+    clip: true
 
     Rectangle {
         id: visualRect
@@ -30,26 +33,40 @@ Item {
                 Qt.color(config.DesktopIndicatorsCustomColorForDesktopsNeedingAttention) :
                 Qt.color("#e6520c");
 
-        color: model.isActive ? Qt.rgba(systemPalette.highlight.r,
-                systemPalette.highlight.g,
-                systemPalette.highlight.b, 0.2) :
-            model.isDemandingAttention ? Qt.rgba(urgentColor.r,
-                    urgentColor.g,
-                    urgentColor.b, 0.2) :
-                "transparent"
-        border.width: (model.isDemandingAttention || model.isActive) ? 1 : 0
-        border.color: model.isActive ? systemPalette.highlight : urgentColor
+        color: isDemandingAttention ? Qt.rgba(urgentColor.r, urgentColor.g, urgentColor.b, 0.2) :
+            Qt.rgba(systemPalette.highlight.r, systemPalette.highlight.g, systemPalette.highlight.b, 0.2);
+
+        border.width: 1
+        border.color: isDemandingAttention ? urgentColor : systemPalette.highlight;
 
         SystemPalette { id: systemPalette }
 
-        // Drop shadow effect
-        Rectangle {
-            anchors.fill: parent
-            anchors.margins: -2
-            radius: parent.radius + 2
-            color: "black"
-            opacity: 0.3
-            z: -1
+        SequentialAnimation {
+            id: dragVisualPulseAnimation
+
+            running: pulse
+            loops: Animation.Infinite
+
+            onStopped: {
+                visualRect.opacity = 0.9;
+            }
+
+            NumberAnimation {
+                target: visualRect
+                property: "opacity"
+                from: 0.9
+                to: 0.5
+                duration: 1000
+                easing.type: Easing.InOutQuad
+            }
+            NumberAnimation {
+                target: visualRect
+                property: "opacity"
+                from: 0.5
+                to: 0.9
+                duration: 1000
+                easing.type: Easing.InOutQuad
+            }
         }
 
         RowLayout {

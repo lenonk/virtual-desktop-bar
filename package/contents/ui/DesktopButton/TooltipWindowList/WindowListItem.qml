@@ -82,6 +82,7 @@ Rectangle {
         property Item draggedItemPlaceholder: null
         property point draggedItemOffset: Qt.point(0, 0);
         property point draggedItemStartPos: Qt.point(0, 0);
+        property int bottomOfButton: 0
 
         onPressed: function(mouse) {
             startPos = Qt.point(mouse.x, mouse.y);
@@ -89,25 +90,23 @@ Rectangle {
 
         onPositionChanged: function(mouse) {
             if (!isDragging && (Math.abs(mouse.x - startPos.x) > 10 || Math.abs(mouse.y - startPos.y) > 10)) {
+                dragOverlay.visible = true;
                 isDragging = true;
                 dragStarted();
                 windowItemRect.opacity = 0;
 
-                tooltipMouseArea.enabled = false;
                 createDragVisual();
                 createDragPlaceholder();
-                dragOverlay.visible = true;
             }
 
             if (isDragging && draggedItem) {
                 updateDragVisual();
                 var globalPos = backend.getCursorPosition();
-                // console.log("Dragging, cursor at:", globalPos.x, globalPos.y);
                 checkForDropTarget(globalPos);
             }
         }
 
-        onReleased: {
+        onReleased: function(mouse) {
             if (isDragging) {
                 var globalPos = backend.getCursorPosition();
                 isDragging = false;
@@ -116,12 +115,11 @@ Rectangle {
                     draggedItemPlaceholder.destroy();
                     draggedItem = null;
                     dragOverlay.visible = false;
-                    tooltipMouseArea.enabled = true;
                     dragFinished();
                     return;
                 }
 
-                let xAnimation = Qt.createQmlObject(`
+                    let xAnimation = Qt.createQmlObject(`
                     import QtQuick 2.15
                     NumberAnimation {
                         duration: 200
@@ -129,7 +127,7 @@ Rectangle {
                     }
                 `, draggedItem);
 
-                let yAnimation = Qt.createQmlObject(`
+                    let yAnimation = Qt.createQmlObject(`
                     import QtQuick 2.15
                     NumberAnimation {
                         duration: 200
@@ -137,7 +135,7 @@ Rectangle {
                     }
                 `, draggedItem);
 
-                let scaleAnimation = Qt.createQmlObject(`
+                    let scaleAnimation = Qt.createQmlObject(`
                     import QtQuick 2.15
                     NumberAnimation {
                         duration: 200
@@ -158,18 +156,16 @@ Rectangle {
                 scaleAnimation.to = 1.1;
 
                 let animationsCompleted = 0;
+
                 function onAnimationFinished() {
                     animationsCompleted++;
                     if (animationsCompleted === 3) {
-                        // Both animations completed, clean up
                         draggedItem.destroy();
                         draggedItemPlaceholder.destroy();
                         windowItemRect.opacity = 1;
                         draggedItem = null;
                         dragOverlay.visible = false;
-                        tooltipMouseArea.enabled = true;
 
-                        // Clean up animations
                         xAnimation.destroy();
                         yAnimation.destroy();
                         scaleAnimation.destroy();
@@ -205,24 +201,36 @@ Rectangle {
                     "genericName": model.genericName,
                     "isDemandingAttention": model.isDemandingAttention,
                     "activityId": model.activityId,
+                    "desktopId": model.desktopId,
                     "width": windowItemRect.width,
-                    "height": windowItemRect.height
+                    "height": windowItemRect.height,
                 });
 
                 if (draggedItem) {
-                    console.log("Drag visual created successfully");
                     let clickPos = backend.getRelativeCursorPosition();
                     draggedItemOffset = windowItemRect.mapFromGlobal(clickPos.x, clickPos.y);
                     updateDragVisual();
                     draggedItemStartPos.x = draggedItem.x;
                     draggedItemStartPos.y = draggedItem.y;
-                    console.log("Positioned drag visual at:", draggedItem.x, draggedItem.y, "size:", draggedItem.width, "x", draggedItem.height);
                 } else {
                     console.log("Failed to create drag visual object");
                 }
             } else {
                 console.log("Component error:", component.errorString());
             }
+        }
+
+        function updateDragVisual() {
+            let pos = backend.getRelativeCursorPosition();
+            let screenOffset = backend.getRelativeScreenPosition();
+            draggedItem.x = pos.x - draggedItemOffset.x - screenOffset.x;
+            draggedItem.y = pos.y - draggedItemOffset.y - screenOffset.y;
+
+            let offsetButtonBottom = bottomOfButton - screenOffset.y
+            if (draggedItem.y < offsetButtonBottom) {
+                draggedItem.y = offsetButtonBottom;
+            }
+            draggedItem.z = 100;
         }
 
         function createDragPlaceholder() {
@@ -241,20 +249,15 @@ Rectangle {
             }
         }
 
-        function updateDragVisual() {
-            let pos = backend.getRelativeCursorPosition();
-            draggedItem.x = pos.x - draggedItemOffset.x;
-            draggedItem.y = pos.y - draggedItemOffset.y;
-            draggedItem.z = 100;
-        }
-
         function checkForDropTarget(globalPos) {
+            let targetButton = null;
             for (var uuid in buttonGrid.desktopButtonMap) {
                 var button = buttonGrid.desktopButtonMap[uuid];
                 if (isPointInButton(button, globalPos)) {
                     for (var i = 0; i < button.children.length; i++) {
                         if (button.children[i].hasOwnProperty('dragIsHovered')) {
                             button.children[i].dragIsHovered = true;
+                            targetButton = button;
                             break;
                         }
                     }
@@ -267,6 +270,12 @@ Rectangle {
                     }
                 }
             }
+            if (targetButton) {
+                draggedItem.pulse = true;
+            }
+            else {
+                draggedItem.pulse = false;
+            }
         }
 
         function isPointInButton(button, globalPos) {
@@ -277,6 +286,7 @@ Rectangle {
                     globalPos.y >= buttonGlobal.y &&
                     globalPos.y <= buttonGlobal.y + button.height;
 
+                bottomOfButton = buttonGlobal.y + button.height;
                 return isInside;
             } catch (e) {
                 console.log("Error in isPointInButton:", e);
@@ -287,11 +297,11 @@ Rectangle {
         function handleDrop(globalPos) {
             for (let uuid in buttonGrid.desktopButtonMap) {
                 let button = buttonGrid.desktopButtonMap[uuid];
-                if (isPointInButton(button, globalPos)) {
+                if (isPointInButton(button, globalPos) && uuid != dragMouseArea.draggedItem.desktopId) {
                     let desktopList = [uuid];
                     Common.TaskManager.requestVirtualDesktops(model.winId, model.desktopId, desktopList, model.activityId);
-
                     clearAllHighlights();
+
                     return true;
                 }
             }

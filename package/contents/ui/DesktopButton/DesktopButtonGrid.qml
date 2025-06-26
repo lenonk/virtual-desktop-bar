@@ -39,6 +39,7 @@ Item {
                 name: model.name
                 uuid: model.uuid
                 isCurrent: model.is_current
+                isDummy: model.is_dummy
                 buttonGrid: desktopButtonGrid
 
                 Layout.fillWidth: Common.LayoutProps.isVerticalOrientation
@@ -69,22 +70,6 @@ Item {
 
         onImplicitWidthChanged: { desktopButtonGrid.implicitWidth = implicitWidth; }
         onImplicitHeightChanged: { desktopButtonGrid.implicitHeight = implicitHeight; }
-    }
-
-    Component {
-        id: desktopButtonComponent
-        DesktopButton {
-            Layout.fillWidth: Common.LayoutProps.isVerticalOrientation
-            Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
-        }
-    }
-
-    Component {
-        id: dropAreaComponent;
-        DesktopButtonDropArea {
-            Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
-            Layout.fillWidth: Common.LayoutProps.isVerticalOrientation
-        }
     }
 
     MouseArea {
@@ -167,22 +152,40 @@ Item {
     }
 
     function updateButtonFirstAndLast() {
-        if (Object.keys(desktopButtonMap).length > 0) {
-            for (var i = 0; i < desktopInfoList.count; i++) {
-                let button = desktopButtonMap[desktopInfoList.get(i).uuid];
-                if (i == 0) {
-                    button.isFirst = true;
-                    if (i != desktopInfoList.count - 1) button.isLast = false;
-                    else button.isLast = true;
-
-                } else if (i == desktopInfoList.count - 1) {
-                    if (i != 0) button.isFirst = false;
-                    else button.isFirst = true;
-                    button.isLast = true;
-                } else {
-                    button.isFirst = false;
-                    button.isLast = false;
-                }
+        // if (Object.keys(desktopButtonMap).length > 0) {
+        //     for (var i = 0; i < desktopInfoList.count; i++) {
+        //         let button = desktopButtonMap[desktopInfoList.get(i).uuid];
+        //         if (i == 0) {
+        //             button.isFirst = true;
+        //             if (i != desktopInfoList.count - 1) button.isLast = false;
+        //             else button.isLast = true;
+        //
+        //         } else if (i == desktopInfoList.count - 1) {
+        //             if (i != 0) button.isFirst = false;
+        //             else button.isFirst = true;
+        //             button.isLast = true;
+        //         } else {
+        //             button.isFirst = false;
+        //             button.isLast = false;
+        //         }
+        //     }
+        // }
+        for (var uuid in desktopButtonMap) {
+            var button = desktopButtonMap[uuid];
+            if (button.isDummy) { continue; } //TODO: Use isDummy property
+            if (button && button.number == 1) {
+                button.isFirst = true;
+                if (desktopInfoList.count <= 3) button.isLast = true;
+                else button.isLast = false;
+            }
+            else if (button && button.number == Math.floor(desktopInfoList.count / 2)) {
+                button.isLast = true;
+                if (desktopInfoList.count <= 3) button.isFirst = true;
+                else button.isFirst = false;
+            }
+            else if (button) {
+                button.isFirst = false;
+                button.isLast = false;
             }
         }
     }
@@ -192,6 +195,12 @@ Item {
             var maxWidth = 0;
             for (var uuid in desktopButtonMap) {
                 var button = desktopButtonMap[uuid];
+                if (button.isDummy) {
+                    button.width = 1;
+                    button.implicitWidth = 1;
+                    continue;
+                }
+
                 if (button && button.implicitWidth > maxWidth) {
                     maxWidth = button.implicitWidth;
                 }
@@ -199,7 +208,7 @@ Item {
 
             for (var uuid in desktopButtonMap) {
                 var button = desktopButtonMap[uuid];
-                if (button) {
+                if (button && !button.isDummy) {
                     button.Layout.preferredWidth = maxWidth;
                 }
             }

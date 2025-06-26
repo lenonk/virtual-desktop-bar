@@ -20,31 +20,33 @@ Rectangle {
 
     property bool ignoreMouseArea: false
     property bool isCurrent: false
-    // TODO: Set up a signal to set isDragged to to and ignoreMouseArea to true
     property bool isDragged: false
     property bool isEmpty: true
     property bool isFirst: false
     property bool isLast: false
     property bool isUrgent: false
+    property bool isDummy: false
     property string name: ""
     property int number: 0
     property int modelIdx: -1
     property string uuid: ""
     property string activeWindowName: ""
-    property alias mouseArea: _mouseArea
     property Item buttonGrid: null
+
+    property alias mouseArea: _mouseArea
+    property alias borderCanvas: _borderCanvas
 
     property int verticalMargins: 5
     property int horizontalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? 0 : config.DesktopButtonsSpacing)
     property int verticalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? config.DesktopButtonsSpacing : 0)
 
-    Layout.bottomMargin: verticalMargins
     Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
     Layout.fillWidth: Common.LayoutProps.isVerticalOrientation
     Layout.topMargin: verticalMargins
+    Layout.bottomMargin: verticalMargins
 
     implicitHeight: label.implicitHeight + 2 * verticalPadding
-    implicitWidth: label.implicitWidth + 2 * horizontalPadding
+    implicitWidth: isDummy ? 1 : label.implicitWidth + 2 * horizontalPadding
 
     opacity: applyOpacityRules()
     color: applyColorRules()
@@ -53,12 +55,6 @@ Rectangle {
     state: "creating"
     visible: true
 
-    // Rectangle {
-    //     anchors.fill: parent
-    //     color: "transparent"
-    //     border.width: 1
-    //     border.color: "red"
-    // }
     SystemPalette { id: systemPalette }
 
     Timer {
@@ -69,6 +65,29 @@ Rectangle {
 
         onTriggered: {
             updateTaskInfo();
+        }
+    }
+
+    Canvas {
+        id: _borderCanvas
+        anchors.fill: parent
+        visible: false
+
+        onPaint: {
+            var ctx = getContext("2d");
+            ctx.clearRect(0, 0, width, height);
+            ctx.strokeStyle = systemPalette.highlight;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([3, 2]); // 6px dash, 4px gap
+            ctx.strokeRect(1, 1, width - 2, height - 2);
+        }
+
+        onVisibleChanged: {
+            requestPaint();
+        }
+
+        Component.onCompleted: {
+            requestPaint();
         }
     }
 
@@ -162,7 +181,9 @@ Rectangle {
     }
 
     onImplicitWidthChanged: {
-        Qt.callLater(onButtonImplicitWidthChanged);
+        if (!_mouseArea.isDragging) {
+            Qt.callLater(onButtonImplicitWidthChanged);
+        }
     }
 
     onIsCurrentChanged: {
@@ -179,9 +200,16 @@ Rectangle {
         onTriggered: buttonRect.state = "visible"
     }
 
-    // DesktopButtonDropArea {
-    //     anchors.fill: parent
-    // }
+    Rectangle {
+        id: dragBorderHighlight
+
+        anchors.fill: parent
+        visible: dragOverlay.visible && !dragHighlight.visible && !isDummy
+        color: "transparent"
+
+        border.width: 1
+        border.color: systemPalette.highlight
+    }
 
     Rectangle {
         id: dragHighlight
@@ -189,20 +217,46 @@ Rectangle {
         property bool dragIsHovered: false
 
         anchors.fill: parent
-        visible: dragIsHovered
+        visible: dragIsHovered && !isDummy
 
         color: Qt.rgba(systemPalette.highlight.r, systemPalette.highlight.g, systemPalette.highlight.b, 0.2)
 
         border.width: 1
         border.color: systemPalette.highlight
+
+        SequentialAnimation {
+            id: buttonPulseAnimation
+
+            running: parent.visible
+            loops: Animation.Infinite
+
+            NumberAnimation {
+                target: dragHighlight
+                property: "opacity"
+                from: 0.9
+                to: 0.2
+                duration: 1000
+                easing.type: Easing.InOutQuad
+            }
+            NumberAnimation {
+                target: dragHighlight
+                property: "opacity"
+                from: 0.2
+                to: 0.9
+                duration: 1000
+                easing.type: Easing.InOutQuad
+            }
+        }
     }
 
     DesktopButtonIndicator {
         id: indicator
+        visible: !isDummy
     }
 
     DesktopButtonLabel {
         id: label
+        visible: !isDummy
 
         text: getButtonLabel()
     }
@@ -210,32 +264,84 @@ Rectangle {
     MouseArea {
         id: _mouseArea
 
+        property bool isPressed: false
+        property bool isDragging: false
+        property point startPos: Qt.point(0, 0);
+        property point draggedItemStartPos: Qt.point(0, 0);
+        property Item draggedItemPlaceholder: null
+
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
         anchors.fill: parent
         hoverEnabled: true
-        enabled: !dragOverlay.visible
+        // enabled: true
+        enabled: !isDummy
 
-        onPressed: {
-            console.log("onPressed");
+        onPressed: function(mouse) {
+            startPos = Qt.point(mouse.x, mouse.y);
+            draggedItemStartPos = Qt.point(buttonRect.x, buttonRect.y);
+            isPressed = true
         }
 
-        onReleased: {
-            console.log("onReleased");
-        }
-
-        onClicked: function(mouse) {
-            Qt.callLater(function() {
+        onPositionChanged: function(mouse) {
+            if (isPressed && !isDragging && (Math.abs(mouse.x - startPos.x) > 10 || Math.abs(mouse.y - startPos.y) > 10)) {
                 hoverTimer.stop();
                 buttonTooltip.checkHide(true);
-            });
+                isDragging = true;
+                indicator.visible = false;
+                label.visible = false;
+                dragBorderHighlight.visible = false;
+                dragHighlight.visible = false;
 
-            if (mouse.button === Qt.LeftButton) {
-                desktopButtonClicked(buttonRect.number);
-                mouse.accepted = true;
-            } else if (mouse.button === Qt.MiddleButton) {
-                if (config.MouseWheelRemoveDesktopOnClick) {
-                    buttonMiddleClick(buttonRect);
+                buttonRect.color = "transparent";
+                buttonRect.border.width = 1;
+                buttonRect.border.color = systemPalette.highlight;
+                buttonRect.opacity = 0.5;
+
+                dragOverlay.visible = true;
+                // createDragPlaceholder();
+                createDragVisual();
+            }
+
+            if (isDragging) {
+                // let layoutPos = buttonRect.mapToItem(desktopButtonGrid, mouse.x, mouse.y);
+                // buttonRect.x = layoutPos.x - startPos.x;
+                updateDragVisual();
+                checkForDropTarget(backend.getCursorPosition());
+            }
+        }
+
+        onReleased: function(mouse) {
+            isPressed = false;
+            if (isDragging) {
+                var globalPos = backend.getCursorPosition();
+                isDragging = false;
+                if (handleDrop(globalPos)) {
+
+                }
+                else {
+                    // buttonRect.x = draggedItemStartPos.x;
+                    // buttonRect.y = draggedItemStartPos.y;
+                    restoreOriginalAppearance();
+                }
+
+                draggedItemPlaceholder.destroy();
+                draggedItemPlaceholder = null;
+                dragOverlay.visible = false;
+            }
+            else {
+                Qt.callLater(function() {
+                    hoverTimer.stop();
+                    buttonTooltip.checkHide(true);
+                });
+
+                if (mouse.button === Qt.LeftButton) {
+                    desktopButtonClicked(buttonRect.number);
                     mouse.accepted = true;
+                } else if (mouse.button === Qt.MiddleButton) {
+                    if (config.MouseWheelRemoveDesktopOnClick) {
+                        buttonMiddleClick(buttonRect);
+                        mouse.accepted = true;
+                    }
                 }
             }
         }
@@ -247,14 +353,18 @@ Rectangle {
         }
 
         onEntered: {
-            hoverTimer.start();
+            if (!dragOverlay.visible && !isDragging) {
+                hoverTimer.start();
+            }
         }
 
         onExited: {
-            hoverTimer.stop();
-            Utils.delay(100, function () {
+            if (!dragOverlay.visible) {
+                hoverTimer.stop();
+                Utils.delay(100, function () {
                     buttonTooltip.checkHide(false);
-            }, _mouseArea);
+                }, _mouseArea);
+            }
         }
 
         Timer {
@@ -271,6 +381,108 @@ Rectangle {
                 });
             }
         }
+
+        function checkForDropTarget(globalPos) {
+            for (let uuid in buttonGrid.desktopButtonMap) {
+                let dummy = buttonGrid.desktopButtonMap[uuid];
+                if (isPointInDummy(dummy, globalPos)) {
+                    const itemX = draggedItemStartPos.x;
+                    const itemWidth = buttonRect.width;
+                    if (Math.abs(dummy.x - itemX) <= 5 || Math.abs(dummy.x - (itemX + itemWidth)) <= 5) {
+                        continue;
+                    }
+                    dummy.Layout.preferredWidth = buttonRect.width;
+                    dummy.borderCanvas.visible = true;
+                    break;
+                } else {
+                    if (dummy.isDummy === true) {
+                        dummy.Layout.preferredWidth = 1;
+                        dummy.borderCanvas.visible = false;
+                    }
+                }
+            }
+        }
+
+        function isPointInDummy(button, globalPos) {
+            try {
+                if (!button.isDummy) { return false; }
+                var dummyGlobal = button.mapToGlobal(0, 0);
+                var isInside = globalPos.x >= dummyGlobal.x - 5 &&
+                    globalPos.x <= dummyGlobal.x + 5 + button.width &&
+                    globalPos.y >= dummyGlobal.y &&
+                    globalPos.y <= dummyGlobal.y + button.height;
+
+                return isInside;
+            } catch (e) {
+                console.log("Error in isPointInButton:", e);
+                return false;
+            }
+        }
+
+        function handleDrop(globalPos) {
+            for (let uuid in buttonGrid.desktopButtonMap) {
+                let button = buttonGrid.desktopButtonMap[uuid];
+                if (isPointInDummy(button, globalPos)) {
+                    if (button.number > buttonRect.number) {
+                        console.log(buttonRect.uuid, ": Number:", buttonRect.number, "Moved to the right");
+                        // TODO: Move all the buttons to the left down one.  For instance, if moving desktop 1 to
+                        // desktop 3, Move all windows from desktop 2 to desktop 1, then rename desktop 1 to desktop 2.
+                        // Repeat for 3 -> 2, then repeat for dragged button -> desktop 3.  The trick is going to be
+                        // moving the correct windows from the dragged desktop to desktop 3, since we've already moved
+                        // the windows from desktop 2 to desktop 1, and we're dragging desktop 1.  We probably need to
+                        // just make a copy of all the windows on desktop 1 when we start dragging and move those to
+                        // desktop 3 on drop. Desktop 1 will briefly have all the windows from desktop 1 and 2, but
+                        // ok as long as we know which ones to move to 3 in the end.
+                    }
+                    else {
+                        console.log(buttonRect.uuid, ": Number:", buttonRect.number, "Moved to the left");
+                        // TODO: Do the above, but in reverse, moving all the desktops with numbers greater than the
+                        // drop zone to the right, started with the last desktop.
+                    }
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function createDragVisual() {
+            let component = Qt.createComponent("DesktopButtonDragPlaceholder.qml");
+
+            if (component.status === Component.Ready) {
+                // draggedItemPlaceholder = component.createObject(desktopButtonGrid, {
+                draggedItemPlaceholder = component.createObject(dragOverlayContent, {
+                    "width": buttonRect.width,
+                    "height": buttonRect.height,
+                    // "x": buttonRect.x,
+                    // "y": buttonRect.y
+                });
+            } else {
+                console.log("Component error:", component.errorString());
+            }
+        }
+    }
+
+    function updateDragVisual() {
+        if (!draggedItemPlaceholder) return;
+
+        let pos = backend.getRelativeCursorPosition();
+        let screenOffset = backend.getRelativeScreenPosition();
+        draggedItemPlaceholder.x = pos.x - startPos.x - screenOffset.x;
+        draggedItemPlaceholder.y = pos.y - startPos.y - screenOffset.y;
+        draggedItemPlaceholder.z = 100;
+    }
+
+    function restoreOriginalAppearance() {
+        // Restore the original button appearance
+        indicator.visible = !isDummy;
+        label.visible = !isDummy;
+        buttonRect.color = applyColorRules();
+        buttonRect.opacity = applyOpacityRules();
+        buttonRect.border.width = 0;
+
+        // Re-enable drag highlights
+        dragBorderHighlight.visible = dragOverlay.visible && !dragHighlight.visible && !isDummy;
     }
 
     function applyColorRules() {
@@ -301,6 +513,7 @@ Rectangle {
 
         return "transparent";
     }
+
     function applyOpacityRules() {
         let indicatorStyle = config.DesktopIndicatorsStyle;
 

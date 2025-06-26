@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import "DesktopButton" as DesktopButton
+import "common" as Common
 
 Item {
     id: root
@@ -20,7 +21,7 @@ Item {
     implicitWidth: desktopButtonGrid.implicitWidth
     implicitHeight: desktopButtonGrid.implicitHeight
 
-    Backend {
+    Common.Backend {
         id: backend
         desktopInfoList: root.desktopInfoList
     }
@@ -74,7 +75,6 @@ Item {
     }
 
     function removeDesktop(last) {
-        console.log("removeDesktop() called");
         let desktop = desktopInfoList.get(desktopInfoList.count - 1);
         if (!last) {
             if (!desktopButtonGrid.hoveredButton) {
