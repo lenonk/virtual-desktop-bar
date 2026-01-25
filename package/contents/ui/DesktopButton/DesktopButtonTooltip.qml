@@ -28,37 +28,44 @@ Item {
         location: plasmoid.location
         visible: false
 
-        width: tooltipBackground.implicitWidth
-        height: tooltipBackground.implicitHeight
+        width: tooltipContent.width + 10
+        height: tooltipContent.height + 10
 
-        mainItem: Rectangle {
+        mainItem: Item {
             id: tooltipBackground
-            color: "transparent"
-            radius: 6
+            implicitWidth: tooltipContent.width + 10
+            implicitHeight: tooltipContent.height + 10
 
-            width: tooltipContent.width + 10
-            height: tooltipContent.height + 10
+            // HoverHandler for reliable hover detection
+            HoverHandler {
+                id: tooltipHoverHandler
 
+                onHoveredChanged: {
+                    if (hovered) {
+                        hideTimer.stop();
+                        tooltipRoot.isHovered = true;
+                    } else {
+                        tooltipRoot.isHovered = false;
+                        hideTimer.restart();
+                    }
+                }
+            }
+
+            // MouseArea to handle clicks and interactions
             MouseArea {
                 id: tooltipMouseArea
                 anchors.fill: parent
-                hoverEnabled: true
+                hoverEnabled: false  // Let HoverHandler handle hover
+                propagateComposedEvents: true
 
-                onEntered: {
-                    hideTimer.stop();
-                    tooltipRoot.isHovered = true;
-                }
-
-                onExited: {
-                    tooltipRoot.isHovered = false;
-                    hideTimer.restart();
+                // Let all events pass through to children
+                onPressed: function(mouse) {
+                    mouse.accepted = false;
                 }
             }
 
             ColumnLayout {
                 id: tooltipContent
-                Layout.fillWidth: true
-
                 anchors.centerIn: parent
                 spacing: 10
 
@@ -133,11 +140,10 @@ Item {
 
     Timer {
         id: hideTimer
-        interval: 50
+        interval: 300
         running: false
 
         onTriggered: {
-            tooltipRoot.isHovered = false;
             checkHide();
         }
     }
@@ -147,10 +153,19 @@ Item {
             hideTimer.restart();
             return;
         }
-        if (!tooltipRoot.isHovered && tooltipRoot.sourceButton) {
-            if (force || (!tooltipRoot.sourceButton.mouseArea.containsMouse && !tooltipMouseArea.containsMouse)) {
-                hide();
-            }
+
+        // Hide if forced, or if neither button nor tooltip is hovered
+        if (force) {
+            hide();
+            return;
+        }
+
+        // Check both button and tooltip hover states
+        const buttonHovered = tooltipRoot.sourceButton && tooltipRoot.sourceButton.mouseArea.containsMouse;
+        const tooltipHovered = tooltipRoot.isHovered;
+
+        if (!buttonHovered && !tooltipHovered) {
+            hide();
         }
     }
 

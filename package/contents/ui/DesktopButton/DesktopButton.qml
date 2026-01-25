@@ -361,7 +361,7 @@ Rectangle {
         onExited: {
             if (!dragOverlay.visible) {
                 hoverTimer.stop();
-                Utils.delay(100, function () {
+                Utils.delay(300, function () {
                     buttonTooltip.checkHide(false);
                 }, _mouseArea);
             }

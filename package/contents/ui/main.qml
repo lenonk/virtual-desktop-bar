@@ -29,23 +29,42 @@ PlasmoidItem {
     Window {
         id: dragOverlay
 
+        visibility: Window.Normal
         visible: false
-        x: 0
-        y: 0
+        x: Screen.virtualX
+        y: Screen.virtualY
         width: Screen.width
         height: Screen.height
 
-        // flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
-        flags: Qt.ToolTip | Qt.WindowFullScreen | Qt.WindowTransparentForInput
+        flags:
+            Qt.Popup |
+            Qt.FramelessWindowHint |
+            Qt.WindowStaysOnTopHint |
+            Qt.WindowTransparentForInput |
+            Qt.BypassWindowManagerHint
+
         color: "transparent"
 
         modality: Qt.NonModal
+
+        onVisibleChanged: {
+            if (visible) {
+                visibility = Window.FullScreen
+                x = Screen.virtualX;
+                y = Screen.virtualY;
+                width = Screen.width;
+                height = Screen.height;
+            }
+            else {
+                visibility = Window.Normal
+            }
+        }
 
         Rectangle {
             id: dragOverlayContent
             anchors.fill: parent
             color: "transparent"
-            // border.width: 1
+            // border.width: 2
             // border.color: "red"
         }
     }

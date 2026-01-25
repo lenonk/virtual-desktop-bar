@@ -43,28 +43,22 @@ Rectangle {
     MouseArea {
         id: itemMouseArea
         anchors.fill: parent
+        z: 10  // Above content layer
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        propagateComposedEvents: true
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
+        acceptedButtons: Qt.NoButton  // Don't accept clicks, just hover
 
         property color origColor: "transparent"
 
         onEntered: {
-            Qt.callLater(function() {
-                hideTimer.stop();
-                tooltipRoot.isHovered = true;
-                origColor = windowItemRect.color;
-                let hoverColor = model.isDemandingAttention ? urgentColor : systemPalette.highlight;
-                windowItemRect.color = Qt.rgba(hoverColor.r, hoverColor.g, hoverColor.b, 0.2);
-                windowItemRect.border.color = hoverColor
-                windowItemRect.border.width = 1;
-            });
+            origColor = windowItemRect.color;
+            let hoverColor = model.isDemandingAttention ? urgentColor : systemPalette.highlight;
+            windowItemRect.color = Qt.rgba(hoverColor.r, hoverColor.g, hoverColor.b, 0.2);
+            windowItemRect.border.color = hoverColor
+            windowItemRect.border.width = 1;
         }
 
         onExited: {
-            tooltipRoot.isHovered = false
-            hideTimer.restart();
             windowItemRect.color = origColor
             if (!model.isActive && !model.isDemandingAttention) {
                 windowItemRect.border.width = 0;
@@ -75,6 +69,7 @@ Rectangle {
     MouseArea {
         id: dragMouseArea
         anchors.fill: parent
+        z: 11  // Above hover MouseArea to capture clicks
 
         property bool isDragging: false
         property point startPos
