@@ -1,3 +1,11 @@
+# NOTE:  A recent KDE release broke some of the behavior of this plasmoid.
+
+I worked around it the best that I can, but setting a KDE panel to    
+"Always visible" will break things.  Use "Windows go below" or "Dodge   
+windows"
+
+This is a KDE bug, and there's nothing I can do about it.
+
 # Virtual Desktop Bar
 
 This is an applet for KDE Plasma panel that lets you switch between virtual desktops and also invoke some actions to dynamically manage them in a convenient way. In order to do it, you can use the mouse, the context menu or user-defined keyboard shortcuts. There are also some extra features related to virtual desktops.
