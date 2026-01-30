@@ -19,7 +19,7 @@ Rectangle {
 
     Layout.alignment: Qt.AlignCenter
 
-    visible: config.AddDesktopButtonShow && !config.DynamicDesktopsEnable
+    visible: config.ShowAddButton && !config.DynamicDesktops
 
     color: "transparent"
 
@@ -30,12 +30,12 @@ Rectangle {
 
         text: "+"
         opacity: 1.0
-        color: config.DesktopLabelsCustomColor || PlasmaCore.Theme.textColor
+        color: config.LabelColor || PlasmaCore.Theme.textColor
 
         font {
             weight: Font.Light
-            family: config.DesktopLabelsCustomFont || PlasmaCore.Theme.defaultFont.family
-            pixelSize: (config.DesktopLabelsCustomFontSize || PlasmaCore.Theme.defaultFont.pixelSize) * 1.5
+            family: config.LabelFont || PlasmaCore.Theme.defaultFont.family
+            pixelSize: (config.LabelFontSize || PlasmaCore.Theme.defaultFont.pixelSize) * 1.5
         }
     }
 

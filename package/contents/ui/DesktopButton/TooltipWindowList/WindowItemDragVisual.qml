@@ -29,8 +29,8 @@ Item {
         scale: 0.9
 
         property color urgentColor:
-            config.DesktopIndicatorsCustomColorForDesktopsNeedingAttention ?
-                Qt.color(config.DesktopIndicatorsCustomColorForDesktopsNeedingAttention) :
+            config.IndicatorColorAttention ?
+                Qt.color(config.IndicatorColorAttention) :
                 Qt.color("#e6520c");
 
         color: isDemandingAttention ? Qt.rgba(urgentColor.r, urgentColor.g, urgentColor.b, 0.2) :

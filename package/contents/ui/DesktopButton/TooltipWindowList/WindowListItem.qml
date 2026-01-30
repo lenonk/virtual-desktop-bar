@@ -23,8 +23,8 @@ Rectangle {
     SystemPalette { id: systemPalette }
 
     property color urgentColor:
-        config.DesktopIndicatorsCustomColorForDesktopsNeedingAttention ?
-            Qt.color(config.DesktopIndicatorsCustomColorForDesktopsNeedingAttention) :
+        config.IndicatorColorAttention ?
+            Qt.color(config.IndicatorColorAttention) :
             Qt.color("#e6520c");
 
     color: model.isActive ? Qt.rgba(systemPalette.highlight.r,
@@ -265,12 +265,13 @@ Rectangle {
                     }
                 }
             }
-            if (targetButton) {
-                draggedItem.pulse = true;
-            }
-            else {
-                draggedItem.pulse = false;
-            }
+            // Disabled: WindowListItem pulsing during drag
+            // if (targetButton) {
+            //     draggedItem.pulse = true;
+            // }
+            // else {
+            //     draggedItem.pulse = false;
+            // }
         }
 
         function isPointInButton(button, globalPos) {

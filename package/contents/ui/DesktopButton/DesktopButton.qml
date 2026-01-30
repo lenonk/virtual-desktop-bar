@@ -25,7 +25,6 @@ Rectangle {
     property bool isFirst: false
     property bool isLast: false
     property bool isUrgent: false
-    property bool isDummy: false
     property string name: ""
     property int number: 0
     property int modelIdx: -1
@@ -34,11 +33,10 @@ Rectangle {
     property Item buttonGrid: null
 
     property alias mouseArea: _mouseArea
-    property alias borderCanvas: _borderCanvas
 
     property int verticalMargins: 5
-    property int horizontalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? 0 : config.DesktopButtonsSpacing)
-    property int verticalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? config.DesktopButtonsSpacing : 0)
+    property int horizontalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? 0 : config.ButtonSpacing)
+    property int verticalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? config.ButtonSpacing : 0)
 
     Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
     Layout.fillWidth: Common.LayoutProps.isVerticalOrientation
@@ -46,7 +44,7 @@ Rectangle {
     Layout.bottomMargin: verticalMargins
 
     implicitHeight: label.implicitHeight + 2 * verticalPadding
-    implicitWidth: isDummy ? 1 : label.implicitWidth + 2 * horizontalPadding
+    implicitWidth: label.implicitWidth + 2 * horizontalPadding
 
     opacity: applyOpacityRules()
     color: applyColorRules()
@@ -68,28 +66,6 @@ Rectangle {
         }
     }
 
-    Canvas {
-        id: _borderCanvas
-        anchors.fill: parent
-        visible: false
-
-        onPaint: {
-            var ctx = getContext("2d");
-            ctx.clearRect(0, 0, width, height);
-            ctx.strokeStyle = systemPalette.highlight;
-            ctx.lineWidth = 2;
-            ctx.setLineDash([3, 2]); // 6px dash, 4px gap
-            ctx.strokeRect(1, 1, width - 2, height - 2);
-        }
-
-        onVisibleChanged: {
-            requestPaint();
-        }
-
-        Component.onCompleted: {
-            requestPaint();
-        }
-    }
 
     Behavior on Layout.preferredHeight {
         enabled: config.AnimationsEnable
@@ -204,7 +180,7 @@ Rectangle {
         id: dragBorderHighlight
 
         anchors.fill: parent
-        visible: dragOverlay.visible && !dragHighlight.visible && !isDummy
+        visible: false  // Disabled: border when dragging WindowListItem
         color: "transparent"
 
         border.width: 1
@@ -217,7 +193,7 @@ Rectangle {
         property bool dragIsHovered: false
 
         anchors.fill: parent
-        visible: dragIsHovered && !isDummy
+        visible: dragIsHovered
 
         color: Qt.rgba(systemPalette.highlight.r, systemPalette.highlight.g, systemPalette.highlight.b, 0.2)
 
@@ -251,13 +227,10 @@ Rectangle {
 
     DesktopButtonIndicator {
         id: indicator
-        visible: !isDummy
     }
 
     DesktopButtonLabel {
         id: label
-        visible: !isDummy
-
         text: getButtonLabel()
     }
 
@@ -267,18 +240,14 @@ Rectangle {
         property bool isPressed: false
         property bool isDragging: false
         property point startPos: Qt.point(0, 0);
-        property point draggedItemStartPos: Qt.point(0, 0);
-        property Item draggedItemPlaceholder: null
 
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
         anchors.fill: parent
         hoverEnabled: true
-        // enabled: true
-        enabled: !isDummy
+        enabled: true
 
         onPressed: function(mouse) {
             startPos = Qt.point(mouse.x, mouse.y);
-            draggedItemStartPos = Qt.point(buttonRect.x, buttonRect.y);
             isPressed = true
         }
 
@@ -287,48 +256,20 @@ Rectangle {
                 hoverTimer.stop();
                 buttonTooltip.checkHide(true);
                 isDragging = true;
-                indicator.visible = false;
-                label.visible = false;
-                dragBorderHighlight.visible = false;
-                dragHighlight.visible = false;
-
-                buttonRect.color = "transparent";
-                buttonRect.border.width = 1;
-                buttonRect.border.color = systemPalette.highlight;
-                buttonRect.opacity = 0.5;
-
-                dragOverlay.visible = true;
-                // createDragPlaceholder();
-                createDragVisual();
-            }
-
-            if (isDragging) {
-                // let layoutPos = buttonRect.mapToItem(desktopButtonGrid, mouse.x, mouse.y);
-                // buttonRect.x = layoutPos.x - startPos.x;
-                updateDragVisual();
-                checkForDropTarget(backend.getCursorPosition());
+                buttonGrid.draggedButton = buttonRect;
+                buttonGrid.draggedButtonOriginalIndex = model.index;
+                buttonGrid.dragStartPos = startPos;
             }
         }
 
         onReleased: function(mouse) {
             isPressed = false;
             if (isDragging) {
-                var globalPos = backend.getCursorPosition();
+                // Manually trigger grid's release handler
                 isDragging = false;
-                if (handleDrop(globalPos)) {
-
-                }
-                else {
-                    // buttonRect.x = draggedItemStartPos.x;
-                    // buttonRect.y = draggedItemStartPos.y;
-                    restoreOriginalAppearance();
-                }
-
-                draggedItemPlaceholder.destroy();
-                draggedItemPlaceholder = null;
-                dragOverlay.visible = false;
-            }
-            else {
+                buttonGrid.handleDragRelease();
+                mouse.accepted = true;
+            } else {
                 Qt.callLater(function() {
                     hoverTimer.stop();
                     buttonTooltip.checkHide(true);
@@ -338,7 +279,7 @@ Rectangle {
                     desktopButtonClicked(buttonRect.number);
                     mouse.accepted = true;
                 } else if (mouse.button === Qt.MiddleButton) {
-                    if (config.MouseWheelRemoveDesktopOnClick) {
+                    if (config.WheelClickRemoves) {
                         buttonMiddleClick(buttonRect);
                         mouse.accepted = true;
                     }
@@ -353,18 +294,16 @@ Rectangle {
         }
 
         onEntered: {
-            if (!dragOverlay.visible && !isDragging) {
+            if (!isDragging) {
                 hoverTimer.start();
             }
         }
 
         onExited: {
-            if (!dragOverlay.visible) {
-                hoverTimer.stop();
-                Utils.delay(300, function () {
-                    buttonTooltip.checkHide(false);
-                }, _mouseArea);
-            }
+            hoverTimer.stop();
+            Utils.delay(300, function () {
+                buttonTooltip.checkHide(false);
+            }, _mouseArea);
         }
 
         Timer {
@@ -382,131 +321,30 @@ Rectangle {
             }
         }
 
-        function checkForDropTarget(globalPos) {
-            for (let uuid in buttonGrid.desktopButtonMap) {
-                let dummy = buttonGrid.desktopButtonMap[uuid];
-                if (isPointInDummy(dummy, globalPos)) {
-                    const itemX = draggedItemStartPos.x;
-                    const itemWidth = buttonRect.width;
-                    if (Math.abs(dummy.x - itemX) <= 5 || Math.abs(dummy.x - (itemX + itemWidth)) <= 5) {
-                        continue;
-                    }
-                    dummy.Layout.preferredWidth = buttonRect.width;
-                    dummy.borderCanvas.visible = true;
-                    break;
-                } else {
-                    if (dummy.isDummy === true) {
-                        dummy.Layout.preferredWidth = 1;
-                        dummy.borderCanvas.visible = false;
-                    }
-                }
-            }
-        }
-
-        function isPointInDummy(button, globalPos) {
-            try {
-                if (!button.isDummy) { return false; }
-                var dummyGlobal = button.mapToGlobal(0, 0);
-                var isInside = globalPos.x >= dummyGlobal.x - 5 &&
-                    globalPos.x <= dummyGlobal.x + 5 + button.width &&
-                    globalPos.y >= dummyGlobal.y &&
-                    globalPos.y <= dummyGlobal.y + button.height;
-
-                return isInside;
-            } catch (e) {
-                console.log("Error in isPointInButton:", e);
-                return false;
-            }
-        }
-
-        function handleDrop(globalPos) {
-            for (let uuid in buttonGrid.desktopButtonMap) {
-                let button = buttonGrid.desktopButtonMap[uuid];
-                if (isPointInDummy(button, globalPos)) {
-                    if (button.number > buttonRect.number) {
-                        console.log(buttonRect.uuid, ": Number:", buttonRect.number, "Moved to the right");
-                        // TODO: Move all the buttons to the left down one.  For instance, if moving desktop 1 to
-                        // desktop 3, Move all windows from desktop 2 to desktop 1, then rename desktop 1 to desktop 2.
-                        // Repeat for 3 -> 2, then repeat for dragged button -> desktop 3.  The trick is going to be
-                        // moving the correct windows from the dragged desktop to desktop 3, since we've already moved
-                        // the windows from desktop 2 to desktop 1, and we're dragging desktop 1.  We probably need to
-                        // just make a copy of all the windows on desktop 1 when we start dragging and move those to
-                        // desktop 3 on drop. Desktop 1 will briefly have all the windows from desktop 1 and 2, but
-                        // ok as long as we know which ones to move to 3 in the end.
-                    }
-                    else {
-                        console.log(buttonRect.uuid, ": Number:", buttonRect.number, "Moved to the left");
-                        // TODO: Do the above, but in reverse, moving all the desktops with numbers greater than the
-                        // drop zone to the right, started with the last desktop.
-                    }
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        function createDragVisual() {
-            let component = Qt.createComponent("DesktopButtonDragPlaceholder.qml");
-
-            if (component.status === Component.Ready) {
-                // draggedItemPlaceholder = component.createObject(desktopButtonGrid, {
-                draggedItemPlaceholder = component.createObject(dragOverlayContent, {
-                    "width": buttonRect.width,
-                    "height": buttonRect.height,
-                    // "x": buttonRect.x,
-                    // "y": buttonRect.y
-                });
-            } else {
-                console.log("Component error:", component.errorString());
-            }
-        }
-    }
-
-    function updateDragVisual() {
-        if (!draggedItemPlaceholder) return;
-
-        let pos = backend.getRelativeCursorPosition();
-        let screenOffset = backend.getRelativeScreenPosition();
-        draggedItemPlaceholder.x = pos.x - startPos.x - screenOffset.x;
-        draggedItemPlaceholder.y = pos.y - startPos.y - screenOffset.y;
-        draggedItemPlaceholder.z = 100;
-    }
-
-    function restoreOriginalAppearance() {
-        // Restore the original button appearance
-        indicator.visible = !isDummy;
-        label.visible = !isDummy;
-        buttonRect.color = applyColorRules();
-        buttonRect.opacity = applyOpacityRules();
-        buttonRect.border.width = 0;
-
-        // Re-enable drag highlights
-        dragBorderHighlight.visible = dragOverlay.visible && !dragHighlight.visible && !isDummy;
     }
 
     function applyColorRules() {
         let indicatorColor = Kirigami.Theme.textColor;
 
         if (isCurrent) {
-            //indicatorColor = config.DesktopIndicatorsCustomColorForCurrentDesktop || PlasmaCore.Theme.highlightColor
-            indicatorColor = config.DesktopIndicatorsCustomColorForCurrentDesktop || systemPalette.highlight
+            //indicatorColor = config.IndicatorColorCurrent || PlasmaCore.Theme.highlightColor
+            indicatorColor = config.IndicatorColorCurrent || systemPalette.highlight
         }
-        if (isEmpty && config.DesktopIndicatorsCustomColorForIdleDesktops) {
-            indicatorColor = config.DesktopIndicatorsCustomColorForIdleDesktops;
+        if (isEmpty && config.IndicatorColorIdle) {
+            indicatorColor = config.IndicatorColorIdle;
         }
-        if (!isEmpty && config.DesktopIndicatorsCustomColorForOccupiedIdleDesktops) {
-            indicatorColor = config.DesktopIndicatorsCustomColorForOccupiedIdleDesktops;
+        if (!isEmpty && config.IndicatorColorOccupied) {
+            indicatorColor = config.IndicatorColorOccupied;
         }
         if (isUrgent) {
             indicatorColor = "#e6520c"
-            if (config.DesktopIndicatorsCustomColorForDesktopsNeedingAttention) {
-                indicatorColor = config.DesktopIndicatorsCustomColorForDesktopsNeedingAttention;
+            if (config.IndicatorColorAttention) {
+                indicatorColor = config.IndicatorColorAttention;
             }
         }
 
-        let labelColor = config.DesktopIndicatorsStyle === IndicatorStyles.UseLabels ? indicatorColor :
-            (config.DesktopLabelsCustomColor || Kirigami.Theme.textColor);
+        let labelColor = config.IndicatorStyle === IndicatorStyles.UseLabels ? indicatorColor :
+            (config.LabelColor || Kirigami.Theme.textColor);
 
         indicator.color = indicatorColor;
         label.color = labelColor;
@@ -515,7 +353,7 @@ Rectangle {
     }
 
     function applyOpacityRules() {
-        let indicatorStyle = config.DesktopIndicatorsStyle;
+        let indicatorStyle = config.IndicatorStyle;
 
         // Determine indicator opacity
         let indOpacity = 1;
@@ -525,19 +363,19 @@ Rectangle {
             lblOpacity = 1.0;
         } else if ((!ignoreMouseArea && _mouseArea.containsMouse) || isDragged) {
             indOpacity = (indicatorStyle === 5) ? 1.0 : 0.75;
-        } else if (config.DesktopIndicatorsDoNotOverrideOpacityOfCustomColors) {
-            const hasCustomColor = (isCurrent && config.DesktopIndicatorsCustomColorForCurrentDesktop) ||
-                (isEmpty && config.DesktopIndicatorsCustomColorForIdleDesktops) ||
-                (!isEmpty && config.DesktopIndicatorsCustomColorForOccupiedIdleDesktops) ||
-                (isUrgent && config.DesktopIndicatorsCustomColorForDesktopsNeedingAttention);
+        } else if (config.IndicatorKeepOpacity) {
+            const hasCustomColor = (isCurrent && config.IndicatorColorCurrent) ||
+                (isEmpty && config.IndicatorColorIdle) ||
+                (!isEmpty && config.IndicatorColorOccupied) ||
+                (isUrgent && config.IndicatorColorAttention);
             if (hasCustomColor) {
                 indOpacity = 1.0;
-            } else if (!isEmpty && config.DesktopIndicatorsDistinctForOccupiedIdleDesktops) {
+            } else if (!isEmpty && config.IndicatorDistinctOccupied) {
                 indOpacity = (indicatorStyle === 5) ? 1.0 : 0.5;
             } else {
                 indOpacity = (indicatorStyle === 5) ? 0.5 : 0.25;
             }
-        } else if (!isEmpty && config.DesktopIndicatorsDistinctForOccupiedIdleDesktops) {
+        } else if (!isEmpty && config.IndicatorDistinctOccupied) {
             indOpacity = (indicatorStyle === 5) ? 1.0 : 0.5;
         } else {
             indOpacity = (indicatorStyle === 5) ? 0.5 : 0.25;
@@ -548,7 +386,7 @@ Rectangle {
             lblOpacity = indOpacity; // Use same opacity as indicator when using label style
         } else if ((!ignoreMouseArea && _mouseArea.containsMouse) || isDragged) {
             lblOpacity = 1.0;
-        } else if (!isCurrent && config.DesktopLabelsDimForIdleDesktops) {
+        } else if (!isCurrent && config.LabelDimIdle) {
             lblOpacity = 0.75;
         } else {
             lblOpacity = 1.0;
@@ -569,15 +407,15 @@ Rectangle {
     function getButtonLabel() {
         let labelText = name;
 
-        if (config.DesktopLabelsStyle === IndicatorStyles.SideLine) {
+        if (config.LabelStyle === IndicatorStyles.SideLine) {
             labelText = number + "";
-        } else if (config.DesktopLabelsStyle === IndicatorStyles.Block) {
+        } else if (config.LabelStyle === IndicatorStyles.Block) {
             labelText = number + ": " + name;
-        } else if (config.DesktopLabelsStyle === IndicatorStyles.Rounded) {
+        } else if (config.LabelStyle === IndicatorStyles.Rounded) {
             labelText = activeWindowName || name;
-        } else if (config.DesktopLabelsStyle === IndicatorStyles.FullSize) {
-            if (config.DesktopLabelsStyleCustomFormat) {
-                var format = config.DesktopLabelsStyleCustomFormat.trim();
+        } else if (config.LabelStyle === IndicatorStyles.FullSize) {
+            if (config.LabelCustomFormat) {
+                var format = config.LabelCustomFormat.trim();
                 if (format.length > 0) {
                     labelText = format;
                     labelText = labelText.replace("$WX", !isEmpty ? activeWindowName : number);
@@ -593,10 +431,10 @@ Rectangle {
             }
         }
 
-        if (labelText.length > config.DesktopLabelsMaximumLength) {
-            labelText = labelText.substr(0, config.DesktopLabelsMaximumLength - 1) + "…";
+        if (labelText.length > config.LabelMaxLength) {
+            labelText = labelText.substr(0, config.LabelMaxLength - 1) + "…";
         }
-        if (config.DesktopLabelsDisplayAsUppercased) {
+        if (config.LabelUppercase) {
             labelText = labelText.toUpperCase();
         }
 

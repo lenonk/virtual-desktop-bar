@@ -10,8 +10,8 @@ Rectangle {
     readonly property int animationColorDuration: 300
     readonly property int animationOpacityDuration: 300
 
-    property int indicatorStyle: config.DesktopIndicatorsStyle
-    
+    property int indicatorStyle: config.IndicatorStyle
+
     visible: indicatorStyle !== IndicatorStyles.UseLabels
 
     Behavior on color {
@@ -27,32 +27,32 @@ Rectangle {
     width: {
         if (Common.LayoutProps.isVerticalOrientation) {
             if (indicatorStyle === IndicatorStyles.SideLine) {
-                return config.DesktopIndicatorsStyleLineThickness;
+                return config.IndicatorLineThickness;
             }
             if (indicatorStyle === IndicatorStyles.FullSize) {
                 return parent.width;
             }
 
-            return parent.width + 0.5 - 2 * config.DesktopButtonsHorizontalMargin;
+            return parent.width + 0.5 - 2 * config.ButtonMarginHorizontal;
         }
         if (indicatorStyle === IndicatorStyles.SideLine) {
-            return config.DesktopIndicatorsStyleLineThickness;
+            return config.IndicatorLineThickness;
         }
 
-        return parent.width + 0.5 - 2 * config.DesktopButtonsSpacing;
+        return parent.width + 0.5 - 2 * config.ButtonSpacing;
     }
 
     height: {
         if (indicatorStyle === IndicatorStyles.FullSize) {
             if (Common.LayoutProps.isVerticalOrientation) {
-                return parent.height + 0.5 - 2 * config.DesktopButtonsSpacing;
+                return parent.height + 0.5 - 2 * config.ButtonSpacing;
             }
             return parent.height;
         }
         if (indicatorStyle > IndicatorStyles.EdgeLine) {
-            return label.implicitHeight + 2 * config.DesktopButtonsVerticalMargin;
+            return label.implicitHeight + 2 * config.ButtonMarginVertical;
         }
-        return config.DesktopIndicatorsStyleLineThickness;
+        return config.IndicatorLineThickness;
     }
 
     x: {
@@ -60,14 +60,14 @@ Rectangle {
             if (indicatorStyle !== IndicatorStyles.SideLine) {
                 return (parent.width - width) / 2;
             }
-            return config.DesktopIndicatorsInvertPosition ?
-                parent.width - config.DesktopIndicatorsStyleLineThickness : 0;
+            return config.IndicatorInvert ?
+                parent.width - config.IndicatorLineThickness : 0;
         }
         if (indicatorStyle === IndicatorStyles.SideLine &&
-            config.DesktopIndicatorsInvertPosition) {
-            return parent.width - width - (config.DesktopButtonsSpacing || 0);
+            config.IndicatorInvert) {
+            return parent.width - width - (config.ButtonSpacing || 0);
         }
-        return config.DesktopButtonsSpacing || 0;
+        return config.ButtonSpacing || 0;
     }
 
     y: {
@@ -75,14 +75,14 @@ Rectangle {
             return (parent.height - height) / 2;
         }
         if (Common.LayoutProps.isTopLocation) {
-            return !config.DesktopIndicatorsInvertPosition ? parent.height - height : 0;
+            return !config.IndicatorInvert ? parent.height - height : 0;
         }
-        return !config.DesktopIndicatorsInvertPosition ? 0 : parent.height - height;
+        return !config.IndicatorInvert ? 0 : parent.height - height;
     }
 
     radius: {
         if (indicatorStyle === IndicatorStyles.Block) {
-            return config.DesktopIndicatorsStyleBlockRadius;
+            return config.IndicatorBlockRadius;
         }
         if (indicatorStyle === IndicatorStyles.Rounded) {
             return 300;

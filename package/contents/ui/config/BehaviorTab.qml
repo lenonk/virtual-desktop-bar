@@ -12,24 +12,24 @@ KCM.SimpleKCM {
     id: root
 
     // Empty desktops
-    property string cfg_EmptyDesktopsRenameAs
+    property string cfg_EmptyDesktopName
 
     // Adding desktops
-    property alias cfg_AddingDesktopsSwitchTo: addingDesktopsSwitchToCheckBox.checked
-    property alias cfg_AddingDesktopsPromptToRename: addingDesktopsPromptToRenameCheckBox.checked
-    property string cfg_AddingDesktopsExecuteCommand
+    property alias cfg_SwitchToNewDesktop: switchToNewDesktopCheckBox.checked
+    property alias cfg_PromptRenameNew: promptRenameNewCheckBox.checked
+    property string cfg_NewDesktopCommand
 
     // Dynamic desktops
-    property alias cfg_DynamicDesktopsEnable: dynamicDesktopsEnableCheckBox.checked
+    property alias cfg_DynamicDesktops: dynamicDesktopsCheckBox.checked
 
     // Multiple screens/monitors
-    property alias cfg_MultipleScreensFilterOccupiedDesktops: multipleScreensFilterOccupiedDesktopsCheckBox.checked
+    property alias cfg_FilterByScreen: filterByScreenCheckBox.checked
 
     // Mouse wheel handling
-    property alias cfg_MouseWheelRemoveDesktopOnClick: mouseWheelRemoveDesktopOnClickCheckBox.checked
-    property alias cfg_MouseWheelSwitchDesktopOnScroll: mouseWheelSwitchDesktopOnScrollCheckBox.checked
-    property alias cfg_MouseWheelInvertDesktopSwitchingDirection: mouseWheelInvertDesktopSwitchingDirectionCheckBox.checked
-    property alias cfg_MouseWheelWrapDesktopNavigationWhenScrolling: mouseWheelWrapDesktopNavigationWhenScrollingCheckBox.checked
+    property alias cfg_WheelClickRemoves: wheelClickRemovesCheckBox.checked
+    property alias cfg_WheelScrollSwitches: wheelScrollSwitchesCheckBox.checked
+    property alias cfg_WheelInvertDirection: wheelInvertDirectionCheckBox.checked
+    property alias cfg_WheelWrapAround: wheelWrapAroundCheckBox.checked
 
     Kirigami.FormLayout {
         Item { Kirigami.FormData.isSection: true }
@@ -37,24 +37,24 @@ KCM.SimpleKCM {
         RowLayout {
             Kirigami.FormData.label: i18n("Empty Desktops:")
             CheckBox {
-                id: emptyDesktopsRenameAsCheckBox
-                checked: cfg_EmptyDesktopsRenameAs
-                onCheckedChanged: cfg_EmptyDesktopsRenameAs = checked ?
-                    emptyDesktopsRenameAsTextField.text : ""
+                id: emptyDesktopNameCheckBox
+                checked: cfg_EmptyDesktopName
+                onCheckedChanged: cfg_EmptyDesktopName = checked ?
+                    emptyDesktopNameTextField.text : ""
                 text: "Rename as:"
             }
 
             UICommon.GrowingTextField {
-                id: emptyDesktopsRenameAsTextField
-                enabled: emptyDesktopsRenameAsCheckBox.checked
+                id: emptyDesktopNameTextField
+                enabled: emptyDesktopNameCheckBox.checked
                 maximumLength: 20
-                text: cfg_EmptyDesktopsRenameAs || "Desktop"
+                text: cfg_EmptyDesktopName || "Desktop"
                 onTextChanged: {
-                    if (cfg_EmptyDesktopsRenameAs && text) {
-                        cfg_EmptyDesktopsRenameAs = text;
+                    if (cfg_EmptyDesktopName && text) {
+                        cfg_EmptyDesktopName = text;
                     }
                 }
-                onEditingFinished: cfg_EmptyDesktopsRenameAs = text
+                onEditingFinished: cfg_EmptyDesktopName = text
             }
         }
 
@@ -63,51 +63,51 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Adding Desktops:")
 
             CheckBox {
-                id: addingDesktopsSwitchToCheckBox
-                enabled: !dynamicDesktopsEnableCheckBox.checked
+                id: switchToNewDesktopCheckBox
+                enabled: !dynamicDesktopsCheckBox.checked
                 text: "Switch to an added desktop"
             }
 
             HintIcon {
-                visible: !addingDesktopsSwitchToCheckBox.enabled
+                visible: !switchToNewDesktopCheckBox.enabled
                 tooltipText: "Not available if dynamic desktops are enabled"
             }
         }
 
         RowLayout {
             CheckBox {
-                id: addingDesktopsPromptToRenameCheckBox
-                enabled: !dynamicDesktopsEnableCheckBox.checked
+                id: promptRenameNewCheckBox
+                enabled: !dynamicDesktopsCheckBox.checked
                 text: "Prompt to rename an added desktop"
             }
 
             HintIcon {
-                visible: !addingDesktopsPromptToRenameCheckBox.enabled
+                visible: !promptRenameNewCheckBox.enabled
                 tooltipText: "Not available if dynamic desktops are enabled"
             }
         }
 
         RowLayout {
             CheckBox {
-                id: addingDesktopsExecuteCommandCheckBox
-                checked: cfg_AddingDesktopsExecuteCommand
-                onCheckedChanged: cfg_AddingDesktopsExecuteCommand = checked ?
-                    addingDesktopsExecuteCommandTextField.text : ""
+                id: newDesktopCommandCheckBox
+                checked: cfg_NewDesktopCommand
+                onCheckedChanged: cfg_NewDesktopCommand = checked ?
+                    newDesktopCommandTextField.text : ""
                 text: "Execute a command:"
             }
 
             UICommon.GrowingTextField {
-                id: addingDesktopsExecuteCommandTextField
-                enabled: addingDesktopsExecuteCommandCheckBox.enabled &&
-                    addingDesktopsExecuteCommandCheckBox.checked
+                id: newDesktopCommandTextField
+                enabled: newDesktopCommandCheckBox.enabled &&
+                    newDesktopCommandCheckBox.checked
                 maximumLength: 255
-                text: cfg_AddingDesktopsExecuteCommand || "krunner"
+                text: cfg_NewDesktopCommand || "krunner"
                 onTextChanged: {
-                    if (cfg_AddingDesktopsExecuteCommand && text) {
-                        cfg_AddingDesktopsExecuteCommand = text;
+                    if (cfg_NewDesktopCommand && text) {
+                        cfg_NewDesktopCommand = text;
                     }
                 }
-                onEditingFinished: cfg_AddingDesktopsExecuteCommand = text
+                onEditingFinished: cfg_NewDesktopCommand = text
             }
         }
 
@@ -117,7 +117,7 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Dynamic Desktops:")
 
             CheckBox {
-                id: dynamicDesktopsEnableCheckBox
+                id: dynamicDesktopsCheckBox
                 text: "Enable dynamic desktops"
             }
 
@@ -131,7 +131,7 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Multiple Screens/Monitors:")
 
             CheckBox {
-                id: multipleScreensFilterOccupiedDesktopsCheckBox
+                id: filterByScreenCheckBox
                 text: "Filter occupied desktops by screen/monitor"
             }
         }
@@ -141,31 +141,31 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Mouse Wheel Handling:")
 
             CheckBox {
-                id: mouseWheelRemoveDesktopOnClickCheckBox
-                enabled: !dynamicDesktopsEnableCheckBox.checked
+                id: wheelClickRemovesCheckBox
+                enabled: !dynamicDesktopsCheckBox.checked
                 text: "Remove desktops on the wheel click"
             }
 
             HintIcon {
-                visible: !mouseWheelRemoveDesktopOnClickCheckBox.enabled
+                visible: !wheelClickRemovesCheckBox.enabled
                 tooltipText: "Not available if dynamic desktops are enabled"
             }
         }
 
         CheckBox {
-            id: mouseWheelSwitchDesktopOnScrollCheckBox
+            id: wheelScrollSwitchesCheckBox
             text: "Switch desktops by scrolling the wheel"
         }
 
         CheckBox {
-            id: mouseWheelInvertDesktopSwitchingDirectionCheckBox
-            enabled: mouseWheelSwitchDesktopOnScrollCheckBox.checked
+            id: wheelInvertDirectionCheckBox
+            enabled: wheelScrollSwitchesCheckBox.checked
             text: "Invert wheel scrolling desktop switching direction"
         }
 
         CheckBox {
-            id: mouseWheelWrapDesktopNavigationWhenScrollingCheckBox
-            enabled: mouseWheelSwitchDesktopOnScrollCheckBox.checked
+            id: wheelWrapAroundCheckBox
+            enabled: wheelScrollSwitchesCheckBox.checked
             text: "Wrap desktop navigation after reaching first or last one"
         }
     }

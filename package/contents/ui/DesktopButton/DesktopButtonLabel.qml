@@ -26,7 +26,7 @@ Text {
         }
     }
 
-    font.family: config.DesktopLabelsCustomFont || PlasmaCore.Theme.defaultFont.family
-    font.pixelSize: config.DesktopLabelsCustomFontSize || PlasmaCore.Theme.defaultFont.pixelSize
-    font.bold: isCurrent && config.DesktopLabelsBoldFontForCurrentDesktop
+    font.family: config.LabelFont || PlasmaCore.Theme.defaultFont.family
+    font.pixelSize: config.LabelFontSize || PlasmaCore.Theme.defaultFont.pixelSize
+    font.bold: isCurrent && config.LabelBoldCurrent
 }

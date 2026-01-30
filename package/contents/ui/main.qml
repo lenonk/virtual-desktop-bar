@@ -29,8 +29,6 @@ PlasmoidItem {
     Window {
         id: dragOverlay
 
-        visibility: Window.Normal
-        visible: false
         x: Screen.virtualX
         y: Screen.virtualY
         width: Screen.width
@@ -45,23 +43,9 @@ PlasmoidItem {
 
         color: "transparent"
 
-        modality: Qt.NonModal
-
-        onVisibleChanged: {
-            if (visible) {
-                visibility = Window.FullScreen
-                x = Screen.virtualX;
-                y = Screen.virtualY;
-                width = Screen.width;
-                height = Screen.height;
-            }
-            else {
-                visibility = Window.Normal
-            }
-        }
-
         Rectangle {
             id: dragOverlayContent
+
             anchors.fill: parent
             color: "transparent"
             // border.width: 2

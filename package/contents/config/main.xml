@@ -8,43 +8,43 @@
 
     <group name="Behavior">
         <!-- Behavior - Empty desktops -->
-        <entry name="EmptyDesktopsRenameAs" type="String">
+        <entry name="EmptyDesktopName" type="String">
             <label>The default name assigned to newly created virtual desktops.</label>
             <default></default>
         </entry>
 
         <!-- Behavior - Adding desktops -->
-        <entry name="AddingDesktopsSwitchTo" type="Bool">
+        <entry name="SwitchToNewDesktop" type="Bool">
             <default>true</default>
-        </entry>/
-        <entry name="AddingDesktopsPromptToRename" type="Bool">
+        </entry>
+        <entry name="PromptRenameNew" type="Bool">
             <default>false</default>
         </entry>
-        <entry name="AddingDesktopsExecuteCommand" type="String">
+        <entry name="NewDesktopCommand" type="String">
             <default></default>
         </entry>
 
         <!-- Behavior - Dynamic desktops -->
-        <entry name="DynamicDesktopsEnable" type="Bool">
+        <entry name="DynamicDesktops" type="Bool">
             <default>false</default>
         </entry>
 
         <!-- Behavior - Multiple screens/monitors -->
-        <entry name="MultipleScreensFilterOccupiedDesktops" type="Bool">
+        <entry name="FilterByScreen" type="Bool">
             <default>true</default>
         </entry>
 
         <!-- Behavior - Mouse wheel handling -->
-        <entry name="MouseWheelRemoveDesktopOnClick" type="Bool">
+        <entry name="WheelClickRemoves" type="Bool">
             <default>true</default>
         </entry>
-        <entry name="MouseWheelSwitchDesktopOnScroll" type="Bool">
+        <entry name="WheelScrollSwitches" type="Bool">
             <default>true</default>
         </entry>
-        <entry name="MouseWheelInvertDesktopSwitchingDirection" type="Bool">
+        <entry name="WheelInvertDirection" type="Bool">
             <default>false</default>
         </entry>
-        <entry name="MouseWheelWrapDesktopNavigationWhenScrolling" type="Bool">
+        <entry name="WheelWrapAround" type="Bool">
             <default>false</default>
         </entry>
     </group>
@@ -61,7 +61,7 @@
         </entry>
 
         <!-- Appearance - Add desktop button -->
-        <entry name="AddDesktopButtonShow" type="Bool">
+        <entry name="ShowAddButton" type="Bool">
             <default>true</default>
         </entry>
         <entry name="AddDesktopButtonSize" type="Int">
@@ -69,86 +69,86 @@
         </entry>
 
         <!-- Appearance - Desktop buttons -->
-        <entry name="DesktopButtonsVerticalMargin" type="Int">
+        <entry name="ButtonMarginVertical" type="Int">
             <default>3</default>
         </entry>
-        <entry name="DesktopButtonsHorizontalMargin" type="Int">
+        <entry name="ButtonMarginHorizontal" type="Int">
             <default>3</default>
         </entry>
-        <entry name="DesktopButtonsSpacing" type="Int">
+        <entry name="ButtonSpacing" type="Int">
             <default>3</default>
         </entry>
-        <entry name="DesktopButtonsSetCommonSizeForAll" type="Bool">
+        <entry name="ButtonCommonSize" type="Bool">
             <default>false</default>
         </entry>
-        <entry name="DesktopButtonsShowOnlyForCurrentDesktop" type="Bool">
+        <entry name="ShowOnlyCurrent" type="Bool">
             <default>false</default>
         </entry>
-        <entry name="DesktopButtonsShowOnlyForOccupiedDesktops" type="Bool">
+        <entry name="ShowOnlyOccupied" type="Bool">
             <default>false</default>
         </entry>
 
         <!-- Appearance - Desktop labels -->
-        <entry name="DesktopLabelsStyle" type="Int">
+        <entry name="LabelStyle" type="Int">
             <default>0</default>
         </entry>
-        <entry name="DesktopLabelsStyleCustomFormat" type="String">
+        <entry name="LabelCustomFormat" type="String">
             <default></default>
         </entry>
-        <entry name="DesktopLabelsMaximumLength" type="Int">
+        <entry name="LabelMaxLength" type="Int">
             <default>25</default>
         </entry>
-        <entry name="DesktopLabelsCustomFont" type="String">
+        <entry name="LabelFont" type="String">
             <default></default>
         </entry>
-        <entry name="DesktopLabelsCustomFontSize" type="Int">
+        <entry name="LabelFontSize" type="Int">
             <default>0</default>
         </entry>
-        <entry name="DesktopLabelsCustomColor" type="String">
+        <entry name="LabelColor" type="String">
             <default></default>
         </entry>
-        <entry name="DesktopLabelsDimForIdleDesktops" type="Bool">
+        <entry name="LabelDimIdle" type="Bool">
             <default>true</default>
         </entry>
-        <entry name="DesktopLabelsDisplayAsUppercased" type="Bool">
+        <entry name="LabelUppercase" type="Bool">
             <default>false</default>
         </entry>
-        <entry name="DesktopLabelsBoldFontForCurrentDesktop" type="Bool">
+        <entry name="LabelBoldCurrent" type="Bool">
             <default>false</default>
         </entry>
 
         <!-- Appearance - Desktop indicators -->
-        <entry name="DesktopIndicatorsStyle" type="Int">
+        <entry name="IndicatorStyle" type="Int">
             <default>0</default>
         </entry>
-        <entry name="DesktopIndicatorsStyleBlockRadius" type="Int">
+        <entry name="IndicatorBlockRadius" type="Int">
             <default>2</default>
         </entry>
-        <entry name="DesktopIndicatorsStyleLineThickness" type="Int">
+        <entry name="IndicatorLineThickness" type="Int">
             <default>3</default>
         </entry>
-        <entry name="DesktopIndicatorsInvertPosition" type="Bool">
+        <entry name="IndicatorInvert" type="Bool">
             <default>false</default>
         </entry>
-        <entry name="DesktopIndicatorsCustomColorForIdleDesktops" type="String">
+        <entry name="IndicatorColorIdle" type="String">
             <default></default>
         </entry>
-        <entry name="DesktopIndicatorsCustomColorForCurrentDesktop" type="String">
+        <entry name="IndicatorColorCurrent" type="String">
             <default></default>
         </entry>
-        <entry name="DesktopIndicatorsCustomColorForOccupiedIdleDesktops" type="String">
+        <entry name="IndicatorColorOccupied" type="String">
             <default></default>
         </entry>
-        <entry name="DesktopIndicatorsCustomColorForDesktopsNeedingAttention" type="String">
+        <entry name="IndicatorColorAttention" type="String">
             <default></default>
         </entry>
-        <entry name="DesktopIndicatorsDoNotOverrideOpacityOfCustomColors" type="Bool">
+        <entry name="IndicatorKeepOpacity" type="Bool">
             <default>false</default>
         </entry>
-        <entry name="DesktopIndicatorsDistinctForOccupiedIdleDesktops" type="Bool">
+        <entry name="IndicatorDistinctOccupied" type="Bool">
             <default>true</default>
         </entry>
-        <entry name="DesktopIndicatorsDistinctForDesktopsNeedingAttention" type="Bool">
+        <entry name="IndicatorDistinctAttention" type="Bool">
             <default>false</default>
         </entry>
     </group>

@@ -300,6 +300,59 @@ VirtualDesktopBar::previousDesktop() {
     return true;
 }
 
+bool
+VirtualDesktopBar::moveDesktop(const QString &id, quint32 targetIndex) {
+    // Get all desktops
+    auto desktops = requestDesktopInfoList();
+    if (desktops.isEmpty()) {
+        qWarning() << "No desktops found";
+        return false;
+    }
+
+    int currentIndex = -1;
+    for (int i = 0; i < desktops.size(); ++i) {
+        const auto desktop = desktops[i].toMap();
+        if (desktop[QSL("uuid")].toString() == id) {
+            currentIndex = i;
+            break;
+        }
+    }
+
+    if (currentIndex == -1) {
+        qWarning() << "Desktop not found:" << id;
+        return false;
+    }
+
+    if (currentIndex == static_cast<int>(targetIndex)) {
+        return true; // Already at target position
+    }
+
+    // KWin doesn't support reordering desktops, so we swap names to simulate it
+    // This is a workaround - windows stay on their desktop numbers, but the names move
+    auto sourceDesktop = desktops[currentIndex].toMap();
+    auto targetDesktop = desktops[targetIndex].toMap();
+
+    QString sourceName = sourceDesktop[QSL("name")].toString();
+    QString sourceUuid = sourceDesktop[QSL("uuid")].toString();
+    QString targetName = targetDesktop[QSL("name")].toString();
+    QString targetUuid = targetDesktop[QSL("uuid")].toString();
+
+    // Swap the names
+    if (!setDesktopName(sourceUuid, targetName)) {
+        qWarning() << "Failed to set source desktop name";
+        return false;
+    }
+
+    if (!setDesktopName(targetUuid, sourceName)) {
+        qWarning() << "Failed to set target desktop name";
+        // Try to rollback
+        setDesktopName(sourceUuid, sourceName);
+        return false;
+    }
+
+    return true;
+}
+
 QString
 VirtualDesktopBar::getIconFromDesktopFile(const QString &desktopFile) {
     QString serviceName = desktopFile;
@@ -360,6 +413,11 @@ VirtualDesktopBar::getCursorSize() const {
 
     return QSize(16, 16);
 
+}
+
+bool
+VirtualDesktopBar::isMouseButtonPressed() const {
+    return QGuiApplication::mouseButtons() & Qt::LeftButton;
 }
 
 QPoint

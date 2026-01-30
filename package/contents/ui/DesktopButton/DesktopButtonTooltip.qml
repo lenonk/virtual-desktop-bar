@@ -124,7 +124,7 @@ Item {
                         onDragStarted: {
                         }
                         onDragFinished: {
-                            checkHide();
+                            checkHide(true);
                         }
                     }
                 }
@@ -149,12 +149,7 @@ Item {
     }
 
     function checkHide(force = false) {
-        if (dragOverlay.visible) {
-            hideTimer.restart();
-            return;
-        }
-
-        // Hide if forced, or if neither button nor tooltip is hovered
+        // Hide if forced
         if (force) {
             hide();
             return;
@@ -164,8 +159,13 @@ Item {
         const buttonHovered = tooltipRoot.sourceButton && tooltipRoot.sourceButton.mouseArea.containsMouse;
         const tooltipHovered = tooltipRoot.isHovered;
 
+        // If neither button nor tooltip is hovered, hide immediately
+        // Even if dragOverlay is still visible, we should check hover state
         if (!buttonHovered && !tooltipHovered) {
             hide();
+        } else if (dragOverlay.visible) {
+            // If still hovered but drag overlay is visible, recheck after overlay closes
+            hideTimer.restart();
         }
     }
 

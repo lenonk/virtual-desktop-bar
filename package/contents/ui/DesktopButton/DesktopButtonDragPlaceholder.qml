@@ -8,8 +8,8 @@ Rectangle {
     id: buttonDragPlaceholder
 
     property int verticalMargins: 5
-    property int horizontalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? 0 : config.DesktopButtonsSpacing)
-    property int verticalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? config.DesktopButtonsSpacing : 0)
+    property int horizontalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? 0 : config.ButtonSpacing)
+    property int verticalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? config.ButtonSpacing : 0)
 
     Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
     Layout.fillWidth: Common.LayoutProps.isVerticalOrientation

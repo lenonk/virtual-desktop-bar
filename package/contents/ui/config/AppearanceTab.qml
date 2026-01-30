@@ -15,48 +15,48 @@ pragma ComponentBehavior: Bound
 KCM.SimpleKCM {
     id: root
     // Behavior - Dynamic desktops
-    property bool cfg_DynamicDesktopsEnable
+    property bool cfg_DynamicDesktops
 
     // Animations
-    property alias cfg_AnimationsEnable: animationsEnableCheckBox.checked
+    property alias cfg_AnimationsEnable: animationsCheckBox.checked
 
     // Tooltips
-    property alias cfg_TooltipsEnable: tooltipsEnableCheckBox.checked
+    property alias cfg_TooltipsEnable: tooltipsCheckBox.checked
 
     // Add desktop button
-    property alias cfg_AddDesktopButtonShow: addDesktopButtonShowCheckBox.checked
+    property alias cfg_ShowAddButton: showAddButtonCheckBox.checked
 
     // Desktop buttons
-    property alias cfg_DesktopButtonsVerticalMargin: desktopButtonsVerticalMarginSpinBox.value
-    property alias cfg_DesktopButtonsHorizontalMargin: desktopButtonsHorizontalMarginSpinBox.value
-    property alias cfg_DesktopButtonsSpacing: desktopButtonsSpacingSpinBox.value
-    property alias cfg_DesktopButtonsSetCommonSizeForAll: desktopButtonsSetCommonSizeForAllCheckBox.checked
-    property alias cfg_DesktopButtonsShowOnlyForCurrentDesktop: desktopButtonsShowOnlyForCurrentDesktopCheckBox.checked
-    property alias cfg_DesktopButtonsShowOnlyForOccupiedDesktops: desktopButtonsShowOnlyForOccupiedDesktopsCheckBox.checked
+    property alias cfg_ButtonMarginVertical: buttonMarginVerticalSpinBox.value
+    property alias cfg_ButtonMarginHorizontal: buttonMarginHorizontalSpinBox.value
+    property alias cfg_ButtonSpacing: buttonSpacingSpinBox.value
+    property alias cfg_ButtonCommonSize: buttonCommonSizeCheckBox.checked
+    property alias cfg_ShowOnlyCurrent: showOnlyCurrentCheckBox.checked
+    property alias cfg_ShowOnlyOccupied: showOnlyOccupiedCheckBox.checked
 
     // Desktop labels
-    property alias cfg_DesktopLabelsStyle: desktopLabelsStyleComboBox.currentIndex
-    property string cfg_DesktopLabelsStyleCustomFormat
-    property string cfg_DesktopLabelsCustomFont
-    property int cfg_DesktopLabelsCustomFontSize
-    property string cfg_DesktopLabelsCustomColor
-    property alias cfg_DesktopLabelsDimForIdleDesktops: desktopLabelsDimForIdleDesktopsCheckBox.checked
-    property alias cfg_DesktopLabelsBoldFontForCurrentDesktop: desktopLabelsBoldFontForCurrentDesktopCheckBox.checked
-    property alias cfg_DesktopLabelsMaximumLength: desktopLabelsMaximumLengthSpinBox.value
-    property alias cfg_DesktopLabelsDisplayAsUppercased: desktopLabelsDisplayAsUppercasedCheckBox.checked
+    property alias cfg_LabelStyle: labelStyleComboBox.currentIndex
+    property string cfg_LabelCustomFormat
+    property string cfg_LabelFont
+    property int cfg_LabelFontSize
+    property string cfg_LabelColor
+    property alias cfg_LabelDimIdle: labelDimIdleCheckBox.checked
+    property alias cfg_LabelBoldCurrent: labelBoldCurrentCheckBox.checked
+    property alias cfg_LabelMaxLength: labelMaxLengthSpinBox.value
+    property alias cfg_LabelUppercase: labelUppercaseCheckBox.checked
 
     // Desktop indicators
-    property alias cfg_DesktopIndicatorsStyle: desktopIndicatorsStyleComboBox.currentIndex
-    property alias cfg_DesktopIndicatorsStyleBlockRadius: desktopIndicatorsStyleBlockRadiusSpinBox.value
-    property alias cfg_DesktopIndicatorsStyleLineThickness: desktopIndicatorsStyleLineThicknessSpinBox.value
-    property alias cfg_DesktopIndicatorsInvertPosition: desktopIndicatorsInvertPositionCheckBox.checked
-    property string cfg_DesktopIndicatorsCustomColorForIdleDesktops
-    property string cfg_DesktopIndicatorsCustomColorForCurrentDesktop
-    property string cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops
-    property string cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention
-    property alias cfg_DesktopIndicatorsDoNotOverrideOpacityOfCustomColors: desktopIndicatorsDoNotOverrideOpacityOfCustomColorsCheckBox.checked
-    property alias cfg_DesktopIndicatorsDistinctForOccupiedIdleDesktops: desktopIndicatorsDistinctForOccupiedIdleDesktopsCheckBox.checked
-    property alias cfg_DesktopIndicatorsDistinctForDesktopsNeedingAttention: desktopIndicatorsDistinctForDesktopsNeedingAttentionCheckBox.checked
+    property alias cfg_IndicatorStyle: indicatorStyleComboBox.currentIndex
+    property alias cfg_IndicatorBlockRadius: indicatorBlockRadiusSpinBox.value
+    property alias cfg_IndicatorLineThickness: indicatorLineThicknessSpinBox.value
+    property alias cfg_IndicatorInvert: indicatorInvertCheckBox.checked
+    property string cfg_IndicatorColorIdle
+    property string cfg_IndicatorColorCurrent
+    property string cfg_IndicatorColorOccupied
+    property string cfg_IndicatorColorAttention
+    property alias cfg_IndicatorKeepOpacity: indicatorKeepOpacityCheckBox.checked
+    property alias cfg_IndicatorDistinctOccupied: indicatorDistinctOccupiedCheckBox.checked
+    property alias cfg_IndicatorDistinctAttention: indicatorDistinctAttentionCheckBox.checked
 
     Kirigami.FormLayout {
         Item { Kirigami.FormData.isSection: true }
@@ -65,7 +65,7 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: "Animations:"
 
             CheckBox {
-                id: animationsEnableCheckBox
+                id: animationsCheckBox
                 text: "Enable animations"
             }
         }
@@ -75,7 +75,7 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: "Tooltips:"
 
             CheckBox {
-                id: tooltipsEnableCheckBox
+                id: tooltipsCheckBox
                 text: "Enable hover tooltips"
             }
         }
@@ -84,13 +84,13 @@ KCM.SimpleKCM {
         RowLayout {
             Kirigami.FormData.label: "Add Desktop Button:"
             CheckBox {
-                id: addDesktopButtonShowCheckBox
-                enabled: !cfg_DynamicDesktopsEnable
+                id: showAddButtonCheckBox
+                enabled: !cfg_DynamicDesktops
                 text: "Show button for adding desktops"
             }
 
             HintIcon {
-                visible: !addDesktopButtonShowCheckBox.enabled
+                visible: !showAddButtonCheckBox.enabled
                 tooltipText: "Not available if dynamic desktops are enabled"
             }
         }
@@ -103,13 +103,13 @@ KCM.SimpleKCM {
             }
 
             PXSpinBox {
-                id: desktopButtonsVerticalMarginSpinBox
-                value: cfg_DesktopButtonsVerticalMargin
+                id: buttonMarginVerticalSpinBox
+                value: cfg_ButtonMarginVertical
 
                 editable: plasmoid.formFactor == PlasmaCore.Types.Vertical ||
-                    (cfg_DesktopIndicatorsStyle != IndicatorStyles.EdgeLine &&
-                        cfg_DesktopIndicatorsStyle != IndicatorStyles.FullSize &&
-                        cfg_DesktopIndicatorsStyle != IndicatorStyles.UseLabels)
+                    (cfg_IndicatorStyle != IndicatorStyles.EdgeLine &&
+                        cfg_IndicatorStyle != IndicatorStyles.FullSize &&
+                        cfg_IndicatorStyle != IndicatorStyles.UseLabels)
 
                 from: 0
                 to: 300
@@ -117,7 +117,7 @@ KCM.SimpleKCM {
             }
 
             HintIcon {
-                visible: !desktopButtonsVerticalMarginSpinBox.enabled
+                visible: !buttonMarginVerticalSpinBox.enabled
                 tooltipText: "Not available for the selected indicator style"
             }
         }
@@ -128,13 +128,13 @@ KCM.SimpleKCM {
             }
 
             PXSpinBox {
-                id: desktopButtonsHorizontalMarginSpinBox
-                value: cfg_DesktopButtonsHorizontalMargin
+                id: buttonMarginHorizontalSpinBox
+                value: cfg_ButtonMarginHorizontal
 
                 editable: plasmoid.formFactor != PlasmaCore.Types.Vertical ||
-                    (cfg_DesktopIndicatorsStyle != IndicatorStyles.SideLine &&
-                        cfg_DesktopIndicatorsStyle != IndicatorStyles.FullSize &&
-                        cfg_DesktopIndicatorsStyle != IndicatorStyles.UseLabels)
+                    (cfg_IndicatorStyle != IndicatorStyles.SideLine &&
+                        cfg_IndicatorStyle != IndicatorStyles.FullSize &&
+                        cfg_IndicatorStyle != IndicatorStyles.UseLabels)
 
                 from: 0
                 to: 300
@@ -142,23 +142,23 @@ KCM.SimpleKCM {
             }
 
             HintIcon {
-                visible: !desktopButtonsHorizontalMarginSpinBox.enabled
+                visible: !buttonMarginHorizontalSpinBox.enabled
                 tooltipText: "Not available for the selected indicator style"
             }
         }
 
         RowLayout {
             Label {
-                enabled: desktopButtonsSpacingSpinBox.enabled
+                enabled: buttonSpacingSpinBox.enabled
                 text: "Spacing between buttons:"
             }
 
             PXSpinBox {
-                id: desktopButtonsSpacingSpinBox
-                value: cfg_DesktopButtonsSpacing
+                id: buttonSpacingSpinBox
+                value: cfg_ButtonSpacing
 
-                editable: !cfg_DesktopButtonsShowOnlyForCurrentDesktop ||
-                    cfg_DesktopButtonsShowOnlyForOccupiedDesktops
+                editable: !cfg_ShowOnlyCurrent ||
+                    cfg_ShowOnlyOccupied
 
                 from: 0
                 to: 100
@@ -166,14 +166,14 @@ KCM.SimpleKCM {
             }
 
             HintIcon {
-                visible: !desktopButtonsSpacingSpinBox.enabled
+                visible: !buttonSpacingSpinBox.enabled
                 tooltipText: "Not available if only one button is shown"
             }
         }
 
         RowLayout {
             CheckBox {
-                id: desktopButtonsSetCommonSizeForAllCheckBox
+                id: buttonCommonSizeCheckBox
                 text: "Set common size for all buttons"
             }
 
@@ -183,12 +183,12 @@ KCM.SimpleKCM {
         }
 
         CheckBox {
-            id: desktopButtonsShowOnlyForCurrentDesktopCheckBox
+            id: showOnlyCurrentCheckBox
             text: "Show button only for current desktop"
         }
 
         CheckBox {
-            id: desktopButtonsShowOnlyForOccupiedDesktopsCheckBox
+            id: showOnlyOccupiedCheckBox
             text: "Show button only for occupied desktops"
         }
 
@@ -200,7 +200,7 @@ KCM.SimpleKCM {
             }
 
             ComboBox {
-                id: desktopLabelsStyleComboBox
+                id: labelStyleComboBox
                 implicitWidth: 150
                 model: [
                     "Name",
@@ -210,36 +210,36 @@ KCM.SimpleKCM {
                     "Custom format"
                 ]
                 onCurrentIndexChanged: {
-                    if (cfg_DesktopLabelsStyle == 4) {
-                        cfg_DesktopLabelsStyleCustomFormat = desktopLabelsStyleTextField.text;
+                    if (cfg_LabelStyle == 4) {
+                        cfg_LabelCustomFormat = labelStyleTextField.text;
                     } else {
-                        cfg_DesktopLabelsStyleCustomFormat = "";
+                        cfg_LabelCustomFormat = "";
                     }
                 }
 
                 Component.onCompleted: {
-                    if (cfg_DesktopLabelsStyle != 4 &&
-                        cfg_DesktopLabelsStyleCustomFormat) {
-                        cfg_DesktopLabelsStyleCustomFormat = "";
+                    if (cfg_LabelStyle != 4 &&
+                        cfg_LabelCustomFormat) {
+                        cfg_LabelCustomFormat = "";
                     }
                 }
             }
 
             UICommon.GrowingTextField {
-                id: desktopLabelsStyleTextField
-                visible: cfg_DesktopLabelsStyle == 4
+                id: labelStyleTextField
+                visible: cfg_LabelStyle == 4
                 maximumLength: 50
-                text: cfg_DesktopLabelsStyleCustomFormat || "$X: $N"
+                text: cfg_LabelCustomFormat || "$X: $N"
                 onTextChanged: {
-                    if (cfg_DesktopLabelsStyle == 4 && text) {
-                        cfg_DesktopLabelsStyleCustomFormat = text;
+                    if (cfg_LabelStyle == 4 && text) {
+                        cfg_LabelCustomFormat = text;
                     }
                 }
-                onEditingFinished: cfg_DesktopLabelsStyleCustomFormat = text
+                onEditingFinished: cfg_LabelCustomFormat = text
             }
 
             HintIcon {
-                visible: desktopLabelsStyleTextField.visible
+                visible: labelStyleTextField.visible
                 tooltipText: "Available variables:<br><br>
                           <tt>$X</tt> = desktop's number<br>
                           <tt>$R</tt> = desktop's number (Roman)<br>
@@ -253,20 +253,20 @@ KCM.SimpleKCM {
 
         RowLayout {
             Label {
-                enabled: desktopLabelsMaximumLengthSpinBox.enabled
+                enabled: labelMaxLengthSpinBox.enabled
                 text: "Maximum length:"
             }
 
             PXSpinBox {
-                id: desktopLabelsMaximumLengthSpinBox
-                editable: cfg_DesktopLabelsStyle != 1
+                id: labelMaxLengthSpinBox
+                editable: cfg_LabelStyle != 1
                 from: 3
                 to: 100
                 suffix: " chars"
             }
 
             HintIcon {
-                tooltipText: cfg_DesktopLabelsStyle == 1 ?
+                tooltipText: cfg_LabelStyle == 1 ?
                     "Not available for the selected label style" :
                     "Labels longer than the specified value will be ellipsized"
             }
@@ -274,23 +274,23 @@ KCM.SimpleKCM {
 
         RowLayout {
             CheckBox {
-                id: desktopLabelsCustomFontCheckBox
-                checked: cfg_DesktopLabelsCustomFont
+                id: labelCustomFontCheckBox
+                checked: cfg_LabelFont
                 onCheckedChanged: {
                     if (checked) {
-                        var currentIndex = desktopLabelsCustomFontComboBox.currentIndex;
-                        var selectedFont = desktopLabelsCustomFontComboBox.model[currentIndex].value;
-                        cfg_DesktopLabelsCustomFont = selectedFont;
+                        var currentIndex = labelCustomFontComboBox.currentIndex;
+                        var selectedFont = labelCustomFontComboBox.model[currentIndex].value;
+                        cfg_LabelFont = selectedFont;
                     } else {
-                        cfg_DesktopLabelsCustomFont = "";
+                        cfg_LabelFont = "";
                     }
                 }
                 text: "Custom font:"
             }
 
             ComboBox {
-                id: desktopLabelsCustomFontComboBox
-                enabled: desktopLabelsCustomFontCheckBox.checked
+                id: labelCustomFontComboBox
+                enabled: labelCustomFontCheckBox.checked
                 implicitWidth: 130
 
                 Component.onCompleted: {
@@ -301,7 +301,7 @@ KCM.SimpleKCM {
                     }
                     model = array;
 
-                    var foundIndex = find(cfg_DesktopLabelsCustomFont);
+                    var foundIndex = find(cfg_LabelFont);
                     if (foundIndex == -1) {
                         foundIndex = find(PlasmaCore.Theme.defaultFont.family);
                     }
@@ -315,7 +315,7 @@ KCM.SimpleKCM {
                         var selectedItem = model[currentIndex];
                         if (selectedItem) {
                             var selectedFont = selectedItem.value;
-                            cfg_DesktopLabelsCustomFont = selectedFont;
+                            cfg_LabelFont = selectedFont;
                         }
                     }
                 }
@@ -324,24 +324,24 @@ KCM.SimpleKCM {
 
         RowLayout {
             CheckBox {
-                id: desktopLabelsCustomFontSizeCheckBox
-                checked: cfg_DesktopLabelsCustomFontSize > 0
-                onCheckedChanged: cfg_DesktopLabelsCustomFontSize = checked ?
-                    desktopLabelsCustomFontSizeSpinBox.value : 0
+                id: labelCustomFontSizeCheckBox
+                checked: cfg_LabelFontSize > 0
+                onCheckedChanged: cfg_LabelFontSize = checked ?
+                    labelCustomFontSizeSpinBox.value : 0
                 text: "Custom font size:"
             }
 
             PXSpinBox {
-                id: desktopLabelsCustomFontSizeSpinBox
-                value: cfg_DesktopLabelsCustomFontSize || PlasmaCore.Theme.defaultFont.pixelSize
+                id: labelCustomFontSizeSpinBox
+                value: cfg_LabelFontSize || PlasmaCore.Theme.defaultFont.pixelSize
 
-                editable: desktopLabelsCustomFontSizeCheckBox.checked
+                editable: labelCustomFontSizeCheckBox.checked
                 from: 5
                 to: 100
                 suffix: " px"
                 onValueChanged: {
-                    if (desktopLabelsCustomFontSizeCheckBox.checked) {
-                        cfg_DesktopLabelsCustomFontSize = value;
+                    if (labelCustomFontSizeCheckBox.checked) {
+                        cfg_LabelFontSize = value;
                     }
                 }
             }
@@ -349,22 +349,22 @@ KCM.SimpleKCM {
 
         RowLayout {
             CheckBox {
-                id: desktopLabelsCustomColorCheckBox
-                enabled: cfg_DesktopIndicatorsStyle != IndicatorStyles.UseLabels
-                checked: cfg_DesktopLabelsCustomColor
-                onCheckedChanged: cfg_DesktopLabelsCustomColor = checked ?
-                    desktopLabelsCustomColorButton.color : ""
+                id: labelCustomColorCheckBox
+                enabled: cfg_IndicatorStyle != IndicatorStyles.UseLabels
+                checked: cfg_LabelColor
+                onCheckedChanged: cfg_LabelColor = checked ?
+                    labelCustomColorButton.color : ""
                 text: "Custom text color:"
             }
 
             ColorButton {
-                id: desktopLabelsCustomColorButton
-                enabled: desktopLabelsCustomColorCheckBox.enabled &&
-                    desktopLabelsCustomColorCheckBox.checked
-                color: cfg_DesktopLabelsCustomColor || PlasmaCore.Theme.textColor
+                id: labelCustomColorButton
+                enabled: labelCustomColorCheckBox.enabled &&
+                    labelCustomColorCheckBox.checked
+                color: cfg_LabelColor || PlasmaCore.Theme.textColor
 
                 colorAcceptedCallback: function (color) {
-                    cfg_DesktopLabelsCustomColor = color;
+                    cfg_LabelColor = color;
                 }
             }
 
@@ -373,9 +373,9 @@ KCM.SimpleKCM {
             }
 
             HintIcon {
-                visible: desktopLabelsCustomColorCheckBox.checked ||
-                    !desktopLabelsCustomColorCheckBox.enabled
-                tooltipText: cfg_DesktopIndicatorsStyle != IndicatorStyles.UseLabels ?
+                visible: labelCustomColorCheckBox.checked ||
+                    !labelCustomColorCheckBox.enabled
+                tooltipText: cfg_IndicatorStyle != IndicatorStyles.UseLabels ?
                     "Click the colored box to choose a different color" :
                     "Not available if labels are used as indicators"
             }
@@ -383,32 +383,32 @@ KCM.SimpleKCM {
 
         RowLayout {
             CheckBox {
-                id: desktopLabelsDimForIdleDesktopsCheckBox
-                enabled: cfg_DesktopIndicatorsStyle != IndicatorStyles.UseLabels
+                id: labelDimIdleCheckBox
+                enabled: cfg_IndicatorStyle != IndicatorStyles.UseLabels
                 text: "Dim labels for idle desktops"
             }
 
             HintIcon {
-                visible: !desktopLabelsDimForIdleDesktopsCheckBox.enabled
+                visible: !labelDimIdleCheckBox.enabled
                 tooltipText: "Not available if labels are used as indicators"
             }
         }
 
         RowLayout {
             CheckBox {
-                id: desktopLabelsDisplayAsUppercasedCheckBox
-                enabled: cfg_DesktopLabelsStyle != 1
+                id: labelUppercaseCheckBox
+                enabled: cfg_LabelStyle != 1
                 text: "Display labels as UPPERCASED"
             }
 
             HintIcon {
-                visible: !desktopLabelsDisplayAsUppercasedCheckBox.enabled
+                visible: !labelUppercaseCheckBox.enabled
                 tooltipText: "Not available for the selected label style"
             }
         }
 
         CheckBox {
-            id: desktopLabelsBoldFontForCurrentDesktopCheckBox
+            id: labelBoldCurrentCheckBox
             text: "Set bold font for current desktop"
         }
 
@@ -420,7 +420,7 @@ KCM.SimpleKCM {
             }
 
             ComboBox {
-                id: desktopIndicatorsStyleComboBox
+                id: indicatorStyleComboBox
                 implicitWidth: 100
                 model: [
                     "Edge line",
@@ -432,39 +432,39 @@ KCM.SimpleKCM {
                 ]
 
                 onCurrentIndexChanged: {
-                    if (cfg_DesktopIndicatorsStyle == IndicatorStyles.Block) {
-                        cfg_DesktopIndicatorsStyleBlockRadius = desktopIndicatorsStyleBlockRadiusSpinBox.value;
+                    if (cfg_IndicatorStyle == IndicatorStyles.Block) {
+                        cfg_IndicatorBlockRadius = indicatorBlockRadiusSpinBox.value;
                     } else {
-                        cfg_DesktopIndicatorsStyleBlockRadius = 2;
+                        cfg_IndicatorBlockRadius = 2;
                     }
-                    if (cfg_DesktopIndicatorsStyle < IndicatorStyles.Block) {
-                        cfg_DesktopIndicatorsStyleLineThickness = desktopIndicatorsStyleLineThicknessSpinBox.value;
+                    if (cfg_IndicatorStyle < IndicatorStyles.Block) {
+                        cfg_IndicatorLineThickness = indicatorLineThicknessSpinBox.value;
                     } else {
-                        cfg_DesktopIndicatorsStyleLineThickness = 3;
+                        cfg_IndicatorLineThickness = 3;
                     }
 
                 }
 
                 Component.onCompleted: {
-                    if (cfg_DesktopIndicatorsStyle != IndicatorStyles.Block) {
-                        cfg_DesktopIndicatorsStyleBlockRadius = 2;
+                    if (cfg_IndicatorStyle != IndicatorStyles.Block) {
+                        cfg_IndicatorBlockRadius = 2;
                     }
                 }
             }
 
             PXSpinBox {
-                id: desktopIndicatorsStyleBlockRadiusSpinBox
-                value: cfg_DesktopIndicatorsStyleBlockRadius
-                visible: cfg_DesktopIndicatorsStyle == IndicatorStyles.Block
+                id: indicatorBlockRadiusSpinBox
+                value: cfg_IndicatorBlockRadius
+                visible: cfg_IndicatorStyle == IndicatorStyles.Block
                 from: 0
                 to: 300
                 suffix: " px corner radius"
             }
 
             PXSpinBox {
-                id: desktopIndicatorsStyleLineThicknessSpinBox
-                value: cfg_DesktopIndicatorsStyleLineThickness
-                visible: cfg_DesktopIndicatorsStyle < IndicatorStyles.Block
+                id: indicatorLineThicknessSpinBox
+                value: cfg_IndicatorLineThickness
+                visible: cfg_IndicatorStyle < IndicatorStyles.Block
                 from: 1
                 to: 10
                 suffix: " px thickness"
@@ -473,29 +473,29 @@ KCM.SimpleKCM {
 
         RowLayout {
             CheckBox {
-                id: desktopIndicatorsInvertPositionCheckBox
-                enabled: cfg_DesktopIndicatorsStyle < IndicatorStyles.Block
+                id: indicatorInvertCheckBox
+                enabled: cfg_IndicatorStyle < IndicatorStyles.Block
                 text: "Invert indicator's position"
             }
 
             HintIcon {
-                visible: !desktopIndicatorsInvertPositionCheckBox.enabled
+                visible: !indicatorInvertCheckBox.enabled
                 tooltipText: "Not available for the selected indicator style"
             }
         }
 
         RowLayout {
             CheckBox {
-                id: desktopIndicatorsDoNotOverrideOpacityOfCustomColorsCheckBox
-                enabled: desktopIndicatorsCustomColorForCurrentDesktopCheckBox.checked ||
-                    desktopIndicatorsCustomColorForIdleDesktopsCheckBox.checked ||
-                    desktopIndicatorsCustomColorForOccupiedIdleDesktopsCheckBox.checked ||
-                    desktopIndicatorsCustomColorForDesktopsNeedingAttentionCheckBox.checked
+                id: indicatorKeepOpacityCheckBox
+                enabled: indicatorCustomColorCurrentCheckBox.checked ||
+                    indicatorCustomColorIdleCheckBox.checked ||
+                    indicatorCustomColorOccupiedCheckBox.checked ||
+                    indicatorCustomColorAttentionCheckBox.checked
                 text: "Do not override opacity of custom colors"
             }
 
             HintIcon {
-                tooltipText: !desktopIndicatorsDoNotOverrideOpacityOfCustomColorsCheckBox.enabled ?
+                tooltipText: !indicatorKeepOpacityCheckBox.enabled ?
                     "Not available if custom colors are not used" :
                     "Alpha channel of custom colors will be applied without any modifications"
             }
@@ -503,108 +503,108 @@ KCM.SimpleKCM {
 
         RowLayout {
             CheckBox {
-                id: desktopIndicatorsDistinctForOccupiedIdleDesktopsCheckBox
-                enabled: !cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops ||
-                    !cfg_DesktopIndicatorsDoNotOverrideOpacityOfCustomColors
+                id: indicatorDistinctOccupiedCheckBox
+                enabled: !cfg_IndicatorColorOccupied ||
+                    !cfg_IndicatorKeepOpacity
                 text: "Distinct indicators for occupied idle desktops"
             }
 
             HintIcon {
-                visible: !desktopIndicatorsDistinctForOccupiedIdleDesktopsCheckBox.enabled
+                visible: !indicatorDistinctOccupiedCheckBox.enabled
                 tooltipText: "Not available if a custom color is used and overriding opacity of custom colors is blocked"
             }
         }
 
         RowLayout {
             CheckBox {
-                id: desktopIndicatorsDistinctForDesktopsNeedingAttentionCheckBox
-                enabled: !cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention ||
-                    !cfg_DesktopIndicatorsDoNotOverrideOpacityOfCustomColors
+                id: indicatorDistinctAttentionCheckBox
+                enabled: !cfg_IndicatorColorAttention ||
+                    !cfg_IndicatorKeepOpacity
                 text: "Distinct indicators for desktops needing attention"
             }
 
             HintIcon {
-                visible: !desktopIndicatorsDistinctForDesktopsNeedingAttentionCheckBox.enabled
+                visible: !indicatorDistinctAttentionCheckBox.enabled
                 tooltipText: "Not available if a custom color is used and overriding opacity of custom colors is blocked"
             }
         }
 
         RowLayout {
             CheckBox {
-                id: desktopIndicatorsCustomColorForIdleDesktopsCheckBox
-                checked: cfg_DesktopIndicatorsCustomColorForIdleDesktops
-                onCheckedChanged: cfg_DesktopIndicatorsCustomColorForIdleDesktops = checked ?
-                    desktopIndicatorsCustomColorForIdleDesktopsButton.color : ""
+                id: indicatorCustomColorIdleCheckBox
+                checked: cfg_IndicatorColorIdle
+                onCheckedChanged: cfg_IndicatorColorIdle = checked ?
+                    indicatorCustomColorIdleButton.color : ""
                 text: "Custom color for idle desktops:"
             }
 
             ColorButton {
-                id: desktopIndicatorsCustomColorForIdleDesktopsButton
-                enabled: desktopIndicatorsCustomColorForIdleDesktopsCheckBox.checked
-                color: cfg_DesktopIndicatorsCustomColorForIdleDesktops || PlasmaCore.Theme.textColor
+                id: indicatorCustomColorIdleButton
+                enabled: indicatorCustomColorIdleCheckBox.checked
+                color: cfg_IndicatorColorIdle || PlasmaCore.Theme.textColor
 
                 colorAcceptedCallback: function (color) {
-                    cfg_DesktopIndicatorsCustomColorForIdleDesktops = color;
+                    cfg_IndicatorColorIdle = color;
                 }
             }
         }
 
         RowLayout {
             CheckBox {
-                id: desktopIndicatorsCustomColorForCurrentDesktopCheckBox
-                checked: cfg_DesktopIndicatorsCustomColorForCurrentDesktop
-                onCheckedChanged: cfg_DesktopIndicatorsCustomColorForCurrentDesktop = checked ?
-                    desktopIndicatorsCustomColorForCurrentDesktopButton.color : ""
+                id: indicatorCustomColorCurrentCheckBox
+                checked: cfg_IndicatorColorCurrent
+                onCheckedChanged: cfg_IndicatorColorCurrent = checked ?
+                    indicatorCustomColorCurrentButton.color : ""
                 text: "Custom color for current desktop:"
             }
 
             ColorButton {
-                id: desktopIndicatorsCustomColorForCurrentDesktopButton
-                enabled: desktopIndicatorsCustomColorForCurrentDesktopCheckBox.checked
-                color: cfg_DesktopIndicatorsCustomColorForCurrentDesktop || PlasmaCore.Theme.buttonFocusColor
+                id: indicatorCustomColorCurrentButton
+                enabled: indicatorCustomColorCurrentCheckBox.checked
+                color: cfg_IndicatorColorCurrent || PlasmaCore.Theme.buttonFocusColor
 
                 colorAcceptedCallback: function (color) {
-                    cfg_DesktopIndicatorsCustomColorForCurrentDesktop = color;
+                    cfg_IndicatorColorCurrent = color;
                 }
             }
         }
 
         RowLayout {
             CheckBox {
-                id: desktopIndicatorsCustomColorForOccupiedIdleDesktopsCheckBox
-                checked: cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops
-                onCheckedChanged: cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops = checked ?
-                    desktopIndicatorsCustomColorForOccupiedIdleDesktopsButton.color : ""
+                id: indicatorCustomColorOccupiedCheckBox
+                checked: cfg_IndicatorColorOccupied
+                onCheckedChanged: cfg_IndicatorColorOccupied = checked ?
+                    indicatorCustomColorOccupiedButton.color : ""
                 text: "Custom color for occupied idle desktops:"
             }
 
             ColorButton {
-                id: desktopIndicatorsCustomColorForOccupiedIdleDesktopsButton
-                enabled: desktopIndicatorsCustomColorForOccupiedIdleDesktopsCheckBox.checked
-                color: cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops || PlasmaCore.Theme.textColor
+                id: indicatorCustomColorOccupiedButton
+                enabled: indicatorCustomColorOccupiedCheckBox.checked
+                color: cfg_IndicatorColorOccupied || PlasmaCore.Theme.textColor
 
                 colorAcceptedCallback: function (color) {
-                    cfg_DesktopIndicatorsCustomColorForOccupiedIdleDesktops = color;
+                    cfg_IndicatorColorOccupied = color;
                 }
             }
         }
 
         RowLayout {
             CheckBox {
-                id: desktopIndicatorsCustomColorForDesktopsNeedingAttentionCheckBox
-                checked: cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention
-                onCheckedChanged: cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention = checked ?
-                    desktopIndicatorsCustomColorForDesktopsNeedingAttentionButton.color : ""
+                id: indicatorCustomColorAttentionCheckBox
+                checked: cfg_IndicatorColorAttention
+                onCheckedChanged: cfg_IndicatorColorAttention = checked ?
+                    indicatorCustomColorAttentionButton.color : ""
                 text: "Custom color for desktops needing attention:"
             }
 
             ColorButton {
-                id: desktopIndicatorsCustomColorForDesktopsNeedingAttentionButton
-                enabled: desktopIndicatorsCustomColorForDesktopsNeedingAttentionCheckBox.checked
-                color: cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention || PlasmaCore.Theme.textColor
+                id: indicatorCustomColorAttentionButton
+                enabled: indicatorCustomColorAttentionCheckBox.checked
+                color: cfg_IndicatorColorAttention || PlasmaCore.Theme.textColor
 
                 colorAcceptedCallback: function (color) {
-                    cfg_DesktopIndicatorsCustomColorForDesktopsNeedingAttention = color;
+                    cfg_IndicatorColorAttention = color;
                 }
             }
         }
