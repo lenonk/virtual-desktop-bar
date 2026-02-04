@@ -3,12 +3,13 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
 
-import "../common" as UICommon
+import "../common" as Common
 
 PlasmaCore.Dialog {
     id: root
 
     property var callback: function() {}
+    property bool isNew: false
 
     visualParent: null
     location: plasmoid.location
@@ -25,7 +26,7 @@ PlasmaCore.Dialog {
             text: "Rename As: "
         }
 
-        UICommon.GrowingTextField {
+        Common.GrowingTextField {
             id: desktopNameInput
             implicitHeight: 28
             maximumLength: 20
@@ -50,13 +51,14 @@ PlasmaCore.Dialog {
         }
     }
 
-    function show(desktopButton) {
+    function show(desktopButton, isNew) {
         if (!desktopButton) {
             console.warn("Cannot show rename popup: no button provided");
             return;
         }
 
         visualParent = desktopButton;
+        isNew = isNew || false;
 
         desktopNameInput.text = desktopButton.name;
 
@@ -65,6 +67,11 @@ PlasmaCore.Dialog {
             if (name.length > 0) {
                 desktopRenamed(desktopButton.uuid, name);
             }
+
+            if (isNew && config.NewDesktopCommand.length > 0) {
+                backend.run(config.NewDesktopCommand);
+            }
+
             visible = false;
         };
 

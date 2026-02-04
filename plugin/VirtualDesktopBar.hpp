@@ -49,6 +49,7 @@ public:
     Q_INVOKABLE QPoint getRelativeScreenPosition() const;
     Q_INVOKABLE QSize getCursorSize() const;
     Q_INVOKABLE bool isMouseButtonPressed() const;
+    Q_INVOKABLE void run(const QString &cmd) const;
 
 Q_SIGNALS:
     void desktopCreated(const QString &id, const QVariantMap &desktopData);

@@ -71,6 +71,7 @@ PlasmoidItem {
             onTriggered: plasmoidRoot.action_renameDesktop()
         },
         PlasmaCore.Action {
+            enabled: config.DynamicDesktops === false
             text: i18n("Remove Desktop")
             icon.name: "list-remove"
             onTriggered: plasmoidRoot.action_removeDesktop()
@@ -79,11 +80,13 @@ PlasmoidItem {
             isSeparator: true
         },
         PlasmaCore.Action {
+            enabled: config.DynamicDesktops === false
             text: i18n("Add Desktop")
             icon.name: "list-add"
             onTriggered: plasmoidRoot.action_addDesktop()
         },
         PlasmaCore.Action {
+            enabled: config.DynamicDesktops === false
             text: i18n("Remove Last Desktop")
             icon.name: "list-remove"
             onTriggered: plasmoidRoot.action_removeLastDesktop()

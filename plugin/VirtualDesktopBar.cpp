@@ -9,6 +9,7 @@
 #include <QScreen>
 #include <QCoreApplication>
 #include <QDBusConnectionInterface>
+#include <QProcess>
 
 #include <KService>
 #include <PlasmaActivities/Consumer>
@@ -418,6 +419,12 @@ VirtualDesktopBar::getCursorSize() const {
 bool
 VirtualDesktopBar::isMouseButtonPressed() const {
     return QGuiApplication::mouseButtons() & Qt::LeftButton;
+}
+
+void
+VirtualDesktopBar::run(const QString &cmd) const {
+    qInfo() << "Running command:" << cmd;
+    QProcess::startDetached(cmd);
 }
 
 QPoint

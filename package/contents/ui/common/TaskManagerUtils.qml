@@ -10,9 +10,18 @@ QtObject {
         id: tasksModel
         filterByVirtualDesktop: true
         filterByActivity: true
+        filterByScreen: false
+        screenGeometry: Qt.rect(0, 0, 0, 0)
     }
 
     property var activeWindowCache: ({})
+
+    function setScreenFiltering(enabled, geometry) {
+        tasksModel.filterByScreen = enabled;
+        if (enabled && geometry) {
+            tasksModel.screenGeometry = geometry;
+        }
+    }
 
     function getActiveWindowName(desktopUuid, activityId) {
         if (!desktopUuid) return "";

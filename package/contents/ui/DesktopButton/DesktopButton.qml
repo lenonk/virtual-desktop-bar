@@ -314,7 +314,7 @@ Rectangle {
 
             onTriggered: {
                 Qt.callLater(function() {
-                    if (!ignoreMouseArea) {
+                    if (!ignoreMouseArea && !buttonGrid.isRenamingDesktop) {
                         buttonTooltip.show();
                     }
                 });
