@@ -14,6 +14,61 @@ pragma ComponentBehavior: Bound
 
 KCM.SimpleKCM {
     id: root
+
+    // Add config keys used on other tabs (Plasma injects all cfg_* into every tab)
+    property string cfg_EmptyDesktopName
+    property bool   cfg_SwitchToNewDesktop
+    property bool   cfg_PromptRenameNew
+    property string cfg_NewDesktopCommand
+    property bool   cfg_FilterByScreen
+    property bool   cfg_WheelClickRemoves
+    property bool   cfg_WheelScrollSwitches
+    property bool   cfg_WheelInvertDirection
+    property bool   cfg_WheelWrapAround
+    property int    cfg_AddDesktopButtonSize
+
+    // Add defaults (Plasma may inject cfg_*Default too)
+    property string cfg_EmptyDesktopNameDefault
+    property bool   cfg_SwitchToNewDesktopDefault
+    property bool   cfg_PromptRenameNewDefault
+    property string cfg_NewDesktopCommandDefault
+    property bool   cfg_DynamicDesktopsDefault
+    property bool   cfg_FilterByScreenDefault
+    property bool   cfg_WheelClickRemovesDefault
+    property bool   cfg_WheelScrollSwitchesDefault
+    property bool   cfg_WheelInvertDirectionDefault
+    property bool   cfg_WheelWrapAroundDefault
+    property bool   cfg_AnimationsEnableDefault
+    property bool   cfg_TooltipsEnableDefault
+    property bool   cfg_ShowAddButtonDefault
+    property int    cfg_AddDesktopButtonSizeDefault
+    property int    cfg_ButtonMarginVerticalDefault
+    property int    cfg_ButtonMarginHorizontalDefault
+    property int    cfg_ButtonSpacingDefault
+    property bool   cfg_ButtonCommonSizeDefault
+    property bool   cfg_ShowOnlyCurrentDefault
+    property bool   cfg_ShowOnlyOccupiedDefault
+    property int    cfg_LabelStyleDefault
+    property string cfg_LabelCustomFormatDefault
+    property int    cfg_LabelMaxLengthDefault
+    property string cfg_LabelFontDefault
+    property int    cfg_LabelFontSizeDefault
+    property string cfg_LabelColorDefault
+    property bool   cfg_LabelDimIdleDefault
+    property bool   cfg_LabelUppercaseDefault
+    property bool   cfg_LabelBoldCurrentDefault
+    property int    cfg_IndicatorStyleDefault
+    property int    cfg_IndicatorBlockRadiusDefault
+    property int    cfg_IndicatorLineThicknessDefault
+    property bool   cfg_IndicatorInvertDefault
+    property string cfg_IndicatorColorIdleDefault
+    property string cfg_IndicatorColorCurrentDefault
+    property string cfg_IndicatorColorOccupiedDefault
+    property string cfg_IndicatorColorAttentionDefault
+    property bool   cfg_IndicatorKeepOpacityDefault
+    property bool   cfg_IndicatorDistinctOccupiedDefault
+    property bool   cfg_IndicatorDistinctAttentionDefault
+
     // Behavior - Dynamic desktops
     property bool cfg_DynamicDesktops
 

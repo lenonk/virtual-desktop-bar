@@ -64,9 +64,9 @@
         <entry name="ShowAddButton" type="Bool">
             <default>true</default>
         </entry>
-        <entry name="AddDesktopButtonSize" type="Int">
-            <default>0</default>
-        </entry>
+<!--        <entry name="AddDesktopButtonSize" type="Int">-->
+<!--            <default>0</default>-->
+<!--        </entry>-->
 
         <!-- Appearance - Desktop buttons -->
         <entry name="ButtonMarginVertical" type="Int">
