@@ -42,6 +42,14 @@ Item {
         }
     }
 
+    Timer {
+        id: checkWindowCountTimer
+        repeat: false
+        onTriggered: {
+            updateWindowCounts();
+        }
+    }
+
     Connections {
         target: Common.TaskManager ? Common.TaskManager.tasksModel : null
         enabled: target !== null
@@ -51,6 +59,10 @@ Item {
                 if (!checkEmptyTimer.running) {
                     checkEmptyTimer.start();
                 }
+            }
+
+            if (!checkWindowCountTimer.running) {
+                checkWindowCountTimer.start();
             }
         }
     }
@@ -178,6 +190,7 @@ Item {
     }
 
     function switchToDesktop(number) {
+        console.log("virtualdesktopbar: switchToDesktop:", number);
         backend.setCurrentDesktop(number);
     }
 
@@ -254,6 +267,17 @@ Item {
         for (let i = 1; i < desktopInfoList.count; i++) {
             let desktop = desktopInfoList.get(i);
             backend.setDesktopName(desktop.uuid, newDesktopName)
+        }
+    }
+
+    function updateWindowCounts() {
+        if (!Common.TaskManager) return;
+
+        let activityId = backend.getCurrentActivityId();
+        for (let i = 0; i < desktopInfoList.count; i++) {
+            let desktop = desktopInfoList.get(i);
+            let hasWindows = Common.TaskManager.hasWindows(desktop.uuid, activityId);
+            desktopInfoList.setProperty(i, "has_windows", hasWindows);
         }
     }
 }

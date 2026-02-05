@@ -19,6 +19,7 @@ VirtualDesktopBar {
             "uuid": desktopId,
             "name": desktopData.name || "Desktop " + (desktopInfoList.count + 1),
             "is_current": false,
+            "has_windows": false,
         };
 
         desktopInfoList.append(newDesktop);
@@ -65,7 +66,9 @@ VirtualDesktopBar {
         desktopInfoList.clear();
 
         for (let i = 0; i < data.length; i++) {
-            desktopInfoList.append(data[i]);
+            let desktop = data[i];
+            desktop.has_windows = false;
+            desktopInfoList.append(desktop);
         }
     }
 

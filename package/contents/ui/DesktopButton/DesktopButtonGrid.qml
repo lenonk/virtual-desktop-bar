@@ -58,6 +58,7 @@ Item {
                 Layout.rightMargin: dropZoneSpacingRight
 
                 Behavior on dropZoneSpacingLeft {
+                    enabled: config.AnimationsEnable
                     NumberAnimation {
                         id: leftAnimation
                         duration: 150
@@ -66,6 +67,7 @@ Item {
                 }
 
                 Behavior on dropZoneSpacingRight {
+                    enabled: config.AnimationsEnable
                     NumberAnimation {
                         id: rightAnimation
                         duration: 150
@@ -74,10 +76,12 @@ Item {
                 }
 
                 Behavior on dropZoneSpacingTop {
+                    enabled: config.AnimationsEnable
                     NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
                 }
 
                 Behavior on dropZoneSpacingBottom {
+                    enabled: config.AnimationsEnable
                     NumberAnimation { duration: 150; easing.type: Easing.OutQuad }
                 }
 
@@ -105,7 +109,9 @@ Item {
                     }
                 }
 
-                visible: draggedButton !== this || dropZoneIndex < 0
+                visible: (draggedButton !== this || dropZoneIndex < 0) &&
+                         (!config.ShowOnlyCurrent || model.is_current) &&
+                         (!config.ShowOnlyOccupied || model.is_current || model.has_windows)
 
                 Component.onCompleted: {
                     desktopButtonGrid.desktopButtonMap[uuid] = this;
@@ -466,6 +472,16 @@ Item {
                 }
             }
         }
+
+        // If animations are disabled, create preview immediately
+        if (!config.AnimationsEnable) {
+            Qt.callLater(function() {
+                let pos = updatePreviewPosition();
+                if (pos) {
+                    createPreviewButton(pos.x, pos.y);
+                }
+            });
+        }
     }
 
     function handleDragRelease() {
@@ -640,33 +656,43 @@ Item {
             }
         }
 
-        // Determine target visible index
-        let targetVisibleIdx = dropZoneIndex;
-        if (dropZoneIndex > originalIdx) {
-            targetVisibleIdx = dropZoneIndex - 1;
-        }
-
-        console.log("  visibleButtons.length=" + visibleButtons.length + " targetVisibleIdx=" + targetVisibleIdx);
+        console.log("  visibleButtons.length=" + visibleButtons.length);
 
         let xPos = 0;
         let yPos = draggedButton.y;
 
-        if (targetVisibleIdx === 0) {
-            // Preview goes at the very start (position 0)
+        // dropZoneIndex tells us where the button will end up in the list
+        // Position preview after the button at list index (dropZoneIndex - 1)
+        if (dropZoneIndex === 0) {
+            // Preview goes at the very start
             xPos = 0;
             console.log("  Preview at start (x=0)");
-        } else if (targetVisibleIdx >= visibleButtons.length) {
-            // Preview goes after last visible button
-            if (visibleButtons.length > 0) {
-                let lastBtn = visibleButtons[visibleButtons.length - 1].button;
-                xPos = lastBtn.x + lastBtn.width;
-                console.log("  Preview at end after " + visibleButtons[visibleButtons.length - 1].name + " x=" + xPos);
-            }
         } else {
-            // Preview goes between buttons - position after the button before it
-            let beforeBtn = visibleButtons[targetVisibleIdx - 1].button;
-            xPos = beforeBtn.x + beforeBtn.width;
-            console.log("  Preview after " + visibleButtons[targetVisibleIdx - 1].name + " x=" + xPos);
+            // Find the button at list index (dropZoneIndex - 1) and position after it
+            let beforeListIdx = dropZoneIndex - 1;
+            let beforeUuid = desktopInfoList.get(beforeListIdx).uuid;
+            let beforeBtn = desktopButtonMap[beforeUuid];
+
+            if (beforeBtn && beforeBtn !== draggedButton) {
+                // Simple case: the button before is visible
+                xPos = beforeBtn.x + beforeBtn.width;
+                console.log("  Preview after button at list idx=" + beforeListIdx + " (" + beforeBtn.name + ") x=" + xPos);
+            } else if (beforeBtn === draggedButton) {
+                // The button at (dropZoneIndex-1) is the dragged button itself
+                // Need to find the actual visible button before it
+                if (beforeListIdx > 0) {
+                    let beforeBeforeListIdx = beforeListIdx - 1;
+                    let beforeBeforeUuid = desktopInfoList.get(beforeBeforeListIdx).uuid;
+                    let beforeBeforeBtn = desktopButtonMap[beforeBeforeUuid];
+                    if (beforeBeforeBtn) {
+                        xPos = beforeBeforeBtn.x + beforeBeforeBtn.width;
+                        console.log("  Preview after button at list idx=" + beforeBeforeListIdx + " (" + beforeBeforeBtn.name + ") x=" + xPos);
+                    }
+                } else {
+                    xPos = 0;
+                    console.log("  Preview at start (dragged was first)");
+                }
+            }
         }
 
         // If preview already exists, update its position

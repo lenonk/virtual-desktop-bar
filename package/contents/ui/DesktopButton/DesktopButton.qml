@@ -35,8 +35,8 @@ Rectangle {
     property alias mouseArea: _mouseArea
 
     property int verticalMargins: 5
-    property int horizontalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? 0 : config.ButtonSpacing)
-    property int verticalPadding: 5 + (Common.LayoutProps.isVerticalOrientation ? config.ButtonSpacing : 0)
+    property int horizontalPadding: config.ButtonMarginHorizontal + (Common.LayoutProps.isVerticalOrientation ? 0 : config.ButtonSpacing)
+    property int verticalPadding: config.ButtonMarginVertical + (Common.LayoutProps.isVerticalOrientation ? config.ButtonSpacing : 0)
 
     Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
     Layout.fillWidth: Common.LayoutProps.isVerticalOrientation

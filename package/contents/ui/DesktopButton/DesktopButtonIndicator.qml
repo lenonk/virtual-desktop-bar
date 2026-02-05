@@ -32,13 +32,17 @@ Rectangle {
             if (indicatorStyle === IndicatorStyles.FullSize) {
                 return parent.width;
             }
-
-            return parent.width + 0.5 - 2 * config.ButtonMarginHorizontal;
+            if (indicatorStyle > IndicatorStyles.EdgeLine) {
+                return label.implicitWidth + 2 * config.ButtonMarginHorizontal;
+            }
+            return parent.width + 0.5 - 2 * config.ButtonSpacing;
         }
         if (indicatorStyle === IndicatorStyles.SideLine) {
             return config.IndicatorLineThickness;
         }
-
+        if (indicatorStyle > IndicatorStyles.EdgeLine) {
+            return label.implicitWidth + 2 * config.ButtonMarginHorizontal;
+        }
         return parent.width + 0.5 - 2 * config.ButtonSpacing;
     }
 
