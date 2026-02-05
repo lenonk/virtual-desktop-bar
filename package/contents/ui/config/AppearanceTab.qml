@@ -106,7 +106,8 @@ KCM.SimpleKCM {
                 id: buttonMarginVerticalSpinBox
                 value: cfg_ButtonMarginVertical
 
-                editable: plasmoid.formFactor == PlasmaCore.Types.Vertical ||
+                editable:false
+                enabled: plasmoid.formFactor == PlasmaCore.Types.Vertical ||
                     (cfg_IndicatorStyle != IndicatorStyles.EdgeLine &&
                         cfg_IndicatorStyle != IndicatorStyles.FullSize &&
                         cfg_IndicatorStyle != IndicatorStyles.UseLabels)
@@ -131,7 +132,8 @@ KCM.SimpleKCM {
                 id: buttonMarginHorizontalSpinBox
                 value: cfg_ButtonMarginHorizontal
 
-                editable: plasmoid.formFactor != PlasmaCore.Types.Vertical ||
+                editable:false
+                enabled: plasmoid.formFactor != PlasmaCore.Types.Vertical ||
                     (cfg_IndicatorStyle != IndicatorStyles.SideLine &&
                         cfg_IndicatorStyle != IndicatorStyles.FullSize &&
                         cfg_IndicatorStyle != IndicatorStyles.UseLabels)

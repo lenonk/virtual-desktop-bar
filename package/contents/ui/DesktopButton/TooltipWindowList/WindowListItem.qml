@@ -114,7 +114,7 @@ Rectangle {
                     return;
                 }
 
-                    let xAnimation = Qt.createQmlObject(`
+                let xAnimation = Qt.createQmlObject(`
                     import QtQuick 2.15
                     NumberAnimation {
                         duration: 200
@@ -122,7 +122,7 @@ Rectangle {
                     }
                 `, draggedItem);
 
-                    let yAnimation = Qt.createQmlObject(`
+                let yAnimation = Qt.createQmlObject(`
                     import QtQuick 2.15
                     NumberAnimation {
                         duration: 200
@@ -130,7 +130,7 @@ Rectangle {
                     }
                 `, draggedItem);
 
-                    let scaleAnimation = Qt.createQmlObject(`
+                let scaleAnimation = Qt.createQmlObject(`
                     import QtQuick 2.15
                     NumberAnimation {
                         duration: 200
@@ -152,18 +152,23 @@ Rectangle {
 
                 let animationsCompleted = 0;
 
+                function dragCompleted() {
+                    draggedItem.destroy();
+                    draggedItemPlaceholder.destroy();
+                    windowItemRect.opacity = 1;
+                    draggedItem = null;
+                    dragOverlay.visible = false;
+
+                    xAnimation.destroy();
+                    yAnimation.destroy();
+                    scaleAnimation.destroy();
+                    dragFinished();
+                }
+
                 function onAnimationFinished() {
                     animationsCompleted++;
                     if (animationsCompleted === 3) {
-                        draggedItem.destroy();
-                        draggedItemPlaceholder.destroy();
-                        windowItemRect.opacity = 1;
-                        draggedItem = null;
-                        dragOverlay.visible = false;
-
-                        xAnimation.destroy();
-                        yAnimation.destroy();
-                        scaleAnimation.destroy();
+                        dragCompleted();
                     }
                 }
 
@@ -172,11 +177,14 @@ Rectangle {
                 scaleAnimation.finished.connect(onAnimationFinished);
 
                 // Start both animations
-                xAnimation.start();
-                yAnimation.start();
-                scaleAnimation.start();
-
-                dragFinished();
+                if (config.AnimationsEnable) {
+                    xAnimation.start();
+                    yAnimation.start();
+                    scaleAnimation.start();
+                }
+                else {
+                    dragCompleted();
+                }
             }
             else {
                 Common.TaskManager.activateWindow(model.winId, model.desktopId, model.activityId);

@@ -176,7 +176,7 @@ Item {
 
     function updateContent() {
         windowListHeader.name = sourceButton.name || `Desktop ${sourceButton.number + 1}`;
-        windowListHeader.pulseAnimation.running = sourceButton.isCurrent;
+        windowListHeader.pulseAnimation.running = sourceButton.isCurrent && config.AnimationsEnable;
 
         const activityId = backend.getCurrentActivityId();
         const activityName = backend.getActivityName(activityId);
@@ -218,6 +218,8 @@ Item {
     }
 
     function show() {
+        if (!config.TooltipsEnable) return;
+
         hideTimer.stop(); // Stop hiding if it's already running
         cleanup();
 

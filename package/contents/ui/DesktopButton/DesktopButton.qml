@@ -401,6 +401,12 @@ Rectangle {
     }
     function startRemoveAnimation() {
         state = "removing";
+        // If animations are disabled, emit completion immediately
+        if (!config.AnimationsEnable) {
+            Qt.callLater(function() {
+                buttonRemoveAnimationCompleted(buttonRect.uuid);
+            });
+        }
         return;
     }
 
