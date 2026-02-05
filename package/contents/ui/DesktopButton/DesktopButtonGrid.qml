@@ -169,6 +169,16 @@ Item {
         onReleased: function(mouse) {
             handleDragRelease();
         }
+    }
+
+    // Separate MouseArea just for wheel events
+    MouseArea {
+        id: wheelArea
+
+        anchors.fill: parent
+        hoverEnabled: false
+        acceptedButtons: Qt.NoButton
+        enabled: true
 
         onWheel: function (wheel) {
             if (!config.WheelScrollSwitches) return;

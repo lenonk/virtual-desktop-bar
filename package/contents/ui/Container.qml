@@ -73,12 +73,10 @@ Item {
         }
     }
 
-    // Update screen filtering when config changes
-    Connections {
-        target: config
-        function onFilterByScreenChanged() {
-            updateScreenFiltering();
-        }
+    // Watch for changes to FilterByScreen config
+    property bool filterByScreenValue: config.FilterByScreen
+    onFilterByScreenValueChanged: {
+        updateScreenFiltering();
     }
 
     function updateScreenFiltering() {
@@ -239,7 +237,6 @@ Item {
         if (desktopInfoList.count > 1 && emptyDesktops.length > 1) {
             for (let i = 0; i < emptyDesktops.length - 1; i++) {
                 // Too many empty desktops - remove extras (but keep at least 1 desktop total)
-                console.log("DynamicDesktops: Removing excess empty desktop");
                 backend.removeDesktop(emptyDesktops[i]);
             }
         }
@@ -247,7 +244,6 @@ Item {
         // Rule: Always have exactly one spare empty desktop
         if (emptyDesktops.length === 0) {
             // No empty desktops - create one
-            console.log("DynamicDesktops: Creating new empty desktop");
             backend.createDesktop(desktopInfoList.count, newDesktopName);
 
             if (config.NewDesktopCommand.length > 0) {
@@ -257,8 +253,7 @@ Item {
 
         for (let i = 1; i < desktopInfoList.count; i++) {
             let desktop = desktopInfoList.get(i);
-            console.log("DynamicDesktops: Renaming desktop " + i + " to " + newDesktopName + " (" + i + ")");
-            backend.setDesktopName(desktop.uuid, newDesktopName + " (" + i + ")")
+            backend.setDesktopName(desktop.uuid, newDesktopName)
         }
     }
 }

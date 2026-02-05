@@ -16,11 +16,14 @@ QtObject {
 
     property var activeWindowCache: ({})
 
+    signal screenFilteringChanged()
+
     function setScreenFiltering(enabled, geometry) {
         tasksModel.filterByScreen = enabled;
         if (enabled && geometry) {
             tasksModel.screenGeometry = geometry;
         }
+        screenFilteringChanged();
     }
 
     function getActiveWindowName(desktopUuid, activityId) {
