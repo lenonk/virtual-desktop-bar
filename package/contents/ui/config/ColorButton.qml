@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import QtQuick.Dialogs
 import org.kde.kirigami as Kirigami
 
@@ -13,31 +12,51 @@ Button {
     opacity: enabled ? 1 : 0.2
 
     property var colorAcceptedCallback
-    property color color: Kirigami.Theme.textColor // Default color
+    property color color: Kirigami.Theme.textColor
 
-    // Background to mimic the color button style
     background: Rectangle {
-        id: rectangle
         radius: Kirigami.Units.smallSpacing
         border.width: 1
         color: button.color
         border.color: Kirigami.Theme.textColor
     }
 
-    ColorDialog {
-        id: dialog
-        title: i18n("Choose a Color")
-        options: ColorDialog.ShowAlphaChannel
-        onAccepted: {
-            button.color = selectedColor;
-            if (typeof colorAcceptedCallback === "function") {
-                colorAcceptedCallback(selectedColor);
+    // Create/destroy the dialog to avoid the "white square after cancel" bug
+    Loader {
+        id: dialogLoader
+        active: false
+
+        sourceComponent: ColorDialog {
+            id: dlg
+            title: i18n("Choose a Color")
+            options: ColorDialog.ShowAlphaChannel
+
+            Component.onCompleted: {
+                dlg.selectedColor = button.color
+            }
+
+            onAccepted: {
+                button.color = selectedColor
+                if (typeof button.colorAcceptedCallback === "function")
+                    button.colorAcceptedCallback(selectedColor)
+                dialogLoader.active = false
+            }
+
+            onRejected: {
+                dialogLoader.active = false
             }
         }
     }
 
-    onClicked: dialog.open()
+    onClicked: {
+        dialogLoader.active = false   // force fresh instance
+        dialogLoader.active = true
+        dialogLoader.item.selectedColor = button.color
+        dialogLoader.item.open()
+    }
 
-    // Sync dialog color with button color
-    Component.onCompleted: dialog.selectedColor = color
+    onColorChanged: {
+        if (dialogLoader.active && dialogLoader.item)
+            dialogLoader.item.selectedColor = button.color
+    }
 }

@@ -295,6 +295,12 @@ KCM.SimpleKCM {
                 enabled: labelCustomFontCheckBox.checked
                 implicitWidth: 130
 
+                textRole: "text"
+                valueRole: "value"
+                popup.width: 300
+
+                property bool _initDone: false
+
                 Component.onCompleted: {
                     var array = [];
                     var fonts = Qt.fontFamilies()
@@ -310,17 +316,51 @@ KCM.SimpleKCM {
                     if (foundIndex >= 0) {
                         currentIndex = foundIndex;
                     }
+
+                    _initDone = true;
                 }
 
-                onCurrentIndexChanged: {
-                    if (enabled && currentIndex) {
-                        var selectedItem = model[currentIndex];
-                        if (selectedItem) {
-                            var selectedFont = selectedItem.value;
-                            cfg_LabelFont = selectedFont;
-                        }
-                    }
+                // Render each popup item in its own font
+                delegate: ItemDelegate {
+                    required property var modelData
+                    required property int index
+
+                    width: labelCustomFontComboBox.popup.width
+
+                    implicitHeight: Kirigami.Units.gridUnit * 2
+
+                    text: modelData.text
+                    font.family: modelData.value
+                    highlighted: labelCustomFontComboBox.highlightedIndex === index
                 }
+
+                // Reliable for user selection
+                onActivated: (idx) => {
+                    if (!_initDone) return;
+                    if (enabled && idx >= 0) cfg_LabelFont = currentValue;
+                    else cfg_LabelFont = "";
+                }
+
+                // Optional: keeps cfg in sync if something sets currentIndex programmatically later
+                onCurrentValueChanged: {
+                    if (!_initDone) return;
+                    if (enabled && currentIndex >= 0) cfg_LabelFont = currentValue;
+                }
+
+                // If the checkbox disables it, clear the config immediately (optional, but matches your else-branch intent)
+                onEnabledChanged: {
+                    if (!_initDone) return;
+                    if (!enabled) cfg_LabelFont = "";
+                    else if (currentIndex >= 0) cfg_LabelFont = currentValue;
+                }
+                // onCurrentIndexChanged: {
+                //     if (enabled && currentIndex >= 0) {
+                //         cfg_LabelFont = currentValue;
+                //     }
+                //     else {
+                //         cfg_LabelFont = "";
+                //     }
+                // }
             }
         }
 
@@ -359,10 +399,10 @@ KCM.SimpleKCM {
                 text: "Custom text color:"
             }
 
+
             ColorButton {
                 id: labelCustomColorButton
-                enabled: labelCustomColorCheckBox.enabled &&
-                    labelCustomColorCheckBox.checked
+                enabled: labelCustomColorCheckBox.enabled && labelCustomColorCheckBox.checked
                 color: cfg_LabelColor || PlasmaCore.Theme.textColor
 
                 colorAcceptedCallback: function (color) {
@@ -375,8 +415,6 @@ KCM.SimpleKCM {
             }
 
             HintIcon {
-                visible: labelCustomColorCheckBox.checked ||
-                    !labelCustomColorCheckBox.enabled
                 tooltipText: cfg_IndicatorStyle != IndicatorStyles.UseLabels ?
                     "Click the colored box to choose a different color" :
                     "Not available if labels are used as indicators"
