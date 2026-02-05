@@ -298,10 +298,10 @@ KCM.SimpleKCM {
             HintIcon {
                 visible: labelStyleTextField.visible
                 tooltipText: "Available variables:<br><br>
-                          <tt>$X</tt> = desktop's number<br>
-                          <tt>$R</tt> = desktop's number (Roman)<br>
-                          <tt>$N</tt> = desktop's name<br>
-                          <tt>$W</tt> = active window's name<br>
+                          <tt>$X</tt>  = desktop's number<br>
+                          <tt>$R</tt>  = desktop's number (Roman)<br>
+                          <tt>$N</tt>  = desktop's name<br>
+                          <tt>$W</tt>  = active window's name<br>
                           <tt>$WX</tt> = <tt>$W</tt>, or <tt>$X</tt> if there are no windows<br>
                           <tt>$WR</tt> = <tt>$W</tt>, or <tt>$R</tt> if there are no windows<br>
                           <tt>$WN</tt> = <tt>$W</tt>, or <tt>$N</tt> if there are no windows"

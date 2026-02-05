@@ -3,33 +3,37 @@
     "Name": "Virtual Desktop Bar",
     "Description": "Manage your virtual desktops",
     "Icon": "virtualdesktopbar",
+
     "Authors": [
-      {
-        "Name": "wsdfhjxc"
-      },
-      {
-        "Name": "Lenon Kitchens"
-      }
+      { "Name": "Lenon Kitchens", "Email": "lenon.kitchens@gmail.com" },
+      { "Name": "wsdfhjxc" }
     ],
+
     "Category": "Windows and Tasks",
-    "Version": "1.5",
+    "Version": "1.0.0",
     "License": "GPL",
     "Id": "org.kde.plasma.virtualdesktopbar",
+
     "ServiceTypes": [
       "Plasma/Applet"
     ],
+
     "Website": "https://github.com/lenonk/virtual-desktop-bar",
+
     "Dependencies": [
       "org.kde.kwin"
     ]
   },
+
   "KPackageStructure": "Plasma/Applet",
   "X-Plasma-API": "declarativeappletscript",
   "X-Plasma-API-Minimum-Version": "6.0",
   "X-Plasma-MainScript": "ui/main.qml",
+
   "X-Plasma-Provides": [
     "org.kde.plasma.virtualdesktops"
   ],
+
   "X-Plasma-RequiredExtensions": [
     "org.kde.kwin"
   ]
