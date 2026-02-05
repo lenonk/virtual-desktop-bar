@@ -160,3 +160,9 @@ This project is distributed under the GPL license. See repository files for deta
 ## Acknowledgements
 
 This project builds upon earlier virtual desktop bar efforts within the KDE community and continues development for modern Plasma environments.
+
+---
+## Support
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K51TO6S1)
+
