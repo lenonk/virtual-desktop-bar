@@ -9,6 +9,11 @@ Rectangle {
 
     readonly property int animationColorDuration: 300
     readonly property int animationOpacityDuration: 300
+    readonly property real spacing: config.ButtonSpacing || 0
+    readonly property bool fillButton: indicatorStyle === IndicatorStyles.Block ||
+        indicatorStyle === IndicatorStyles.Rounded ||
+        indicatorStyle === IndicatorStyles.FullSize
+
 
     property int indicatorStyle: config.IndicatorStyle
 
@@ -29,21 +34,30 @@ Rectangle {
             if (indicatorStyle === IndicatorStyles.SideLine) {
                 return config.IndicatorLineThickness;
             }
-            if (indicatorStyle === IndicatorStyles.FullSize) {
-                return parent.width;
+            // if (indicatorStyle === IndicatorStyles.FullSize) {
+            //     return parent.width;
+            // }
+            if (fillButton) {
+                return parent.width + 0.5 - 2 * spacing;
             }
             if (indicatorStyle > IndicatorStyles.EdgeLine) {
                 return label.implicitWidth + 2 * config.ButtonMarginHorizontal;
             }
-            return parent.width + 0.5 - 2 * config.ButtonSpacing;
+            return parent.width + 0.5 - 2 * spacing;
         }
+
         if (indicatorStyle === IndicatorStyles.SideLine) {
             return config.IndicatorLineThickness;
         }
-        if (indicatorStyle > IndicatorStyles.EdgeLine) {
-            return label.implicitWidth + 2 * config.ButtonMarginHorizontal;
+
+        // if (indicatorStyle > IndicatorStyles.EdgeLine) {
+        //     return label.implicitWidth + 2 * config.ButtonMarginHorizontal;
+        // }
+        if (fillButton) {
+            return parent.width + 0.5 - 2 * spacing;
         }
-        return parent.width + 0.5 - 2 * config.ButtonSpacing;
+
+        return parent.width + 0.5 - 2 * spacing;
     }
 
     height: {
@@ -62,16 +76,17 @@ Rectangle {
     x: {
         if (Common.LayoutProps.isVerticalOrientation) {
             if (indicatorStyle !== IndicatorStyles.SideLine) {
-                return (parent.width - width) / 2;
+                // return (parent.width - width) / 2;
+                return fillButton ? spacing : (parent.width - width) / 2;
             }
             return config.IndicatorInvert ?
                 parent.width - config.IndicatorLineThickness : 0;
         }
-        if (indicatorStyle === IndicatorStyles.SideLine &&
-            config.IndicatorInvert) {
-            return parent.width - width - (config.ButtonSpacing || 0);
+
+        if (indicatorStyle === IndicatorStyles.SideLine && config.IndicatorInvert) {
+            return parent.width - width - spacing;
         }
-        return config.ButtonSpacing || 0;
+        return spacing;
     }
 
     y: {
