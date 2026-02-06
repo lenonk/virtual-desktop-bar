@@ -28,3 +28,8 @@ find_package(KWin REQUIRED)
 
 add_subdirectory(plugin)
 plasma_install_package(package org.kde.plasma.virtualdesktopbar)
+
+install(FILES
+        ${CMAKE_SOURCE_DIR}/package/contents/icons/hicolor/scalable/apps/virtualdesktopbar.svg
+        DESTINATION ${KDE_INSTALL_ICONDIR}/hicolor/scalable/apps
+)

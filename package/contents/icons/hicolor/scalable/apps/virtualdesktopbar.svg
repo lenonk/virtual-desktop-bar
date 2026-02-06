@@ -1,0 +1,60 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Created using Karbon, part of Calligra: http://www.calligra.org/karbon -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="204.8pt" height="204.8pt">
+<defs>
+  <linearGradient id="gradient0" gradientTransform="" gradientUnits="objectBoundingBox" x1="0.00000000000" y1="0.00000000000" x2="1.00000000000" y2="1.00000000000" spreadMethod="pad">
+   <stop stop-color="#1f2a44" offset="0.00000000000" stop-opacity="1.000000"/>
+   <stop stop-color="#1b2438" offset="1.00000000000" stop-opacity="1.000000"/>
+  </linearGradient>
+  <linearGradient id="gradient1" gradientTransform="" gradientUnits="objectBoundingBox" x1="0.00000000000" y1="0.00000000000" x2="1.00000000000" y2="1.00000000000" spreadMethod="pad">
+   <stop stop-color="#ffb31a" offset="0.00000000000" stop-opacity="1.000000"/>
+   <stop stop-color="#f07a1a" offset="1.00000000000" stop-opacity="1.000000"/>
+  </linearGradient>
+  <linearGradient id="gradient2" gradientTransform="" gradientUnits="objectBoundingBox" x1="0.00000000000" y1="0.00000000000" x2="1.00000000000" y2="1.00000000000" spreadMethod="pad">
+   <stop stop-color="#35c45a" offset="0.00000000000" stop-opacity="1.000000"/>
+   <stop stop-color="#b8d61a" offset="1.00000000000" stop-opacity="1.000000"/>
+  </linearGradient>
+  <linearGradient id="gradient3" gradientTransform="" gradientUnits="objectBoundingBox" x1="0.00000000000" y1="0.00000000000" x2="1.00000000000" y2="1.00000000000" spreadMethod="pad">
+   <stop stop-color="#2fa3e0" offset="0.00000000000" stop-opacity="1.000000"/>
+   <stop stop-color="#2a5bd6" offset="1.00000000000" stop-opacity="1.000000"/>
+  </linearGradient>
+  <clipPath id="clippath0" clipPathUnits="userSpaceOnUse">
+   <path d="M22.5844 17.6036C22.5844 8.99125 26.7159 4.68508 34.979 4.68508L65.9654 4.68508C71.474 4.68508 75.6056 7.55586 78.3599 13.2974L82.4914 21.9097L158.925 21.9097C168.565 21.9097 173.385 26.9336 173.385 36.9813L173.385 105.88C173.385 115.928 168.565 120.951 158.925 120.951L34.979 120.951C26.7159 120.951 22.5844 115.928 22.5844 105.88L22.5844 17.6036Z"/>
+  </clipPath>
+  <linearGradient id="gradient4" gradientTransform="matrix(1.20994 0 0 0.82649 1e-06 1e-07)" gradientUnits="objectBoundingBox" x1="0.00000000000" y1="0.00000000000" x2="0.88158965179" y2="1.29059792083" spreadMethod="pad">
+   <stop stop-color="#ff4aa7" offset="0.00000000000" stop-opacity="1.000000"/>
+   <stop stop-color="#9a2ccf" offset="1.00000000000" stop-opacity="1.000000"/>
+  </linearGradient>
+  <linearGradient id="gradient5" gradientTransform="matrix(2.46597 0 0 0.40552 3e-07 0)" gradientUnits="objectBoundingBox" x1="0.00000000000" y1="0.00000000000" x2="0.43255493812" y2="0.00000000000" spreadMethod="pad">
+   <stop stop-color="#cc2fa0" offset="0.00000000000" stop-opacity="0.549996"/>
+   <stop stop-color="#cc2fa0" offset="1.00000000000" stop-opacity="0.349996"/>
+  </linearGradient>
+  <linearGradient id="gradient6" gradientTransform="matrix(1.41386 0 0 0.707285 1e-06 0)" gradientUnits="objectBoundingBox" x1="0.00000000000" y1="0.00000000000" x2="0.75443736653" y2="1.50811440682" spreadMethod="pad">
+   <stop stop-color="#2fa3e0" offset="0.00000000000" stop-opacity="1.000000"/>
+   <stop stop-color="#2a5bd6" offset="1.00000000000" stop-opacity="1.000000"/>
+  </linearGradient>
+  <linearGradient id="gradient7" gradientTransform="matrix(1.42775 0 0 0.700404 0 0)" gradientUnits="objectBoundingBox" x1="0.00000000000" y1="0.00000000000" x2="0.74709779874" y2="1.52293020956" spreadMethod="pad">
+   <stop stop-color="#35c45a" offset="0.00000000000" stop-opacity="1.000000"/>
+   <stop stop-color="#b8d61a" offset="1.00000000000" stop-opacity="1.000000"/>
+  </linearGradient>
+  <linearGradient id="gradient8" gradientTransform="matrix(1.42775 0 0 0.700404 0 1e-05)" gradientUnits="objectBoundingBox" x1="0.00000000000" y1="0.00000000000" x2="0.74709779874" y2="1.52293020956" spreadMethod="pad">
+   <stop stop-color="#ff4aa7" offset="0.00000000000" stop-opacity="1.000000"/>
+   <stop stop-color="#9a2ccf" offset="1.00000000000" stop-opacity="1.000000"/>
+  </linearGradient>
+ </defs>
+<g id="layer0">
+  <rect id="shape0" transform="" fill="url(#gradient0)" width="204.80000000000pt" height="204.80000000000pt"/>
+  <rect id="shape1" transform="translate(58, 58)" fill="url(#gradient1)" opacity="0.95000000000" width="134.40000000000pt" height="92.80000000000pt" rx="17.60000000000pt" ry="17.60000000000pt"/>
+  <rect id="shape2" transform="translate(44, 70)" fill="url(#gradient2)" opacity="0.95000000000" width="134.40000000000pt" height="92.80000000000pt" rx="17.60000000000pt" ry="17.60000000000pt"/>
+  <rect id="shape3" transform="translate(28, 82)" fill="url(#gradient3)" opacity="0.95000000000" width="134.40000000000pt" height="92.80000000000pt" rx="17.60000000000pt" ry="17.60000000000pt"/>
+  <g id="group0" transform="translate(23.0211, 77.4051)" fill="none" clip-path="url(#clippath0)">
+   <rect id="shape4" transform="matrix(1.23101 0 0 1.20039 15.2241 5.55263)" fill="url(#gradient4)" width="112.76793294404pt" height="77.48580895219pt" rx="14.76722982789pt" ry="15.78414668749pt"/>
+   <rect id="shape5" transform="matrix(1.23101 0 0 1.20039 18.3911 44.1566)" fill="url(#gradient5)" width="112.76793294404pt" height="18.65398999542pt"/>
+  </g>
+  <text id="shape6" fill="#ffffff" font-family="Sans" font-size="86.14640045166pt" font-weight="bold" text-anchor="middle" x="21.54687500000pt" y="58.35030500000pt" transform="matrix(1.00805 0 0 0.992017 103.981 111.997)"><tspan x="-27.0974"  y="68.0437">2</tspan></text>
+  <rect id="shape7" transform="translate(49.2212, 210.084)" fill="url(#gradient6)" width="37.90883600000pt" height="18.96397400000pt" rx="6.31813960000pt" ry="5.98862310000pt"/>
+  <rect id="shape8" transform="translate(108.401, 210.227)" fill="url(#gradient7)" width="38.16000000000pt" height="18.71999900000pt" rx="6.36000010000pt" ry="5.91157910000pt"/>
+  <rect id="shape9" transform="translate(167.313, 209.942)" fill="url(#gradient8)" width="38.16000000000pt" height="18.71999900000pt" rx="6.36000010000pt" ry="5.91157910000pt"/>
+ </g>
+</svg>
