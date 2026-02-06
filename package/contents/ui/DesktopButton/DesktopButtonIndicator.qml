@@ -14,8 +14,13 @@ Rectangle {
         indicatorStyle === IndicatorStyles.Rounded ||
         indicatorStyle === IndicatorStyles.FullSize
 
-
     property int indicatorStyle: config.IndicatorStyle
+
+    // TODO: Make this configurable?
+    readonly property int indicatorLabelGap: 10
+    readonly property int sideLineLabelReserve: (indicatorStyle === IndicatorStyles.SideLine)
+        ? (config.IndicatorLineThickness + indicatorLabelGap)
+        : 0
 
     visible: indicatorStyle !== IndicatorStyles.UseLabels
 

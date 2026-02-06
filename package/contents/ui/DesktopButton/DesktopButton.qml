@@ -43,8 +43,8 @@ Rectangle {
     Layout.topMargin: verticalMargins
     Layout.bottomMargin: verticalMargins
 
-    implicitHeight: label.implicitHeight + 2 * verticalPadding
-    implicitWidth: label.implicitWidth + 2 * horizontalPadding
+    implicitHeight: label.implicitHeight + 2 * verticalPadding + (Common.LayoutProps.isVerticalOrientation ? indicator.sideLineLabelReserve : 0)
+    implicitWidth: label.implicitWidth + 2 * horizontalPadding + (Common.LayoutProps.isVerticalOrientation ? 0 : indicator.sideLineLabelReserve)
 
     opacity: applyOpacityRules()
     color: applyColorRules()
