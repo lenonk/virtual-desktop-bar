@@ -1,103 +1,168 @@
-# NOTE:  A recent KDE release broke some of the behavior of this plasmoid.
+# Virtual Desktop Bar (Plasma 6)
 
-I worked around it the best that I can, but setting a KDE panel to    
-"Always visible" will break things.  Use "Windows go below" or "Dodge   
-windows"
+Virtual Desktop Bar is a KDE Plasma widget that provides a clean, configurable, text-based virtual desktop switcher. It replaces the default Pager with a compact desktop bar focused on clarity, customization, and modern Plasma 6 Wayland environments.
 
-This is a KDE bug, and there's nothing I can do about it.
+The widget displays desktops as labeled buttons with configurable indicators, styling, and behavior options. It also supports optional dynamic desktop management to automatically maintain a spare empty desktop.
 
-# Virtual Desktop Bar
+This project is a modern continuation of earlier work, updated and maintained specifically for Plasma 6 on Wayland.
 
-This is an applet for KDE Plasma panel that lets you switch between virtual desktops and also invoke some actions to dynamically manage them in a convenient way. In order to do it, you can use the mouse, the context menu or user-defined keyboard shortcuts. There are also some extra features related to virtual desktops.
-
-This branch is a fork of the excellent virtual-desktop-bar plasmoid for Plasma 5 and X11.  This version is updated to work with Plasma 6 and Wayland.  I have no idea whether or not it works on X11.  It probably should, but it's untested.  It almost certainly will not work with Plasma 5, that's untested too, but there are other forks out there for that.
-
-The plasmoid displays virtual desktops as text labels with indicators in various styles. That means there's no graphical icons and window previews like in the Plasma's default Pager applet. Although the intention is to keep it simple, the applet has several configuration options regarding its behavior and visuals. These should be more than enough for desktop customization enthusiasts and folks at [/r/unixporn](https://reddit.com/r/unixporn) who want to make their panels aesthetic.
-
-And actually, the whole reason for creating this plasmoid was about the aesthetics in the first place, as I consider the Plasma's default Pager applet, with its fixed-size rectangles and window shapes, to be quite ugly, to put it straight.
-
-## Features
-
-* Switching, adding, removing, renaming, moving desktops
-* Mouse dragging, clicking, scrolling support, context menu, keyboard shortcuts
-* Automation: switching, renaming desktops, executing commands, dynamic desktops
-* Customizable size, spacing, font, color and style of desktop buttons and labels
-* Showing a desktop button only for the current desktop or only for occupied desktops
-* Formatting the desktop label's style (name, number, Roman number, window's name, etc.)
-* Limiting the maximum length of desktop labels, displaying them as UPPERCASED
-* Customizable style and colors of desktop indicators in different states (idle, current, occupied etc.)
-
-and a few more not mentioned options...
+---
 
 ## Screenshots
 
-These screen shots are all of the original version.  New screenshots coming soon.
+### Adding, renaming, moving, and removing a desktop:
+![Example 1](screenshots/1.gif)
 
-Adding, renaming, moving, removing a desktop:
+### Various desktop label styles:
+![Example 1](screenshots/2.gif)
 
-![](screenshots/1.gif)
+### Various desktop indicator styles:
+![Example 1](screenshots/3.gif)
 
-Various desktop label styles:
+### Partial support for vertical panels (still a work in progress):
+![Example 1](screenshots/4.png)
 
-![](screenshots/2.gif)
+*(Screenshots may change as the widget evolves.)*
 
-Various desktop indicator styles:
+---
 
-![](screenshots/3.gif)
+## Features
 
-Partial support also for vertical panels:
+### Desktop Switching
+- Displays desktops as labeled buttons instead of thumbnails
+- Quickly switch desktops with a click
+- Optional scroll-wheel desktop switching
+- Optional filtering by screen
 
-![](screenshots/4.png)
+### Indicator Styles
+Multiple indicator styles are available:
+
+- Edge line
+- Side line
+- Block
+- Rounded block
+- Full-size highlight
+
+Indicator thickness, radius, colors, and behavior are configurable.
+
+### Label Customization
+Desktop labels support:
+
+- Multiple label styles
+- Custom formatting
+- Maximum length limits
+- Uppercase option
+- Bold current desktop
+- Dim inactive desktops
+- Custom fonts and sizes
+- Custom label colors
+
+### Appearance Controls
+- Adjustable button spacing and margins
+- Optional uniform button sizing
+- Configurable animations
+- Add-desktop button support
+
+### Dynamic Desktop Management
+Optionally:
+- Automatically maintain one empty desktop
+- Create desktops as needed
+- Remove unused desktops
+- Optionally switch or rename newly created desktops
+- Execute commands when desktops are created
+
+---
 
 ## Installation
 
-To install the applet, either get it as a distro-specific package, or build it from source by yourself.
+### From the AUR (Arch Linux)
 
-### Packages
+The widget is available in the AUR:
 
-* Arch Linux users can get the latest git version of the applet as an [AUR package](https://aur.archlinux.org/packages/plasma5-applets-virtual-desktop-bar-git) (thanks @nwwdles)
+`plasma6-applets-virtual-desktop-bar-wayland`
 
-### From source
+Install using your preferred AUR helper:
 
-First, you need to install some required dependencies:
+    paru -S plasma6-applets-virtual-desktop-bar-wayland
 
-* On Fedora run: `./scripts/install-dependencies-fedora.sh`
-* On openSUSE run: `./scripts/install-dependencies-opensuse.sh`
-* On Arch Linux or Manjaro run: `./scripts/install-dependencies-arch.sh`
-* On Kubuntu or KDE neon run: `./scripts/install-dependencies-ubuntu.sh`
+or:
 
-Then, to compile the source code and install the applet run: `./scripts/install-applet.sh`
+    yay -S plasma6-applets-virtual-desktop-bar-wayland
 
-Note: This also applies if you want to upgrade to a newer version.
+After installation, add the widget to a panel or desktop via Plasma's widget picker.
 
-Note: If you want to remove the applet run: `./scripts/uninstall-applet.sh`
+---
 
-After that, you should be able to find Virtual Desktop Bar in the Add Widgets menu.
+### Manual Installation
 
-## Configuration
+Clone the repository:
 
-The applet has some options regarding its behavior and visuals. You'll find them in the configuration dialog.
+    git clone https://github.com/lenonk/virtual-desktop-bar.git
+    cd virtual-desktop-bar
 
-Don't get fooled by an empty Keyboard Shortcuts section though. It's an imposed thing, common for all plasmoids.
+Build and install:
 
-There are global keyboard shortcuts, but you have to configure them in the Global Shortcuts System Settings Module. They should be available under KWin, Plasma or Latte Dock component, depending on the Plasma's mood and where have you placed the applet. All of the shortcuts have the `Virtual Desktop Bar` prefix for easier recognition.
+    cmake -B build
+    cmake --build build
+    sudo cmake --install build
 
-## Known issues
+Restart plasmashell or re-login if the widget does not appear immediately.
 
-* Virtual desktops are shared by all monitors (KWin's limitation)
-* Dynamic virtual desktop management doesn't play nice with KWin scripts (see the explanation below)
+---
 
-## Compatibility with KWin scripts
+## Usage
 
-The plasmoid does some things which results of are not exposed through the KWin scripting API. This is related to dynamic desktops, moving desktops, removing desktops other than the last one. These are non-native features. Because of that, KWin scripts tracking desktops or windows (for example tiling scripts) in most cases will be confused and will not react properly to performed actions (maybe except the dynamic desktops feature, depends on the script).
+1. Add **Virtual Desktop Bar** to a panel or desktop.
+2. Open widget settings to configure appearance and behavior.
+3. Customize indicator styles, labels, colors, and dynamic desktop options to your liking.
 
-Nothing can be done about it, as long as KWin scripting API does not support signals like:
+---
 
- * `desktopRemoved(QString id)`
- * `desktopsReplaced(QString id1, QString id2)`
+## Compatibility
 
-To avoid issues while using KWin scripts, do not use the features mentioned above.
+This widget is designed and tested for:
 
-## Compatibility with window managers other than KWin
+- KDE Plasma 6
+- Wayland sessions
 
-Don't do it.  The entire C++ backend is dependant on KWin's D-Bus API.
+Wayland is required.
+
+---
+
+## Known Issues
+
+Some Plasma panel visibility modes currently interfere with virtual desktop widgets. If desktops do not update correctly:
+
+- Avoid panel modes that hide the panel automatically, or
+- Use standard visibility modes.
+
+Upstream Plasma behavior may change in future releases.
+
+---
+
+## Contributing
+
+Bug reports, suggestions, and pull requests are welcome.
+
+If reporting an issue, please include:
+- Plasma version
+- Distribution
+- Steps to reproduce the problem
+
+---
+
+## License
+
+This project is distributed under the GPL license. See repository files for details.
+
+---
+
+## Acknowledgements
+
+This project builds upon earlier virtual desktop bar efforts within the KDE community and continues development for modern Plasma environments.
+
+---
+## Support
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K51TO6S1)
+
