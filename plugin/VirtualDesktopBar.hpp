@@ -7,6 +7,8 @@
 #include <QCursor>
 #include <QGuiApplication>
 #include <QPoint>
+#include <QHash>
+#include <QPointer>
 
 #include "KWinDesktop.h"
 
@@ -26,6 +28,21 @@ namespace DBus {
     }
 }
 
+class SignalTraceProbe : public QObject {
+    Q_OBJECT
+
+public:
+    explicit SignalTraceProbe(QObject *target, QString label, QObject *parent = nullptr);
+    [[nodiscard]] QObject *target() const;
+
+public Q_SLOTS:
+    void onAnySignal();
+
+private:
+    QPointer<QObject> m_target;
+    QString m_label;
+};
+
 class VirtualDesktopBar : public QObject {
     Q_OBJECT
 
@@ -33,23 +50,27 @@ public:
     explicit VirtualDesktopBar(QObject *parent = nullptr);
     ~VirtualDesktopBar() override;
 
-    Q_INVOKABLE QVariantList requestDesktopInfoList();
-    Q_INVOKABLE bool createDesktop(quint32 index, const QString &name);
-    Q_INVOKABLE bool removeDesktop(QString id);
-    Q_INVOKABLE bool setDesktopName(QString id, QString name);
-    Q_INVOKABLE bool setCurrentDesktop(qint32 number);
-    Q_INVOKABLE bool nextDesktop();
-    Q_INVOKABLE bool previousDesktop();
-    Q_INVOKABLE bool moveDesktop(const QString &id, quint32 targetIndex);
-    Q_INVOKABLE QString getIconFromDesktopFile(const QString &desktopFile);
-    Q_INVOKABLE QString getCurrentActivityId();
-    Q_INVOKABLE QString getActivityName(const QString activityId);
-    Q_INVOKABLE QPoint getCursorPosition() const;
-    Q_INVOKABLE QPoint getRelativeCursorPosition() const;
-    Q_INVOKABLE QPoint getRelativeScreenPosition() const;
-    Q_INVOKABLE QSize getCursorSize() const;
-    Q_INVOKABLE bool isMouseButtonPressed() const;
-    Q_INVOKABLE void run(const QString &cmd) const;
+    Q_INVOKABLE static QVariantList requestDesktopInfoList();
+    Q_INVOKABLE static QVariantList requestActivityInfoList();
+    Q_INVOKABLE static bool createDesktop(quint32 index, const QString &name);
+    Q_INVOKABLE static bool removeDesktop(const QString &id);
+    Q_INVOKABLE static bool setDesktopName(const QString& id, const QString &name);
+    Q_INVOKABLE static bool setCurrentDesktop(qint32 number);
+    Q_INVOKABLE static bool nextDesktop();
+    Q_INVOKABLE static bool previousDesktop();
+    Q_INVOKABLE static bool moveDesktop(const QString &id, quint32 targetIndex);
+    Q_INVOKABLE static QString getIconFromDesktopFile(const QString &desktopFile);
+    Q_INVOKABLE static QString getCurrentActivityId();
+    Q_INVOKABLE static QString getActivityName(const QString &activityId);
+    Q_INVOKABLE static QPoint getCursorPosition() ;
+    Q_INVOKABLE static QPoint getRelativeCursorPosition() ;
+    Q_INVOKABLE static QPoint getRelativeScreenPosition() ;
+    Q_INVOKABLE static QSize getCursorSize() ;
+    Q_INVOKABLE static bool isMouseButtonPressed() ;
+    Q_INVOKABLE static void run(const QString &cmd);
+    Q_INVOKABLE void startSignalTrace(QObject *target, const QString &label = QString());
+    Q_INVOKABLE void stopSignalTrace(QObject *target);
+    Q_INVOKABLE void stopAllSignalTraces();
 
 Q_SIGNALS:
     void desktopCreated(const QString &id, const QVariantMap &desktopData);
@@ -65,6 +86,7 @@ private Q_SLOTS:
 
 private:
     void connectToDBusSignals();
-    QDBusInterface *createInterface(const QString& service, const QString& path, const QString& interface,
+    static std::unique_ptr<QDBusInterface> createInterface(const QString& service, const QString& path, const QString& interface,
         const QDBusConnection &busType = QDBusConnection::sessionBus());
+    QHash<QObject*, class SignalTraceProbe*> m_signalTraceProbes;
 };

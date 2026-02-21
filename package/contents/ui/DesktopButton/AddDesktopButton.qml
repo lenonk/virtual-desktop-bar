@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami as Kirigami
 import "../common" as Common
 
 Rectangle {
@@ -30,12 +30,12 @@ Rectangle {
 
         text: "+"
         opacity: 1.0
-        color: config.LabelColor || PlasmaCore.Theme.textColor
+        color: config.LabelColor || Kirigami.Theme.textColor
 
         font {
             weight: Font.Light
-            family: config.LabelFont || PlasmaCore.Theme.defaultFont.family
-            pixelSize: (config.LabelFontSize || PlasmaCore.Theme.defaultFont.pixelSize) * 1.5
+            family: config.LabelFont || Kirigami.Theme.defaultFont.family
+            pixelSize: (config.LabelFontSize || Kirigami.Theme.defaultFont.pixelSize) * 1.5
         }
     }
 

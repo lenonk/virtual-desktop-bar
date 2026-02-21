@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+
+import org.kde.plasma.plasmoid
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
 

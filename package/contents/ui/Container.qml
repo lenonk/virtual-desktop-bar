@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import "DesktopButton" as DesktopButton
+import "ActivityButton" as ActivityButton
 import "common" as Common
 import "common/Utils.js" as Utils
 
@@ -12,6 +13,7 @@ Item {
     // Properties
     property QtObject config: plasmoid.configuration
     property ListModel desktopInfoList: ListModel {}
+    property ListModel activityInfoList: ListModel {}
     property var lastKnownDesktopStates: ({})  // Track desktop states to prevent loops
 
     signal desktopRenamed(string uuid, string name)
@@ -26,6 +28,7 @@ Item {
     Common.Backend {
         id: backend
         desktopInfoList: root.desktopInfoList
+        activityInfoList: root.activityInfoList
     }
 
     Component.onCompleted: {
@@ -70,6 +73,14 @@ Item {
     DesktopButton.DesktopRenamePopup {
         id: renamePopup
     }
+
+    // ActivityButton.ActivityButtonGrid {
+    //     id: activityButtonGrid
+    //
+    //     anchors.centerIn: parent
+    //     container: root
+    //     activityInfoList: root.activityInfoList
+    // }
 
     DesktopButton.DesktopButtonGrid {
         id: desktopButtonGrid

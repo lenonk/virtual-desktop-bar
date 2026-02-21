@@ -12,24 +12,13 @@ Rectangle {
 
     property QtObject config: plasmoid.configuration
 
-    readonly property int tooltipDelay: 650
     readonly property int animationSizeDuration: 100
     readonly property int animationVisibilityDuration: 350
 
-    property var buttonTooltip: null
-
-    property bool ignoreMouseArea: false
     property bool isCurrent: false
-    property bool isDragged: false
-    property bool isEmpty: true
-    property bool isFirst: false
-    property bool isLast: false
-    property bool isUrgent: false
     property string name: ""
-    property int number: 0
-    property int modelIdx: -1
     property string uuid: ""
-    property string activeWindowName: ""
+    property string icon: ""
     property Item buttonGrid: null
 
     property alias mouseArea: _mouseArea
@@ -54,18 +43,6 @@ Rectangle {
     visible: true
 
     SystemPalette { id: systemPalette }
-
-    Timer {
-        id: taskUpateTimer
-        interval: 500
-        repeat: true
-        running: true
-
-        onTriggered: {
-            updateTaskInfo();
-        }
-    }
-
 
     Behavior on Layout.preferredHeight {
         enabled: config.AnimationsEnable
@@ -142,18 +119,9 @@ Rectangle {
         }
     ]
 
-    Component {
-        id: tooltipComponent
-        DesktopButtonTooltip {
-            buttonGrid: buttonRect.buttonGrid
-        }
-    }
-
     Component.onCompleted: {
         state = "creating";
         createTimer.start();
-        updateTaskInfo();
-        buttonTooltip = tooltipComponent.createObject(this, {"sourceButton": this});
     }
 
     onImplicitWidthChanged: {
@@ -185,44 +153,6 @@ Rectangle {
 
         border.width: 1
         border.color: systemPalette.highlight
-    }
-
-    Rectangle {
-        id: dragHighlight
-
-        property bool dragIsHovered: false
-
-        anchors.fill: parent
-        visible: dragIsHovered
-
-        color: Qt.rgba(systemPalette.highlight.r, systemPalette.highlight.g, systemPalette.highlight.b, 0.2)
-
-        border.width: 1
-        border.color: systemPalette.highlight
-
-        SequentialAnimation {
-            id: buttonPulseAnimation
-
-            running: parent.visible
-            loops: Animation.Infinite
-
-            NumberAnimation {
-                target: dragHighlight
-                property: "opacity"
-                from: 0.9
-                to: 0.2
-                duration: 1000
-                easing.type: Easing.InOutQuad
-            }
-            NumberAnimation {
-                target: dragHighlight
-                property: "opacity"
-                from: 0.2
-                to: 0.9
-                duration: 1000
-                easing.type: Easing.InOutQuad
-            }
-        }
     }
 
     DesktopButtonIndicator {

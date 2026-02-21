@@ -1,7 +1,5 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
-import org.kde.plasma.components as PlasmaComponents
 import "../common" as Common
 
 Item {
@@ -12,7 +10,6 @@ Item {
     required property ListModel desktopInfoList
 
     property DesktopButton hoveredButton
-    property bool commonSizeEnabled: config.ButtonCommonSize
     property var desktopButtonMap: ({})
     property int dropZoneIndex: -1  // Index of drop zone being hovered (-1 = none)
     property DesktopButton draggedButton: null
@@ -37,7 +34,7 @@ Item {
         Layout.fillHeight: !Common.LayoutProps.isVerticalOrientation
 
         Repeater {
-            id: repeater
+            id: desktopRepeater
             model: desktopButtonGrid.desktopInfoList
 
             delegate: DesktopButton {
@@ -254,42 +251,31 @@ Item {
         Qt.callLater(updateGridSizes);
     }
 
-    onCommonSizeEnabledChanged: {
-        Qt.callLater(updateGridSizes);
+    Connections {
+        target: config
+
+        function onValueChanged(key, value) {
+            if (key === "ButtonCommonSize") {
+                Qt.callLater(updateGridSizes);
+            }
+        }
     }
 
     function updateButtonFirstAndLast() {
-        // if (Object.keys(desktopButtonMap).length > 0) {
-        //     for (var i = 0; i < desktopInfoList.count; i++) {
-        //         let button = desktopButtonMap[desktopInfoList.get(i).uuid];
-        //         if (i == 0) {
-        //             button.isFirst = true;
-        //             if (i != desktopInfoList.count - 1) button.isLast = false;
-        //             else button.isLast = true;
-        //
-        //         } else if (i == desktopInfoList.count - 1) {
-        //             if (i != 0) button.isFirst = false;
-        //             else button.isFirst = true;
-        //             button.isLast = true;
-        //         } else {
-        //             button.isFirst = false;
-        //             button.isLast = false;
-        //         }
-        //     }
-        // }
-        for (var uuid in desktopButtonMap) {
-            var button = desktopButtonMap[uuid];
-            if (button && button.number == 1) {
+        for (const uuid in desktopButtonMap) {
+            const button = desktopButtonMap[uuid];
+
+            if (!button) return;
+
+            if (button.number === 1) {
                 button.isFirst = true;
-                if (desktopInfoList.count <= 1) button.isLast = true;
-                else button.isLast = false;
+                button.isLast = desktopInfoList.count <= 1;
             }
-            else if (button && button.number == desktopInfoList.count) {
+            else if (button.number === desktopInfoList.count) {
                 button.isLast = true;
-                if (desktopInfoList.count <= 1) button.isFirst = true;
-                else button.isFirst = false;
+                button.isFirst = desktopInfoList.count <= 1;
             }
-            else if (button) {
+            else {
                 button.isFirst = false;
                 button.isLast = false;
             }
@@ -297,27 +283,24 @@ Item {
     }
 
     function updateGridSizes() {
-        if (config.ButtonCommonSize) {
-            var maxWidth = 0;
-            for (var uuid in desktopButtonMap) {
-                var button = desktopButtonMap[uuid];
-                if (button && button.implicitWidth > maxWidth) {
-                    maxWidth = button.implicitWidth;
-                }
-            }
+        let maxWidth = 0;
 
-            for (var uuid in desktopButtonMap) {
-                var button = desktopButtonMap[uuid];
-                if (button) {
-                    button.Layout.preferredWidth = maxWidth;
-                }
+        for (const uuid in desktopButtonMap) {
+            const button = desktopButtonMap[uuid];
+            if (button && button.implicitWidth > maxWidth) {
+                maxWidth = button.implicitWidth;
             }
-        } else {
-            for (var uuid in desktopButtonMap) {
-                var button = desktopButtonMap[uuid];
-                if (button) {
-                    button.Layout.preferredWidth = button.implicitWidth;
-                }
+        }
+
+        for (const uuid in desktopButtonMap) {
+            const button = desktopButtonMap[uuid];
+            if (button) {
+                const commonSizeEnabled =
+                    (config.ButtonCommonSize !== undefined) ? config.ButtonCommonSize :
+                    ((config.buttonCommonSize !== undefined) ? config.buttonCommonSize :
+                    ((config.DesktopButtonsSetCommonSizeForAll !== undefined) ? config.DesktopButtonsSetCommonSizeForAll : false));
+
+                button.Layout.preferredWidth = commonSizeEnabled ? maxWidth : button.implicitWidth;
             }
         }
     }
@@ -629,7 +612,7 @@ Item {
         draggedButtonOriginalIndex = -1;
         dropZoneIndex = -1;
 
-        Qt.callLater(desktopButtonGrid.visible = true);
+        Qt.callLater(function () { desktopButtonGrid.visible = true });
     }
 
     function updatePreviewPosition() {

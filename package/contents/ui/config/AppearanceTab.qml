@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kquickcontrols as KQControls
 import org.kde.kirigami as Kirigami
@@ -366,7 +367,7 @@ KCM.SimpleKCM {
 
                     var foundIndex = find(cfg_LabelFont);
                     if (foundIndex == -1) {
-                        foundIndex = find(PlasmaCore.Theme.defaultFont.family);
+                        foundIndex = find(Kirigami.Theme.defaultFont.family);
                     }
                     if (foundIndex >= 0) {
                         currentIndex = foundIndex;
@@ -430,7 +431,7 @@ KCM.SimpleKCM {
 
             PXSpinBox {
                 id: labelCustomFontSizeSpinBox
-                value: cfg_LabelFontSize || PlasmaCore.Theme.defaultFont.pixelSize
+                value: cfg_LabelFontSize || Kirigami.Theme.defaultFont.pixelSize
 
                 editable: labelCustomFontSizeCheckBox.checked
                 from: 5
@@ -458,7 +459,7 @@ KCM.SimpleKCM {
             ColorButton {
                 id: labelCustomColorButton
                 enabled: labelCustomColorCheckBox.enabled && labelCustomColorCheckBox.checked
-                color: cfg_LabelColor || PlasmaCore.Theme.textColor
+                color: cfg_LabelColor || Kirigami.Theme.textColor
 
                 colorAcceptedCallback: function (color) {
                     cfg_LabelColor = color;
@@ -636,7 +637,7 @@ KCM.SimpleKCM {
             ColorButton {
                 id: indicatorCustomColorIdleButton
                 enabled: indicatorCustomColorIdleCheckBox.checked
-                color: cfg_IndicatorColorIdle || PlasmaCore.Theme.textColor
+                color: cfg_IndicatorColorIdle || Kirigami.Theme.textColor
 
                 colorAcceptedCallback: function (color) {
                     cfg_IndicatorColorIdle = color;
@@ -656,7 +657,7 @@ KCM.SimpleKCM {
             ColorButton {
                 id: indicatorCustomColorCurrentButton
                 enabled: indicatorCustomColorCurrentCheckBox.checked
-                color: cfg_IndicatorColorCurrent || PlasmaCore.Theme.buttonFocusColor
+                color: cfg_IndicatorColorCurrent || Kirigami.Theme.highlightColor
 
                 colorAcceptedCallback: function (color) {
                     cfg_IndicatorColorCurrent = color;
@@ -676,7 +677,7 @@ KCM.SimpleKCM {
             ColorButton {
                 id: indicatorCustomColorOccupiedButton
                 enabled: indicatorCustomColorOccupiedCheckBox.checked
-                color: cfg_IndicatorColorOccupied || PlasmaCore.Theme.textColor
+                color: cfg_IndicatorColorOccupied || Kirigami.Theme.textColor
 
                 colorAcceptedCallback: function (color) {
                     cfg_IndicatorColorOccupied = color;
@@ -696,7 +697,7 @@ KCM.SimpleKCM {
             ColorButton {
                 id: indicatorCustomColorAttentionButton
                 enabled: indicatorCustomColorAttentionCheckBox.checked
-                color: cfg_IndicatorColorAttention || PlasmaCore.Theme.textColor
+                color: cfg_IndicatorColorAttention || Kirigami.Theme.textColor
 
                 colorAcceptedCallback: function (color) {
                     cfg_IndicatorColorAttention = color;

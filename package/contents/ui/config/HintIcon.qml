@@ -2,7 +2,6 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami 2.20 as Kirigami
-import org.kde.plasma.core as PlasmaCore
 import Qt5Compat.GraphicalEffects
 
 import "../common" as UICommon
@@ -146,9 +145,9 @@ Item {
                 id: backgroundRect
                 z: 50
                 anchors.fill: parent
-                color: PlasmaCore.Theme.viewBackgroundColor
+                color: Kirigami.Theme.backgroundColor
                 border.width: 1
-                border.color: PlasmaCore.Theme.disabledTextColor
+                border.color: Kirigami.Theme.disabledTextColor
             }
 
             contentItem: Text {

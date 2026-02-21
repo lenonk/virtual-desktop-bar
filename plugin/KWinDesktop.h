@@ -6,7 +6,7 @@
 
 namespace KWin {
     struct KWinDesktopData {
-        int     id      {};
+        qint32 id       {};
         QString uuid    {};
         QString name    {};
     };

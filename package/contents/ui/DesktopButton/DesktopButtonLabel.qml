@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Controls
-import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami as Kirigami
 
 Text {
     property QtObject config: plasmoid.configuration
@@ -26,7 +26,7 @@ Text {
         }
     }
 
-    font.family: config.LabelFont || PlasmaCore.Theme.defaultFont.family
-    font.pixelSize: config.LabelFontSize || PlasmaCore.Theme.defaultFont.pixelSize
+    font.family: config.LabelFont || Kirigami.Theme.defaultFont.family
+    font.pixelSize: config.LabelFontSize || Kirigami.Theme.defaultFont.pixelSize
     font.bold: isCurrent && config.LabelBoldCurrent
 }

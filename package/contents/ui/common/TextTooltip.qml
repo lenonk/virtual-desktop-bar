@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami as Kirigami
 
 PlasmaCore.Dialog {
     property Item target
@@ -17,6 +18,6 @@ PlasmaCore.Dialog {
         height: implicitHeight
 
         textFormat: Text.RichText
-        color: PlasmaCore.Theme.textColor
+        color: Kirigami.Theme.textColor
     }
 }

@@ -5,11 +5,18 @@ VirtualDesktopBar {
     id: backend
 
     required property ListModel desktopInfoList
+    required property ListModel activityInfoList
 
     Component.onCompleted: {
         if (backend) {
+            // backend.startSignalTrace(backend, "backend");
+            // if (typeof plasmoid !== "undefined") {
+            //     backend.startSignalTrace(plasmoid, "plasmoid");
+            //     backend.startSignalTrace(plasmoid.configuration, "plasmoid.configuration");
+            // }
             console.log("Backend is ready. Requesting desktop info list...");
             initializeDesktopInfoList(backend.requestDesktopInfoList());
+            initializeActivityInfoList(backend.requestActivityInfoList());
         }
     }
 
@@ -72,4 +79,13 @@ VirtualDesktopBar {
         }
     }
 
+    function initializeActivityInfoList(data) {
+        activityInfoList.clear();
+
+        for (let i = 0; i < data.length; i++) {
+            let activity = data[i];
+            activityInfoList.append(activity);
+        }
+
+    }
 }

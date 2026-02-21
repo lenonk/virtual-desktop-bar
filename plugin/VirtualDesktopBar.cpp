@@ -2,23 +2,48 @@
 
 #include <QString>
 #include <QDBusMetaType>
-#include <QDBusReply>
 #include <QStandardPaths>
 #include <QDir>
-#include <QFile>
 #include <QScreen>
-#include <QCoreApplication>
 #include <QDBusConnectionInterface>
 #include <QProcess>
+#include <QMetaMethod>
 
 #include <KService>
 #include <PlasmaActivities/Consumer>
 
 #include "VirtualDesktopBar.hpp"
 
-#include <memory>
-
 #define QSL(str) QStringLiteral(str)
+
+SignalTraceProbe::SignalTraceProbe(QObject *target, QString label, QObject *parent)
+    : QObject(parent), m_target(target), m_label(std::move(label)) {
+}
+
+QObject *SignalTraceProbe::target() const {
+    return m_target.data();
+}
+
+void SignalTraceProbe::onAnySignal() {
+    QObject *signalSender = sender();
+    if (!signalSender) {
+        return;
+    }
+
+    const int signalIndex = senderSignalIndex();
+    QByteArray signalSignature("<unknown>");
+    if (signalIndex >= 0 && signalIndex < signalSender->metaObject()->methodCount()) {
+        signalSignature = signalSender->metaObject()->method(signalIndex).methodSignature();
+    }
+
+    const QString label = m_label.isEmpty() ? QString::fromLatin1(signalSender->metaObject()->className()) : m_label;
+    qInfo().noquote().nospace()
+        << "[virtualdesktopbar][signal] "
+        << label
+        << " sender=" << signalSender->metaObject()->className()
+        << "@" << signalSender
+        << " signal=" << signalSignature;
+}
 
 void
 registerKWinDesktopMetaTypes() {
@@ -39,7 +64,76 @@ VirtualDesktopBar::VirtualDesktopBar(QObject *parent) : QObject(parent) {
     connectToDBusSignals();
 }
 
-VirtualDesktopBar::~VirtualDesktopBar() {
+VirtualDesktopBar::~VirtualDesktopBar() = default;
+
+void VirtualDesktopBar::startSignalTrace(QObject *target, const QString &label) {
+    if (!target) {
+        qWarning() << "startSignalTrace called with null target";
+        return;
+    }
+
+    if (m_signalTraceProbes.contains(target)) {
+        return;
+    }
+
+    auto *probe = new SignalTraceProbe(target, label, this);
+    int hookedSignalCount = 0;
+    const QMetaObject *metaObject = target->metaObject();
+    const int methodCount = metaObject->methodCount();
+
+    for (int methodIndex = 0; methodIndex < methodCount; ++methodIndex) {
+        const QMetaMethod method = metaObject->method(methodIndex);
+        if (method.methodType() != QMetaMethod::Signal) {
+            continue;
+        }
+
+        const QByteArray encodedSignal = "2" + method.methodSignature();
+        const bool connected = QObject::connect(target, encodedSignal.constData(), probe, SLOT(onAnySignal()));
+        if (connected) {
+            ++hookedSignalCount;
+        }
+    }
+
+    if (hookedSignalCount == 0) {
+        qWarning() << "No signals were connected for target" << target;
+        probe->deleteLater();
+        return;
+    }
+
+    m_signalTraceProbes.insert(target, probe);
+    QObject::connect(target, &QObject::destroyed, this, [this, target]() {
+        m_signalTraceProbes.remove(target);
+    });
+
+    qInfo() << "Signal tracing enabled for" << target << "with" << hookedSignalCount << "signals";
+}
+
+void VirtualDesktopBar::stopSignalTrace(QObject *target) {
+    if (!target) {
+        return;
+    }
+
+    auto it = m_signalTraceProbes.find(target);
+    if (it == m_signalTraceProbes.end()) {
+        return;
+    }
+
+    SignalTraceProbe *probe = it.value();
+    QObject::disconnect(target, nullptr, probe, nullptr);
+    m_signalTraceProbes.erase(it);
+    probe->deleteLater();
+}
+
+void VirtualDesktopBar::stopAllSignalTraces() {
+    for (auto it = m_signalTraceProbes.begin(); it != m_signalTraceProbes.end(); ++it) {
+        QObject *target = it.key();
+        SignalTraceProbe *probe = it.value();
+        if (target) {
+            QObject::disconnect(target, nullptr, probe, nullptr);
+        }
+        probe->deleteLater();
+    }
+    m_signalTraceProbes.clear();
 }
 
 void
@@ -59,16 +153,14 @@ VirtualDesktopBar::connectToDBusSignals() {
         DBus::Interfaces::VDManager, QSL("currentChanged"), this, SLOT(onCurrentChanged(QString)));
 }
 
-QDBusInterface *
+std::unique_ptr<QDBusInterface>
 VirtualDesktopBar::createInterface(const QString &service, const QString &path, const QString &interface,
     const QDBusConnection &busType) {
-    const QString key = service + path + interface;
 
-    const auto iface = new QDBusInterface(service, path, interface, busType, this);
+    auto iface = std::make_unique<QDBusInterface>(service, path, interface, busType, nullptr);
 
     if (!iface->isValid()) {
         qWarning() << QSL("Failed to create interface %1 for %2:%3").arg(service, path, interface);
-        delete iface;
         return nullptr;
     }
 
@@ -77,13 +169,13 @@ VirtualDesktopBar::createInterface(const QString &service, const QString &path, 
 
 QVariantList
 VirtualDesktopBar::requestDesktopInfoList() {
-    auto getDesktopsProperty = [this]() -> KWin::KWinDesktopDataList {
+    auto getDesktopsProperty = []() -> KWin::KWinDesktopDataList {
         QDBusMessage msg = QDBusMessage::createMethodCall( DBus::Services::KWin, DBus::Paths::VDManager,
            QSL("org.freedesktop.DBus.Properties"), QSL("Get"));
 
         msg << DBus::Interfaces::VDManager << QSL("desktops");
 
-        QDBusMessage reply = QDBusConnection::sessionBus().call(msg);
+        const QDBusMessage reply = QDBusConnection::sessionBus().call(msg);
         if (reply.type() == QDBusMessage::ErrorMessage) {
             qWarning() << "Failed to get desktops property";
             return {};
@@ -204,7 +296,7 @@ VirtualDesktopBar::requestDesktopInfoList() {
 // }
 
 bool
-VirtualDesktopBar::createDesktop(quint32 index, const QString &name) {
+VirtualDesktopBar::createDesktop(const quint32 index, const QString &name) {
     QDBusMessage msg = QDBusMessage::createMethodCall(DBus::Services::KWin, DBus::Paths::VDManager,
        DBus::Interfaces::VDManager, QSL("createDesktop"));
 
@@ -213,7 +305,7 @@ VirtualDesktopBar::createDesktop(quint32 index, const QString &name) {
     const auto reply = QDBusConnection::sessionBus().call(msg, QDBus::Block);
 
     if (reply.type() == QDBusMessage::ErrorMessage) {
-        qWarning() << QSL("Failed to create desktop: Name: %1, Index: %2").arg(name, index);
+        qWarning() << QSL("Failed to create desktop: Name: %1, Index: %2").arg(name, static_cast<int32_t>(index));
         return false;
     }
 
@@ -221,7 +313,7 @@ VirtualDesktopBar::createDesktop(quint32 index, const QString &name) {
 }
 
 bool
-VirtualDesktopBar::removeDesktop(QString id) {
+VirtualDesktopBar::removeDesktop(const QString &id) {
     QDBusMessage msg = QDBusMessage::createMethodCall(DBus::Services::KWin, DBus::Paths::VDManager,
        DBus::Interfaces::VDManager, QSL("removeDesktop"));
 
@@ -238,7 +330,7 @@ VirtualDesktopBar::removeDesktop(QString id) {
 }
 
 bool
-VirtualDesktopBar::setDesktopName(QString id, QString name) {
+VirtualDesktopBar::setDesktopName(const QString& id, const QString &name) {
     QDBusMessage msg = QDBusMessage::createMethodCall(DBus::Services::KWin, DBus::Paths::VDManager,
        DBus::Interfaces::VDManager, QSL("setDesktopName"));
 
@@ -273,7 +365,7 @@ VirtualDesktopBar::setCurrentDesktop(const qint32 number) {
 
 bool
 VirtualDesktopBar::nextDesktop() {
-    QDBusMessage msg = QDBusMessage::createMethodCall(DBus::Services::KWin, DBus::Paths::KWin,
+    const QDBusMessage msg = QDBusMessage::createMethodCall(DBus::Services::KWin, DBus::Paths::KWin,
        DBus::Interfaces::KWin, QSL("nextDesktop"));
 
     const auto reply = QDBusConnection::sessionBus().call(msg, QDBus::Block);
@@ -288,7 +380,7 @@ VirtualDesktopBar::nextDesktop() {
 
 bool
 VirtualDesktopBar::previousDesktop() {
-    QDBusMessage msg = QDBusMessage::createMethodCall(DBus::Services::KWin, DBus::Paths::KWin,
+    const QDBusMessage msg = QDBusMessage::createMethodCall(DBus::Services::KWin, DBus::Paths::KWin,
        DBus::Interfaces::KWin, QSL("previousDesktop"));
 
     const auto reply = QDBusConnection::sessionBus().call(msg, QDBus::Block);
@@ -302,7 +394,7 @@ VirtualDesktopBar::previousDesktop() {
 }
 
 bool
-VirtualDesktopBar::moveDesktop(const QString &id, quint32 targetIndex) {
+VirtualDesktopBar::moveDesktop(const QString &id, const quint32 targetIndex) {
     // Get all desktops
     auto desktops = requestDesktopInfoList();
     if (desktops.isEmpty()) {
@@ -333,10 +425,10 @@ VirtualDesktopBar::moveDesktop(const QString &id, quint32 targetIndex) {
     auto sourceDesktop = desktops[currentIndex].toMap();
     auto targetDesktop = desktops[targetIndex].toMap();
 
-    QString sourceName = sourceDesktop[QSL("name")].toString();
-    QString sourceUuid = sourceDesktop[QSL("uuid")].toString();
-    QString targetName = targetDesktop[QSL("name")].toString();
-    QString targetUuid = targetDesktop[QSL("uuid")].toString();
+    const QString sourceName = sourceDesktop[QSL("name")].toString();
+    const QString sourceUuid = sourceDesktop[QSL("uuid")].toString();
+    const QString targetName = targetDesktop[QSL("name")].toString();
+    const QString targetUuid = targetDesktop[QSL("uuid")].toString();
 
     // Swap the names
     if (!setDesktopName(sourceUuid, targetName)) {
@@ -361,8 +453,7 @@ VirtualDesktopBar::getIconFromDesktopFile(const QString &desktopFile) {
         serviceName.chop(8);
     }
 
-    KService::Ptr service = KService::serviceByDesktopName(serviceName);
-    if (service) {
+    if (KService::Ptr service = KService::serviceByDesktopName(serviceName)) {
         return service->icon();
     }
 
@@ -371,24 +462,43 @@ VirtualDesktopBar::getIconFromDesktopFile(const QString &desktopFile) {
 
 QString
 VirtualDesktopBar::getCurrentActivityId() {
-    KActivities::Consumer consumer;
+    const KActivities::Consumer consumer;
     return consumer.currentActivity();
 }
 
 QString
-VirtualDesktopBar::getActivityName(const QString activityId) {
-    KActivities::Consumer consumer;
+VirtualDesktopBar::getActivityName(const QString &activityId) {
     const KActivities::Info activityInfo(activityId);
     return activityInfo.name();
 }
 
+QVariantList
+VirtualDesktopBar::requestActivityInfoList() {
+    const KActivities::Consumer consumer;
+
+    QVariantList out;
+    const auto uuids = consumer.activities();
+
+    out.reserve(uuids.size());
+    for (const auto &uuid: uuids) {
+        const KActivities::Info info(uuid);
+        QVariantMap m;
+        m[QSL("id")] = uuid;
+        m[QSL("name")] = info.name();
+        m[QSL("icon")] = info.icon();
+        out.append(m);
+    }
+
+    return out;
+}
+
 QPoint
-VirtualDesktopBar::getCursorPosition() const {
+VirtualDesktopBar::getCursorPosition() {
     return QCursor::pos();
 }
 
 QPoint
-VirtualDesktopBar::getRelativeCursorPosition() const {
+VirtualDesktopBar::getRelativeCursorPosition() {
     const auto globalPos = QCursor::pos();
     auto currentScreen = QGuiApplication::screenAt(globalPos);
 
@@ -399,36 +509,35 @@ VirtualDesktopBar::getRelativeCursorPosition() const {
     if (currentScreen) {
         const auto screenGeometry = currentScreen->geometry();
 
-        return QPoint(globalPos.x() - screenGeometry.x(),
-                     globalPos.y() - screenGeometry.y());
+        return {globalPos.x() - screenGeometry.x(), globalPos.y() - screenGeometry.y()};
     }
 
     return globalPos;
 }
 QSize
-VirtualDesktopBar::getCursorSize() const {
+VirtualDesktopBar::getCursorSize() {
     const auto currentCursor = QGuiApplication::overrideCursor() ? *QGuiApplication::overrideCursor() : QCursor();
     const auto cursorPixmap = currentCursor.pixmap();
 
     if (!cursorPixmap.isNull()) { return cursorPixmap.size(); }
 
-    return QSize(16, 16);
+    return {16, 16};
 
 }
 
 bool
-VirtualDesktopBar::isMouseButtonPressed() const {
+VirtualDesktopBar::isMouseButtonPressed() {
     return QGuiApplication::mouseButtons() & Qt::LeftButton;
 }
 
 void
-VirtualDesktopBar::run(const QString &cmd) const {
+VirtualDesktopBar::run(const QString &cmd) {
     qInfo() << "Running command:" << cmd;
     QProcess::startDetached(cmd);
 }
 
 QPoint
-VirtualDesktopBar::getRelativeScreenPosition() const {
+VirtualDesktopBar::getRelativeScreenPosition() {
     const auto globalPos = QCursor::pos();
     auto currentScreen = QGuiApplication::screenAt(globalPos);
 

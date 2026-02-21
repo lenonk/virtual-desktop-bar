@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
+import org.kde.kirigami as Kirigami
 
 import "../common" as Common
 
@@ -22,7 +23,7 @@ PlasmaCore.Dialog {
 
         Text {
             Layout.alignment: Qt.AlignVCenter
-            color: PlasmaCore.Theme.textColor
+            color: Kirigami.Theme.textColor
             text: "Rename As: "
         }
 
